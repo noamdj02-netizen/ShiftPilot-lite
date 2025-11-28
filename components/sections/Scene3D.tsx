@@ -7,7 +7,11 @@ import { FloatingShiftCards } from '@/components/3d/FloatingShiftCards'
 
 export function Scene3D() {
   return (
-    <Canvas>
+    <Canvas
+      gl={{ alpha: false }}
+      style={{ background: '#1e3a5f' }}
+    >
+      <color attach="background" args={['#1e3a5f']} />
       <PerspectiveCamera makeDefault position={[0, 0, 5]} />
       <ambientLight intensity={0.5} />
       <directionalLight position={[10, 10, 5]} intensity={1} />
@@ -19,7 +23,7 @@ export function Scene3D() {
         <FloatingCalendar3D />
       </Float>
       <FloatingShiftCards />
-      <Environment preset="city" />
+      <Environment preset="night" />
     </Canvas>
   )
 }

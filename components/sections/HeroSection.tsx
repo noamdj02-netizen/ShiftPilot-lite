@@ -1,14 +1,20 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, Suspense } from 'react'
+import dynamic from 'next/dynamic'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { Canvas } from '@react-three/fiber'
-import { Float, PerspectiveCamera, Environment } from '@react-three/drei'
 import { Button } from '@/components/ui/Button'
 import { ArrowRight, Play } from 'lucide-react'
-import { FloatingCalendar3D } from '@/components/3d/FloatingCalendar3D'
-import { FloatingShiftCards } from '@/components/3d/FloatingShiftCards'
 import Link from 'next/link'
+
+// Dynamic import pour éviter le SSR avec Three.js
+const Scene3D = dynamic(
+  () => import('./Scene3D').then((mod) => ({ default: mod.Scene3D })),
+  { 
+    ssr: false,
+    loading: () => <div className="w-full h-full flex items-center justify-center text-slate-400">Chargement...</div>
+  }
+)
 
 export function HeroSection() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -176,20 +182,7 @@ export function HeroSection() {
           transition={{ duration: 0.8, delay: 0.3 }}
           className="relative h-[500px] lg:h-[600px]"
         >
-          <Canvas>
-            <PerspectiveCamera makeDefault position={[0, 0, 5]} />
-            <ambientLight intensity={0.5} />
-            <directionalLight position={[10, 10, 5]} intensity={1} />
-            <Float
-              speed={2}
-              rotationIntensity={0.5}
-              floatIntensity={1}
-            >
-              <FloatingCalendar3D />
-            </Float>
-            <FloatingShiftCards />
-            <Environment preset="city" />
-          </Canvas>
+          <Scene3D />
           
           {/* Floating stats cards */}
           <motion.div

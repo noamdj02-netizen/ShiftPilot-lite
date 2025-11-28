@@ -19,7 +19,7 @@ export default function PlanningPage() {
   weekEnd.setHours(23, 59, 59, 999);
 
   const days = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
-  const weekDays = [];
+  const weekDays: Date[] = [];
   for (let i = 0; i < 7; i++) {
     const date = new Date(weekStart);
     date.setDate(date.getDate() + i);

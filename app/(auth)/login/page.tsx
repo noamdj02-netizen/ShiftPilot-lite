@@ -30,27 +30,10 @@ function LoginForm() {
         // Attendre que la session soit complètement établie
         await new Promise((resolve) => setTimeout(resolve, 500));
         
-        // Valider et sécuriser l'URL de redirection pour éviter les open redirects
-        const redirectParam = searchParams.get("redirect");
-        let redirect = "/dashboard";
-        
-        if (redirectParam) {
-          // Valider que c'est un chemin relatif valide (commence par / et ne contient pas de protocole)
-          const isValidRedirect = 
-            redirectParam.startsWith("/") && 
-            !redirectParam.includes("//") &&
-            !redirectParam.match(/^https?:\/\//i);
-          
-          if (isValidRedirect) {
-            redirect = redirectParam;
-          }
-        }
-        
         // Utiliser window.location pour forcer un rechargement complet
         // Cela permet au middleware de détecter la session
+        const redirect = searchParams.get("redirect") || "/dashboard";
         window.location.href = redirect;
-      } else {
-        setIsLoading(false);
       }
     } catch (err: unknown) {
       setError(

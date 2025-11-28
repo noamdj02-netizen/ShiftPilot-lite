@@ -24,14 +24,21 @@ function LoginForm() {
     setIsLoading(true);
 
     try {
-      await signIn(email, password);
-      const redirect = searchParams.get("redirect") || "/dashboard";
-      router.push(redirect);
+      const result = await signIn(email, password);
+      
+      if (result?.user) {
+        // Attendre que la session soit complètement établie
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        
+        // Utiliser window.location pour forcer un rechargement complet
+        // Cela permet au middleware de détecter la session
+        const redirect = searchParams.get("redirect") || "/dashboard";
+        window.location.href = redirect;
+      }
     } catch (err: unknown) {
       setError(
         err instanceof Error ? err.message : "Une erreur est survenue"
       );
-    } finally {
       setIsLoading(false);
     }
   };

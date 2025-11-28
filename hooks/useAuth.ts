@@ -60,11 +60,18 @@ export function useAuth() {
       password,
     });
 
-    if (error) throw error;
+    if (error) {
+      console.error("SignIn error:", error);
+      throw error;
+    }
+    
     if (data.user) {
       setUser(data.user);
+      // Attendre un peu pour que la session soit synchronisée
+      await new Promise((resolve) => setTimeout(resolve, 300));
       await fetchProfile(data.user.id);
     }
+    
     return data;
   };
 

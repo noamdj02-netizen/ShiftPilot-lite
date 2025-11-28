@@ -133,43 +133,52 @@ export function TestimonialsSection() {
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border-accent/20 text-sm font-medium text-accent mb-6">
-            <Star className="w-4 h-4 fill-accent" />
-            Témoignages
-          </span>
-          
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6">
-            Ils ont transformé leur{' '}
-            <span className="gradient-text">gestion d'équipe</span>
-          </h2>
-          
-          <p className="text-lg text-foreground-secondary max-w-2xl mx-auto">
-            Plus de 500 restaurateurs nous font confiance au quotidien.
-          </p>
-        </motion.div>
+               {/* Header - Design plus raffiné */}
+               <motion.div
+                 initial={{ opacity: 0, y: 20 }}
+                 animate={isInView ? { opacity: 1, y: 0 } : {}}
+                 transition={{ duration: 0.6, ease: [0.25, 0.4, 0.25, 1] }}
+                 className="text-center mb-16 lg:mb-20"
+               >
+                 <motion.span
+                   initial={{ opacity: 0, scale: 0.9 }}
+                   animate={isInView ? { opacity: 1, scale: 1 } : {}}
+                   transition={{ duration: 0.5, ease: [0.25, 0.4, 0.25, 1] }}
+                   className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border-accent/20 text-sm font-medium text-accent mb-6 backdrop-blur-sm"
+                 >
+                   <Star className="w-4 h-4 fill-accent" />
+                   Témoignages
+                 </motion.span>
+                 
+                 <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-foreground mb-6 leading-tight tracking-tight">
+                   Ils ont transformé leur{' '}
+                   <span className="gradient-text">gestion d'équipe</span>
+                 </h2>
+                 
+                 <p className="text-lg lg:text-xl text-foreground-secondary max-w-2xl mx-auto leading-relaxed font-light">
+                   Plus de 500 restaurateurs nous font confiance au quotidien.
+                 </p>
+               </motion.div>
 
         {/* Main testimonial */}
         <div className="relative max-w-4xl mx-auto mb-20">
-          {/* Navigation arrows */}
-          <button
-            onClick={() => paginate(-1)}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-16 z-10 w-12 h-12 rounded-full glass border-border hover:border-accent/50 flex items-center justify-center transition-all group"
-          >
-            <ChevronLeft className="w-5 h-5 text-foreground-secondary group-hover:text-accent" />
-          </button>
-          <button
-            onClick={() => paginate(1)}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-16 z-10 w-12 h-12 rounded-full glass border-border hover:border-accent/50 flex items-center justify-center transition-all group"
-          >
-            <ChevronRight className="w-5 h-5 text-foreground-secondary group-hover:text-accent" />
-          </button>
+                 {/* Navigation arrows - Design plus premium */}
+                 <motion.button
+                   onClick={() => paginate(-1)}
+                   whileHover={{ scale: 1.1, x: -2 }}
+                   whileTap={{ scale: 0.95 }}
+                   className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-16 z-10 w-12 h-12 rounded-full glass border-border hover:border-accent/50 flex items-center justify-center transition-all duration-300 group backdrop-blur-sm"
+                 >
+                   <ChevronLeft className="w-5 h-5 text-foreground-secondary group-hover:text-accent transition-colors duration-300" />
+                 </motion.button>
+                 <motion.button
+                   onClick={() => paginate(1)}
+                   whileHover={{ scale: 1.1, x: 2 }}
+                   whileTap={{ scale: 0.95 }}
+                   className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-16 z-10 w-12 h-12 rounded-full glass border-border hover:border-accent/50 flex items-center justify-center transition-all duration-300 group backdrop-blur-sm"
+                 >
+                   <ChevronRight className="w-5 h-5 text-foreground-secondary group-hover:text-accent transition-colors duration-300" />
+                 </motion.button>
 
           {/* Autoplay control */}
           <button

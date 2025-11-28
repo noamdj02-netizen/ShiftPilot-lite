@@ -73,44 +73,54 @@ export function PricingSection() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border-accent/20 text-sm font-medium text-accent mb-6">
+          <motion.span
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease: [0.25, 0.4, 0.25, 1] }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border-accent/20 text-sm font-medium text-accent mb-6 backdrop-blur-sm"
+          >
             Tarifs
-          </span>
+          </motion.span>
           
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-foreground mb-6 leading-tight tracking-tight">
             Simple et transparent
           </h2>
           
-          <p className="text-lg text-foreground-secondary max-w-2xl mx-auto mb-10">
+          <p className="text-lg lg:text-xl text-foreground-secondary max-w-2xl mx-auto mb-10 leading-relaxed font-light">
             14 jours d'essai gratuit. Sans carte bancaire. Annulation en 1 clic.
           </p>
           
-          {/* Billing toggle */}
-          <div className="inline-flex items-center gap-4 p-1.5 rounded-full glass">
-            <button
-              onClick={() => setIsYearly(false)}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
-                !isYearly 
-                  ? 'bg-accent text-white shadow-glow-sm' 
-                  : 'text-foreground-secondary hover:text-foreground'
-              }`}
-            >
-              Mensuel
-            </button>
-            <button
-              onClick={() => setIsYearly(true)}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
-                isYearly 
-                  ? 'bg-accent text-white shadow-glow-sm' 
-                  : 'text-foreground-secondary hover:text-foreground'
-              }`}
-            >
-              Annuel
-              <span className="px-2 py-0.5 rounded-full bg-success/20 text-success text-xs">
-                -20%
-              </span>
-            </button>
-          </div>
+                 {/* Billing toggle - Design plus premium */}
+                 <div className="inline-flex items-center gap-1 p-1 rounded-full glass backdrop-blur-sm border border-border/50">
+                   <motion.button
+                     onClick={() => setIsYearly(false)}
+                     whileHover={{ scale: 1.02 }}
+                     whileTap={{ scale: 0.98 }}
+                     className={`relative px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${
+                       !isYearly 
+                         ? 'bg-accent text-white shadow-glow-sm' 
+                         : 'text-foreground-secondary hover:text-foreground'
+                     }`}
+                   >
+                     Mensuel
+                   </motion.button>
+                   <motion.button
+                     onClick={() => setIsYearly(true)}
+                     whileHover={{ scale: 1.02 }}
+                     whileTap={{ scale: 0.98 }}
+                     className={`relative px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300 flex items-center gap-2 ${
+                       isYearly 
+                         ? 'bg-accent text-white shadow-glow-sm' 
+                         : 'text-foreground-secondary hover:text-foreground'
+                     }`}
+                   >
+                     Annuel
+                     <span className="px-2 py-0.5 rounded-full bg-success/20 text-success text-xs font-semibold">
+                       -20%
+                     </span>
+                   </motion.button>
+                 </div>
         </motion.div>
         
         {/* Pricing cards */}
@@ -200,19 +210,19 @@ export function PricingSection() {
                   ))}
                 </ul>
                 
-                {/* CTA */}
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`w-full py-3 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
-                    plan.popular
-                      ? 'bg-accent text-white hover:shadow-glow'
-                      : 'glass border-border hover:border-accent/50 text-foreground'
-                  }`}
-                >
-                  {plan.cta}
-                  <ArrowRight className="w-4 h-4" />
-                </motion.button>
+                       {/* CTA - Design plus premium */}
+                       <motion.button
+                         whileHover={{ scale: 1.02, y: -1 }}
+                         whileTap={{ scale: 0.98 }}
+                         className={`w-full py-3.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
+                           plan.popular
+                             ? 'bg-accent text-white hover:shadow-glow hover:shadow-accent/30'
+                             : 'glass border-border hover:border-accent/50 text-foreground hover:bg-background-hover'
+                         }`}
+                       >
+                         {plan.cta}
+                         <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                       </motion.button>
               </div>
             </motion.div>
           ))}

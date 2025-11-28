@@ -93,14 +93,14 @@ const colorMap = {
     bg: 'bg-cyan/10',
     border: 'border-cyan/20',
     text: 'text-cyan',
-    glow: 'shadow-glow-cyan/30 hover:shadow-glow-cyan',
+    glow: 'hover:shadow-glow-cyan',
     gradient: 'from-cyan to-accent',
   },
   violet: {
     bg: 'bg-violet/10',
     border: 'border-violet/20',
     text: 'text-violet',
-    glow: 'shadow-glow-violet/30 hover:shadow-glow-violet',
+    glow: 'hover:shadow-glow-violet',
     gradient: 'from-violet to-accent',
   },
   success: {
@@ -188,48 +188,58 @@ function FeatureCard({ feature, index }: { feature: typeof features[0]; index: n
       ref={ref}
       initial={{ opacity: 0, y: 30 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
+      transition={{ duration: 0.6, delay: index * 0.1, ease: [0.25, 0.4, 0.25, 1] }}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
       style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
-      className={`group relative glass rounded-2xl p-6 lg:p-8 overflow-hidden transition-all duration-500 ${colors.glow} ${
+      className={`group relative glass rounded-2xl p-6 lg:p-8 overflow-hidden transition-all duration-500 hover:shadow-lg hover:shadow-background/20 ${
         feature.size === 'large' ? 'lg:col-span-2 lg:row-span-2' :
         feature.size === 'medium' ? 'lg:col-span-2' : ''
       }`}
     >
-      {/* Gradient border on hover */}
-      <div className={`absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 p-[1px] bg-gradient-to-br ${colors.gradient}`}>
+      {/* Gradient border on hover - Plus subtil */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isHovered ? 1 : 0 }}
+        transition={{ duration: 0.3 }}
+        className={`absolute inset-0 rounded-2xl p-[1px] bg-gradient-to-br ${colors.gradient}`}
+      >
         <div className="w-full h-full rounded-2xl bg-background-elevated" />
-      </div>
+      </motion.div>
       
       {/* Content */}
-      <div className="relative z-10">
-        {/* Icon */}
+      <div className="relative z-10 h-full flex flex-col">
+        {/* Icon - Animation plus fluide */}
         <motion.div
           animate={isHovered ? { scale: 1.1, rotate: 5 } : { scale: 1, rotate: 0 }}
-          className={`w-12 h-12 lg:w-14 lg:h-14 rounded-xl ${colors.bg} ${colors.border} border flex items-center justify-center mb-4`}
+          transition={{ duration: 0.3, ease: [0.25, 0.4, 0.25, 1] }}
+          className={`w-12 h-12 lg:w-14 lg:h-14 rounded-xl ${colors.bg} ${colors.border} border flex items-center justify-center mb-4 transition-colors duration-300 group-hover:border-opacity-50`}
         >
-          <feature.icon className={`w-6 h-6 lg:w-7 lg:h-7 ${colors.text}`} />
+          <feature.icon className={`w-6 h-6 lg:w-7 lg:h-7 ${colors.text} transition-transform duration-300 group-hover:scale-110`} />
         </motion.div>
         
-        {/* Title */}
-        <h3 className={`text-lg lg:text-xl font-bold text-foreground mb-2 ${feature.size === 'large' ? 'lg:text-2xl' : ''}`}>
+        {/* Title - Typographie améliorée */}
+        <h3 className={`text-lg lg:text-xl font-bold text-foreground mb-3 leading-tight ${feature.size === 'large' ? 'lg:text-2xl' : ''}`}>
           {feature.title}
         </h3>
         
-        {/* Description */}
-        <p className={`text-foreground-secondary leading-relaxed ${feature.size === 'large' ? 'lg:text-lg' : 'text-sm lg:text-base'}`}>
+        {/* Description - Espacement amélioré */}
+        <p className={`text-foreground-secondary leading-relaxed flex-grow ${feature.size === 'large' ? 'lg:text-lg' : 'text-sm lg:text-base'}`}>
           {feature.description}
         </p>
         
-        {/* Tags for large cards */}
+        {/* Tags for large cards - Design plus raffiné */}
         {feature.size === 'large' && (
-          <div className="mt-6 pt-6 border-t border-border flex flex-wrap gap-2">
+          <div className="mt-6 pt-6 border-t border-border/50 flex flex-wrap gap-2">
             {['Drag & drop', 'Templates', 'Import CSV', 'Export PDF'].map((tag) => (
-              <span key={tag} className={`px-3 py-1 rounded-full text-xs font-medium ${colors.bg} ${colors.text}`}>
+              <motion.span
+                key={tag}
+                whileHover={{ scale: 1.05 }}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium ${colors.bg} ${colors.text} border ${colors.border} transition-all duration-300 hover:border-opacity-50`}
+              >
                 {tag}
-              </span>
+              </motion.span>
             ))}
           </div>
         )}
@@ -238,13 +248,14 @@ function FeatureCard({ feature, index }: { feature: typeof features[0]; index: n
       {/* Visual element for AI generation */}
       {feature.visual === 'ai-generation' && <AIGenerationVisual />}
       
-      {/* Hover arrow */}
+      {/* Hover arrow - Animation plus fluide */}
       <motion.div
-        initial={{ opacity: 0, x: -10 }}
-        animate={isHovered ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
+        initial={{ opacity: 0, x: -10, scale: 0.8 }}
+        animate={isHovered ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0, x: -10, scale: 0.8 }}
+        transition={{ duration: 0.3, ease: [0.25, 0.4, 0.25, 1] }}
         className="absolute bottom-6 right-6"
       >
-        <div className={`w-8 h-8 rounded-full ${colors.bg} flex items-center justify-center`}>
+        <div className={`w-9 h-9 rounded-full ${colors.bg} ${colors.border} border flex items-center justify-center transition-all duration-300 group-hover:scale-110`}>
           <ArrowRight className={`w-4 h-4 ${colors.text}`} />
         </div>
       </motion.div>
@@ -260,29 +271,33 @@ export function FeaturesSection() {
       <div className="absolute inset-0 grid-pattern" />
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
+        {/* Header - Design plus raffiné */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
+          transition={{ duration: 0.6, ease: [0.25, 0.4, 0.25, 1] }}
           className="text-center mb-16 lg:mb-20"
         >
           <motion.span
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border-accent/20 text-sm font-medium text-accent mb-6"
+            transition={{ duration: 0.5, ease: [0.25, 0.4, 0.25, 1] }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border-accent/20 text-sm font-medium text-accent mb-6 backdrop-blur-sm"
           >
             <Zap className="w-4 h-4" />
             Fonctionnalités
           </motion.span>
           
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-foreground mb-6 leading-tight tracking-tight">
             Tout pour gérer vos équipes,{' '}
-            <span className="gradient-text">rien de superflu</span>
+            <span className="relative inline-block">
+              <span className="relative z-10 gradient-text">rien de superflu</span>
+            </span>
           </h2>
           
-          <p className="text-lg text-foreground-secondary max-w-2xl mx-auto">
+          <p className="text-lg lg:text-xl text-foreground-secondary max-w-2xl mx-auto leading-relaxed font-light">
             Des outils puissants dans une interface simple. 
             Concentrez-vous sur votre restaurant, on s'occupe du reste.
           </p>
@@ -295,20 +310,21 @@ export function FeaturesSection() {
           ))}
         </div>
         
-        {/* Bottom CTA */}
+        {/* Bottom CTA - Design plus premium */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mt-16"
+          transition={{ duration: 0.6, ease: [0.25, 0.4, 0.25, 1] }}
+          className="text-center mt-16 lg:mt-20"
         >
           <motion.button
-            whileHover={{ scale: 1.02 }}
+            whileHover={{ scale: 1.02, y: -2 }}
             whileTap={{ scale: 0.98 }}
-            className="group inline-flex items-center gap-2 px-6 py-3 glass glass-hover rounded-xl font-medium text-foreground"
+            className="group inline-flex items-center gap-2 px-6 py-3 glass glass-hover rounded-xl font-semibold text-foreground transition-all duration-300 hover:shadow-lg"
           >
             Voir toutes les fonctionnalités
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
           </motion.button>
         </motion.div>
       </div>

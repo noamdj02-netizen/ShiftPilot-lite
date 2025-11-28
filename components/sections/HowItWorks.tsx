@@ -111,99 +111,115 @@ export function HowItWorks() {
   const lineHeight = useTransform(scrollYProgress, [0.1, 0.9], ['0%', '100%'])
   
   return (
-    <section ref={containerRef} className="py-24 bg-slate-950 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
+    <section ref={containerRef} className="py-24 lg:py-32 bg-background-secondary relative overflow-hidden">
+      {/* Background */}
+      <div className="absolute inset-0">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-accent/5 rounded-full blur-[120px]" />
+        <div className="absolute inset-0 grid-pattern opacity-[0.02]" />
+      </div>
+      
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header - Design plus raffiné */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-20"
+          transition={{ duration: 0.6, ease: [0.25, 0.4, 0.25, 1] }}
+          className="text-center mb-16 lg:mb-20"
         >
-          <span className="inline-block px-4 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-sm font-medium mb-4">
+          <motion.span
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease: [0.25, 0.4, 0.25, 1] }}
+            className="inline-block px-4 py-2 rounded-full glass border-accent/20 text-sm font-medium text-accent mb-6 backdrop-blur-sm"
+          >
             Simple comme bonjour
-          </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
+          </motion.span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-foreground mb-6 leading-tight tracking-tight">
             3 étapes pour en finir avec Excel
           </h2>
-          <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+          <p className="text-lg lg:text-xl text-foreground-secondary max-w-2xl mx-auto leading-relaxed font-light">
             De l'inscription à votre premier planning publié en moins de 10 minutes.
           </p>
         </motion.div>
         
         {/* Timeline */}
         <div className="relative">
-          {/* Vertical line */}
-          <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-slate-800 -translate-x-1/2 hidden lg:block">
+          {/* Vertical line - Design premium */}
+          <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-border/30 -translate-x-1/2 hidden lg:block">
             <motion.div
-              className="w-full bg-gradient-to-b from-emerald-500 via-blue-500 to-purple-500"
+              className="w-full bg-gradient-to-b from-accent via-cyan to-violet"
               style={{ height: lineHeight }}
             />
           </div>
           
           {/* Steps */}
-          <div className="space-y-24">
-            {steps.map((step, index) => (
-              <motion.div
-                key={step.number}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-100px' }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className={`flex flex-col lg:flex-row items-center gap-8 lg:gap-16 ${
-                  index % 2 === 1 ? 'lg:flex-row-reverse' : ''
-                }`}
-              >
-                {/* Content */}
-                <div className={`flex-1 ${index % 2 === 1 ? 'lg:text-right' : ''}`}>
-                  <span className={`text-6xl font-bold ${
-                    step.color === 'emerald' ? 'text-emerald-500/20' :
-                    step.color === 'blue' ? 'text-blue-500/20' :
-                    'text-purple-500/20'
-                  }`}>
-                    {step.number}
-                  </span>
-                  <div className={`flex items-center gap-3 mb-4 ${index % 2 === 1 ? 'lg:justify-end' : ''}`}>
-                    <div className={`w-12 h-12 rounded-xl ${
-                      step.color === 'emerald' ? 'bg-emerald-500/20' :
-                      step.color === 'blue' ? 'bg-blue-500/20' :
-                      'bg-purple-500/20'
-                    } flex items-center justify-center`}>
-                      <step.icon className={`w-6 h-6 ${
-                        step.color === 'emerald' ? 'text-emerald-400' :
-                        step.color === 'blue' ? 'text-blue-400' :
-                        'text-purple-400'
-                      }`} />
+          <div className="space-y-20 lg:space-y-24">
+            {steps.map((step, index) => {
+              const colorMap = {
+                emerald: { bg: 'bg-accent/10', border: 'border-accent/20', text: 'text-accent', dot: 'bg-accent' },
+                blue: { bg: 'bg-cyan/10', border: 'border-cyan/20', text: 'text-cyan', dot: 'bg-cyan' },
+                purple: { bg: 'bg-violet/10', border: 'border-violet/20', text: 'text-violet', dot: 'bg-violet' },
+              }
+              const colors = colorMap[step.color as keyof typeof colorMap]
+              
+              return (
+                <motion.div
+                  key={step.number}
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-100px' }}
+                  transition={{ duration: 0.6, delay: index * 0.1, ease: [0.25, 0.4, 0.25, 1] }}
+                  className={`flex flex-col lg:flex-row items-center gap-8 lg:gap-16 ${
+                    index % 2 === 1 ? 'lg:flex-row-reverse' : ''
+                  }`}
+                >
+                  {/* Content */}
+                  <div className={`flex-1 ${index % 2 === 1 ? 'lg:text-right' : ''}`}>
+                    <span className={`text-6xl lg:text-7xl font-bold ${colors.text}/10 mb-2 block`}>
+                      {step.number}
+                    </span>
+                    <div className={`flex items-center gap-3 mb-4 ${index % 2 === 1 ? 'lg:justify-end' : ''}`}>
+                      <motion.div
+                        whileHover={{ scale: 1.1, rotate: 5 }}
+                        className={`w-12 h-12 lg:w-14 lg:h-14 rounded-xl ${colors.bg} ${colors.border} border flex items-center justify-center transition-all duration-300`}
+                      >
+                        <step.icon className={`w-6 h-6 lg:w-7 lg:h-7 ${colors.text}`} />
+                      </motion.div>
+                      <h3 className="text-2xl lg:text-3xl font-bold text-foreground">{step.title}</h3>
                     </div>
-                    <h3 className="text-2xl font-bold text-white">{step.title}</h3>
+                    <p className="text-lg lg:text-xl text-foreground-secondary leading-relaxed font-light">{step.description}</p>
                   </div>
-                  <p className="text-lg text-slate-400">{step.description}</p>
-                </div>
-                
-                {/* Center dot */}
-                <div className="relative z-10 hidden lg:flex items-center justify-center">
-                  <motion.div
-                    whileInView={{ scale: [0, 1.2, 1] }}
-                    viewport={{ once: true }}
-                    className={`w-6 h-6 rounded-full ${
-                      step.color === 'emerald' ? 'bg-emerald-500' :
-                      step.color === 'blue' ? 'bg-blue-500' :
-                      'bg-purple-500'
-                    } shadow-lg`}
-                  />
-                </div>
-                
-                {/* Visual */}
-                <div className="flex-1 flex justify-center">
-                  <motion.div
-                    whileHover={{ scale: 1.05, rotateY: 5 }}
-                    style={{ perspective: 1000 }}
-                  >
-                    {step.visual}
-                  </motion.div>
-                </div>
-              </motion.div>
-            ))}
+                  
+                  {/* Center dot - Design premium */}
+                  <div className="relative z-10 hidden lg:flex items-center justify-center">
+                    <motion.div
+                      whileInView={{ scale: [0, 1.2, 1] }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, ease: [0.25, 0.4, 0.25, 1] }}
+                      className={`w-6 h-6 rounded-full ${colors.dot} shadow-lg`}
+                      style={{
+                        boxShadow: colors.dot === 'bg-accent' ? '0 10px 30px rgba(59, 130, 246, 0.3)' :
+                                   colors.dot === 'bg-cyan' ? '0 10px 30px rgba(6, 182, 212, 0.3)' :
+                                   '0 10px 30px rgba(139, 92, 246, 0.3)'
+                      }}
+                    />
+                  </div>
+                  
+                  {/* Visual - Design premium */}
+                  <div className="flex-1 flex justify-center">
+                    <motion.div
+                      whileHover={{ scale: 1.05, y: -4 }}
+                      transition={{ duration: 0.3, ease: [0.25, 0.4, 0.25, 1] }}
+                      className="w-full max-w-sm"
+                    >
+                      {step.visual}
+                    </motion.div>
+                  </div>
+                </motion.div>
+              )
+            })}
           </div>
         </div>
         

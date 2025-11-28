@@ -83,6 +83,14 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  const featureColors: { [key: string]: { bg: string; border: string; text: string } } = {
+    accent: { bg: 'bg-accent/10', border: 'border-accent/20', text: 'text-accent' },
+    cyan: { bg: 'bg-cyan/10', border: 'border-cyan/20', text: 'text-cyan' },
+    violet: { bg: 'bg-violet/10', border: 'border-violet/20', text: 'text-violet' },
+    success: { bg: 'bg-success/10', border: 'border-success/20', text: 'text-success' },
+    warning: { bg: 'bg-warning/10', border: 'border-warning/20', text: 'text-warning' },
+  }
+
   return (
     <>
       <motion.header
@@ -140,8 +148,8 @@ export function Navbar() {
                             href={feature.href}
                             className="flex items-start gap-3 p-3 rounded-xl hover:bg-background-hover transition-colors group"
                           >
-                            <div className={`w-10 h-10 rounded-lg bg-${feature.color}/10 border border-${feature.color}/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform`}>
-                              <feature.icon className={`w-5 h-5 text-${feature.color}`} />
+                            <div className={`w-10 h-10 rounded-lg ${featureColors[feature.color as keyof typeof featureColors].bg} ${featureColors[feature.color as keyof typeof featureColors].border} border flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform`}>
+                              <feature.icon className={`w-5 h-5 ${featureColors[feature.color as keyof typeof featureColors].text}`} />
                             </div>
                             <div>
                               <p className="font-medium text-foreground group-hover:text-accent transition-colors">{feature.title}</p>

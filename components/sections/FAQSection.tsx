@@ -65,23 +65,28 @@ export function FAQSection() {
       </div>
 
       <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
+        {/* Header - Design plus raffiné */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          transition={{ duration: 0.6, ease: [0.25, 0.4, 0.25, 1] }}
+          className="text-center mb-16 lg:mb-20"
         >
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border-accent/20 text-sm font-medium text-accent mb-6">
+          <motion.span
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={isInView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ duration: 0.5, ease: [0.25, 0.4, 0.25, 1] }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border-accent/20 text-sm font-medium text-accent mb-6 backdrop-blur-sm"
+          >
             <MessageCircle className="w-4 h-4" />
             FAQ
-          </span>
+          </motion.span>
           
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-foreground mb-6 leading-tight tracking-tight">
             Questions fréquentes
           </h2>
           
-          <p className="text-lg text-foreground-secondary">
+          <p className="text-lg lg:text-xl text-foreground-secondary leading-relaxed font-light">
             Tout ce que vous devez savoir pour démarrer avec ShiftPilot.
           </p>
         </motion.div>
@@ -108,30 +113,35 @@ export function FAQSection() {
                     : 'border-border hover:border-border-light'
                 }`}
               >
-                <button
+                <motion.button
                   onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                  className="w-full flex items-center justify-between p-6 text-left"
+                  whileHover={{ x: 2 }}
+                  className="w-full flex items-center justify-between p-6 text-left group/button"
                 >
-                  <span className={`font-semibold pr-8 transition-colors ${
-                    openIndex === index ? 'text-accent' : 'text-foreground'
+                  <span className={`font-semibold pr-8 transition-colors duration-300 text-base lg:text-lg ${
+                    openIndex === index ? 'text-accent' : 'text-foreground group-hover/button:text-foreground-secondary'
                   }`}>
                     {faq.question}
                   </span>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${
-                    openIndex === index 
-                      ? 'bg-accent text-white rotate-0' 
-                      : 'bg-background-elevated text-foreground-secondary group-hover:bg-accent/10 group-hover:text-accent'
-                  }`}>
+                  <motion.div
+                    animate={{ rotate: openIndex === index ? 180 : 0 }}
+                    transition={{ duration: 0.3, ease: [0.25, 0.4, 0.25, 1] }}
+                    className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
+                      openIndex === index 
+                        ? 'bg-accent text-white shadow-glow-sm' 
+                        : 'bg-background-elevated text-foreground-secondary group-hover/button:bg-accent/10 group-hover/button:text-accent'
+                    }`}
+                  >
                     {openIndex === index ? (
                       <Minus className="w-4 h-4" />
                     ) : (
                       <Plus className="w-4 h-4" />
                     )}
-                  </div>
-                </button>
+                  </motion.div>
+                </motion.button>
 
                 <AnimatePresence>
-                  {openIndex === index && (
+                {openIndex === index && (
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
@@ -142,11 +152,11 @@ export function FAQSection() {
                       <div className="px-6 pb-6 pt-0">
                         <div className="h-px bg-border mb-4" />
                         <p className="text-foreground-secondary leading-relaxed">
-                          {faq.answer}
+                    {faq.answer}
                         </p>
                       </div>
                     </motion.div>
-                  )}
+                )}
                 </AnimatePresence>
               </div>
             </motion.div>

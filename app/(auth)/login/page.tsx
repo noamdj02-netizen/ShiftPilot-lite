@@ -49,9 +49,6 @@ function LoginForm() {
         // Utiliser window.location pour forcer un rechargement complet
         // Cela permet au middleware de détecter la session
         window.location.href = redirect;
-      } else {
-        // Si pas d'utilisateur retourné, réinitialiser le loading
-        setIsLoading(false);
       }
     } catch (err: unknown) {
       setError(

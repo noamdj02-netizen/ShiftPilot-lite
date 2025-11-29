@@ -27,10 +27,33 @@ export function LoginForm() {
     setIsLoading(true)
     setError('')
     try {
+      // Validate inputs
+      if (!email || !pass) {
+        setError('Veuillez remplir tous les champs')
+        setIsLoading(false)
+        return
+      }
+      
       await signIn(email, pass)
+      
+      // Small delay to ensure state is updated
+      await new Promise(resolve => setTimeout(resolve, 100))
+      
       router.push('/dashboard')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Une erreur est survenue')
+      console.error('Login error:', err)
+      const errorMessage = err instanceof Error ? err.message : 'Une erreur est survenue'
+      setError(errorMessage)
+      
+      // Log for debugging
+      if (typeof window !== 'undefined') {
+        console.error('Login failed:', {
+          email: formData.email,
+          error: errorMessage,
+          userAgent: navigator.userAgent,
+          platform: navigator.platform
+        })
+      }
     } finally {
       setIsLoading(false)
     }

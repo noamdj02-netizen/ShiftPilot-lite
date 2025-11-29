@@ -1,3 +1,4 @@
+import React from 'react'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { supabaseClient as supabase } from '@/lib/supabase/client'
@@ -30,11 +31,53 @@ export const useAuthStore = create<AuthState>()(
       setRestaurant: (restaurant) => set({ restaurant }),
       
       signIn: async (email, pass) => {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
+        // Normalize email (trim and lowercase)
+        const normalizedEmail = email.trim().toLowerCase()
+        
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: normalizedEmail,
           password: pass,
         })
-        if (error) throw error
+        
+        if (error) {
+          console.error('Sign in error:', error)
+          // Provide more user-friendly error messages
+          if (error.message.includes('Invalid login credentials') || error.message.includes('Invalid credentials')) {
+            throw new Error('Email ou mot de passe incorrect')
+          } else if (error.message.includes('Email not confirmed')) {
+            throw new Error('Veuillez confirmer votre email avant de vous connecter')
+          } else {
+            throw new Error(error.message || 'Erreur de connexion')
+          }
+        }
+        
+        // After successful login, fetch user profile and restaurant
+        if (data?.user) {
+          // Fetch profile
+          const { data: profileData } = await (supabase
+            .from('profiles') as any)
+            .select('*')
+            .eq('id', data.user.id)
+            .single()
+          
+          if (profileData) {
+            set({ profile: profileData })
+            
+            // Fetch restaurant/organization if exists
+            if (profileData.organization_id || profileData.restaurant_id) {
+              const orgId = profileData.organization_id || profileData.restaurant_id
+              const { data: orgData } = await (supabase
+                .from(profileData.organization_id ? 'organizations' : 'restaurants') as any)
+                .select('*')
+                .eq('id', orgId)
+                .single()
+              
+              if (orgData) {
+                set({ restaurant: orgData })
+              }
+            }
+          }
+        }
       },
 
       signUp: async (email, pass, userData) => {
@@ -111,9 +154,75 @@ export const useAuthStore = create<AuthState>()(
 // Hook to initialize auth state listener
 export const useAuth = () => {
   const store = useAuthStore()
+  const { setUser, setProfile, setRestaurant } = store
   
-  // You might want to add a useEffect here to listen to onAuthStateChange
-  // and update the store accordingly, fetching profile and restaurant data.
+  // Initialize auth state listener
+  React.useEffect(() => {
+    const loadUserData = async (userId: string) => {
+      try {
+        // Fetch profile
+        const { data: profileData } = await (supabase
+          .from('profiles') as any)
+          .select('*')
+          .eq('id', userId)
+          .single()
+        
+        if (profileData) {
+          setProfile(profileData)
+          
+          // Fetch restaurant/organization if exists
+          if (profileData.organization_id || profileData.restaurant_id) {
+            const orgId = profileData.organization_id || profileData.restaurant_id
+            const tableName = profileData.organization_id ? 'organizations' : 'restaurants'
+            const { data: orgData } = await (supabase
+              .from(tableName) as any)
+              .select('*')
+              .eq('id', orgId)
+              .single()
+            
+            if (orgData) {
+              setRestaurant(orgData)
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error loading user data:', error)
+      }
+    }
+    
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUser(session.user)
+        // Load profile and restaurant
+        loadUserData(session.user.id)
+      } else {
+        setUser(null)
+        setProfile(null)
+        setRestaurant(null)
+      }
+      store.setState({ isLoading: false })
+    })
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session?.user) {
+        setUser(session.user)
+        await loadUserData(session.user.id)
+      } else {
+        setUser(null)
+        setProfile(null)
+        setRestaurant(null)
+      }
+      store.setState({ isLoading: false })
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [setUser, setProfile, setRestaurant])
 
   return store
 }

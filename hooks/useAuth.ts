@@ -12,7 +12,7 @@ interface AuthState {
   setProfile: (profile: any) => void
   setRestaurant: (restaurant: any) => void
   signIn: (email: string, pass: string) => Promise<void>
-  signUp: (email: string, pass: string, firstName: string, lastName: string, restaurantName: string) => Promise<void>
+  signUp: (email: string, pass: string, userData: { first_name: string, last_name: string, restaurant_name: string, employee_count?: string, plan?: string }) => Promise<void>
   signOut: () => Promise<void>
   resetPassword: (email: string) => Promise<void>
   updatePassword: (password: string) => Promise<void>
@@ -37,16 +37,17 @@ export const useAuthStore = create<AuthState>()(
         if (error) throw error
       },
 
-      signUp: async (email, pass, firstName, lastName, restaurantName) => {
+      signUp: async (email, pass, userData) => {
         // 1. Sign up the user
         const { data: authData, error: authError } = await supabase.auth.signUp({
           email,
           password: pass,
           options: {
             data: {
-              first_name: firstName,
-              last_name: lastName,
+              first_name: userData.first_name,
+              last_name: userData.last_name,
               role: 'employer', // Default role for new signups is employer
+              // Store plan and employee count in metadata if needed, or just ignore for now
             },
           },
         })
@@ -64,7 +65,7 @@ export const useAuthStore = create<AuthState>()(
         
         const { data: restaurantData, error: restaurantError } = await supabase
           .from('restaurants')
-          .insert({ name: restaurantName })
+          .insert({ name: userData.restaurant_name })
           .select()
           .single()
 

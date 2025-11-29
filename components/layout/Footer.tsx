@@ -1,69 +1,100 @@
-import Link from "next/link";
+'use client'
+
+import { motion } from 'framer-motion'
+import Link from 'next/link'
+import { Linkedin, Twitter, Facebook } from 'lucide-react'
+import { SectionReveal } from '@/components/ui/SectionReveal'
+
+const footerLinks = {
+  product: {
+    title: 'Produit',
+    links: [
+      { name: 'Fonctionnalités', href: '#fonctionnalites' },
+      { name: 'Tarifs', href: '#tarifs' },
+      { name: 'Démo', href: '#' },
+      { name: 'Intégrations', href: '#' },
+    ],
+  },
+  resources: {
+    title: 'Ressources',
+    links: [
+      { name: 'Blog', href: '#' },
+      { name: 'Guide', href: '#' },
+      { name: 'Support', href: '#' },
+      { name: 'API', href: '#' },
+    ],
+  },
+  legal: {
+    title: 'Légal',
+    links: [
+      { name: 'Confidentialité', href: '#' },
+      { name: 'CGU', href: '#' },
+      { name: 'Mentions légales', href: '#' },
+      { name: 'Cookies', href: '#' },
+    ],
+  },
+}
+
+const socialLinks = [
+  { icon: Linkedin, href: '#' },
+  { icon: Twitter, href: '#' },
+  { icon: Facebook, href: '#' },
+]
 
 export function Footer() {
   return (
-    <footer className="bg-card border-t border-border py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          <div>
-            <h3 className="font-heading font-bold text-lg text-foreground mb-4">
-              ShiftPilot
-            </h3>
-            <p className="text-sm text-muted">
-              Plannings restaurant simplifiés. Gagnez du temps, chaque semaine.
+    <footer className="bg-white border-t border-indigo-200 py-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-16">
+          <SectionReveal className="col-span-2 md:col-span-1">
+            <div className="text-xl font-bold tracking-tight mb-4" style={{ letterSpacing: '-0.05em' }}>
+              <span className="bg-gradient-to-r from-[#8976FD] to-[#7180FF] bg-clip-text text-transparent">
+                SHIFTPILOT
+              </span>
+            </div>
+            <p className="text-sm text-indigo-600 font-medium mb-6 leading-relaxed">
+              La solution de planning intelligente pour restaurants
             </p>
-          </div>
-          <div>
-            <h4 className="font-semibold text-foreground mb-4">Produit</h4>
-            <ul className="space-y-2 text-sm text-muted">
-              <li>
-                <Link href="#how-it-works" className="hover:text-foreground">
-                  Fonctionnalités
-                </Link>
-              </li>
-              <li>
-                <Link href="#pricing" className="hover:text-foreground">
-                  Tarifs
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-semibold text-foreground mb-4">Support</h4>
-            <ul className="space-y-2 text-sm text-muted">
-              <li>
-                <Link href="#faq" className="hover:text-foreground">
-                  FAQ
-                </Link>
-              </li>
-              <li>
-                <a href="mailto:support@shiftpilot.fr" className="hover:text-foreground">
-                  Contact
+          </SectionReveal>
+
+          {Object.entries(footerLinks).map(([key, section], index) => (
+            <SectionReveal key={key} delay={index * 0.1}>
+              <div>
+                <h4 className="text-sm font-bold mb-5 text-indigo-900">{section.title}</h4>
+                <ul className="space-y-3">
+                  {section.links.map((link) => (
+                    <li key={link.name}>
+                      <a 
+                        href={link.href}
+                        className="text-sm text-indigo-600 hover:text-indigo-900 font-medium transition-colors"
+                      >
+                        {link.name}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </SectionReveal>
+          ))}
+        </div>
+
+        <SectionReveal delay={0.4} className="pt-8 border-t border-indigo-200">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <p className="text-sm text-indigo-600 font-medium">© 2024 ShiftPilot. Tous droits réservés.</p>
+            <div className="flex space-x-6 mt-4 md:mt-0">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.icon.name}
+                  href={social.href}
+                  className="text-indigo-400 hover:text-indigo-600 transition-colors"
+                >
+                  <social.icon className="w-5 h-5 transition-transform hover:-translate-y-0.5" />
                 </a>
-              </li>
-            </ul>
+              ))}
+            </div>
           </div>
-          <div>
-            <h4 className="font-semibold text-foreground mb-4">Légal</h4>
-            <ul className="space-y-2 text-sm text-muted">
-              <li>
-                <Link href="/legal" className="hover:text-foreground">
-                  Mentions légales
-                </Link>
-              </li>
-              <li>
-                <Link href="/privacy" className="hover:text-foreground">
-                  Confidentialité
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div className="pt-8 border-t border-border text-center text-sm text-muted">
-          <p>© {new Date().getFullYear()} ShiftPilot. Tous droits réservés.</p>
-        </div>
+        </SectionReveal>
       </div>
     </footer>
-  );
+  )
 }
-

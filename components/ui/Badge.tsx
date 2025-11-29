@@ -1,34 +1,34 @@
-import React from "react";
-import { cn } from "@/lib/utils";
+'use client'
 
-interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  variant?: "default" | "accent" | "muted";
-  children: React.ReactNode;
+import { motion } from 'framer-motion'
+import { ReactNode } from 'react'
+import { cn } from '@/lib/utils'
+
+interface BadgeProps {
+  children: ReactNode
+  variant?: 'primary' | 'success' | 'warning'
+  className?: string
 }
 
-export function Badge({
-  variant = "default",
-  className,
-  children,
-  ...props
-}: BadgeProps) {
+export function Badge({ children, variant = 'primary', className }: BadgeProps) {
   const variants = {
-    default: "bg-background text-foreground border-border",
-    accent: "bg-accent/10 text-accent border-accent/20",
-    muted: "bg-muted/10 text-muted border-muted/20",
-  };
-
+    primary: 'bg-primary/10 text-primary border border-primary/20',
+    success: 'bg-green-50 text-green-700 border border-green-200',
+    warning: 'bg-yellow-50 text-yellow-700 border border-yellow-200',
+  }
+  
   return (
-    <span
+    <motion.span
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.3 }}
       className={cn(
-        "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border",
+        'inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium',
         variants[variant],
         className
       )}
-      {...props}
     >
       {children}
-    </span>
-  );
+    </motion.span>
+  )
 }
-

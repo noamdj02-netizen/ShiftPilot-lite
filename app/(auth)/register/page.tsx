@@ -1,210 +1,157 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { useAuth } from "@/hooks/useAuth";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Label } from "@/components/ui/Label";
-import { Card } from "@/components/ui/Card";
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { Mail, Lock, User, ArrowRight, Check } from 'lucide-react'
+import { Button } from '@/components/ui/Button'
+import { Card } from '@/components/ui/Card'
+import Link from 'next/link'
 
 export default function RegisterPage() {
-  const router = useRouter();
-  const { signUp } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    acceptTerms: false,
+  })
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
-    if (password !== confirmPassword) {
-      setError("Les mots de passe ne correspondent pas");
-      return;
-    }
-
-    if (password.length < 8) {
-      setError("Le mot de passe doit contenir au moins 8 caractères");
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      const result = await signUp(email, password, {
-        first_name: firstName,
-        last_name: lastName,
-      });
-      
-      if (result?.user) {
-        setSuccess(true);
-      } else {
-        setError("L'inscription a échoué. Veuillez réessayer.");
-      }
-    } catch (err: unknown) {
-      console.error("Registration error:", err);
-      const errorMessage = err instanceof Error ? err.message : "Une erreur est survenue";
-      
-      // Messages d'erreur plus explicites
-      if (errorMessage.includes("Database error") || errorMessage.includes("profile")) {
-        setError(
-          "Erreur lors de la création du profil. Le compte a peut-être été créé. Essayez de vous connecter."
-        );
-      } else {
-        setError(errorMessage);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (success) {
-    return (
-      <Card className="p-8 text-center">
-        <div className="mb-4">
-          <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4">
-            <svg
-              className="w-8 h-8 text-accent"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          </div>
-          <h2 className="font-heading font-bold text-xl text-foreground dark:text-dark-foreground mb-2">
-            Vérifiez votre email
-          </h2>
-          <p className="text-sm text-muted dark:text-dark-foreground-muted">
-            Nous avons envoyé un lien de confirmation à {email}
-          </p>
-        </div>
-        <Button variant="outline" href="/login" className="w-full">
-          Retour à la connexion
-        </Button>
-      </Card>
-    );
+    e.preventDefault()
+    // TODO: Implement registration logic
+    console.log('Register:', formData)
   }
 
   return (
-    <Card className="p-8">
-      <div className="mb-6">
-        <h1 className="font-heading font-bold text-2xl text-foreground dark:text-dark-foreground mb-2">
-          Créer un compte
-        </h1>
-        <p className="text-sm text-muted dark:text-dark-foreground-muted">
-          Commencez votre essai gratuit de 14 jours
-        </p>
-      </div>
+    <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4 py-20">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="w-full max-w-md"
+      >
+        <Card className="p-8 lg:p-12">
+          {/* Logo */}
+          <Link href="/" className="inline-flex items-center gap-3 mb-8 group">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-framer">
+              <span className="text-white font-bold text-xl">S</span>
+            </div>
+            <span className="text-2xl font-bold text-foreground">
+              Shift<span className="text-primary">Pilot</span>
+            </span>
+          </Link>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {error && (
-          <div className="p-3 rounded-lg bg-error/10 border border-error/20 text-error text-sm">
-            {error}
-          </div>
-        )}
-
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="firstName">Prénom</Label>
-            <Input
-              id="firstName"
-              type="text"
-              placeholder="Jean"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              required
-              disabled={isLoading}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="lastName">Nom</Label>
-            <Input
-              id="lastName"
-              type="text"
-              placeholder="Dupont"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              required
-              disabled={isLoading}
-            />
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="vous@exemple.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            disabled={isLoading}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="password">Mot de passe</Label>
-          <Input
-            id="password"
-            type="password"
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            disabled={isLoading}
-            minLength={8}
-          />
-          <p className="text-xs text-muted dark:text-dark-foreground-muted">
-            Minimum 8 caractères
+          {/* Header */}
+          <h1 className="text-3xl font-bold text-foreground mb-2">Créer un compte</h1>
+          <p className="text-foreground-muted mb-8">
+            Commencez votre essai gratuit de 14 jours
           </p>
-        </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="confirmPassword">Confirmer le mot de passe</Label>
-          <Input
-            id="confirmPassword"
-            type="password"
-            placeholder="••••••••"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-            disabled={isLoading}
-          />
-        </div>
+          {/* Benefits */}
+          <div className="space-y-2 mb-8 p-4 bg-purple-50 rounded-2xl">
+            {[
+              "14 jours gratuits",
+              "Sans carte bancaire",
+              "Annulation en 1 clic",
+            ].map((benefit) => (
+              <div key={benefit} className="flex items-center gap-2 text-sm text-foreground">
+                <Check className="w-4 h-4 text-green-600" />
+                {benefit}
+              </div>
+            ))}
+          </div>
 
-        <Button
-          type="submit"
-          variant="primary"
-          size="lg"
-          className="w-full"
-          disabled={isLoading}
-        >
-          {isLoading ? "Création..." : "Créer mon compte"}
-        </Button>
-      </form>
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
+                Nom de l'établissement
+              </label>
+              <div className="relative">
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground-muted" />
+                <input
+                  type="text"
+                  id="name"
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full pl-12 pr-4 py-3 rounded-2xl bg-gray-50 border border-border-soft text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                  placeholder="Mon Restaurant"
+                />
+              </div>
+            </div>
 
-      <div className="mt-6 text-center text-sm text-muted dark:text-dark-foreground-muted">
-        Déjà un compte ?{" "}
-        <Link href="/login" className="text-accent hover:text-accent-hover font-medium">
-          Se connecter
-        </Link>
-      </div>
-    </Card>
-  );
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
+                Email
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground-muted" />
+                <input
+                  type="email"
+                  id="email"
+                  required
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="w-full pl-12 pr-4 py-3 rounded-2xl bg-gray-50 border border-border-soft text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                  placeholder="votre@email.com"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-foreground mb-2">
+                Mot de passe
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground-muted" />
+                <input
+                  type="password"
+                  id="password"
+                  required
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  className="w-full pl-12 pr-4 py-3 rounded-2xl bg-gray-50 border border-border-soft text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                  placeholder="••••••••"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  required
+                  checked={formData.acceptTerms}
+                  onChange={(e) => setFormData({ ...formData, acceptTerms: e.target.checked })}
+                  className="w-4 h-4 rounded border-border-soft text-primary focus:ring-primary"
+                />
+                <span className="text-sm text-foreground-muted">
+                  J'accepte les{' '}
+                  <Link href="/terms" className="text-primary hover:underline">
+                    conditions d'utilisation
+                  </Link>
+                </span>
+              </label>
+            </div>
+
+            <Button variant="primary" size="lg" className="w-full" type="submit">
+              Créer mon compte
+              <ArrowRight className="w-5 h-5" />
+            </Button>
+          </form>
+
+          {/* Footer */}
+          <div className="mt-8 text-center">
+            <p className="text-foreground-muted">
+              Déjà un compte ?{' '}
+              <Link href="/login" className="text-primary font-semibold hover:underline">
+                Se connecter
+              </Link>
+            </p>
+          </div>
+        </Card>
+      </motion.div>
+    </div>
+  )
 }
-

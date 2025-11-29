@@ -37,7 +37,7 @@ export function HowItWorks() {
   ];
 
   return (
-    <section className="py-20 bg-bg">
+    <section className="py-20 bg-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           {/* Left: Steps */}
@@ -49,12 +49,12 @@ export function HowItWorks() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="flex items-start gap-4 p-6 bg-bg-soft rounded-2xl"
+                className="flex items-start gap-4 p-6 bg-gray-50 rounded-2xl"
               >
                 <div className="text-3xl">{step.icon}</div>
                 <div>
-                  <h3 className="font-semibold text-text-main mb-1">{step.title}</h3>
-                  <p className="text-text-muted text-sm">{step.description}</p>
+                  <h3 className="font-semibold text-foreground mb-1">{step.title}</h3>
+                  <p className="text-foreground-muted text-sm">{step.description}</p>
                 </div>
               </motion.div>
             ))}
@@ -62,11 +62,11 @@ export function HowItWorks() {
 
           {/* Right: Content */}
           <div>
-            <p className="text-sm text-text-muted mb-2">POURQUOI SHIFTPILOT</p>
-            <h2 className="text-4xl md:text-5xl font-semibold text-text-main mb-6">
+            <p className="text-sm text-foreground-muted mb-2">POURQUOI SHIFTPILOT</p>
+            <h2 className="text-4xl md:text-5xl font-semibold text-foreground mb-6">
               Tout ce dont vous avez besoin pour gérer vos équipes
             </h2>
-            <p className="text-text-muted mb-8 leading-relaxed">
+            <p className="text-foreground-muted mb-8 leading-relaxed">
               ShiftPilot centralise la planification, la communication et le suivi de vos équipes. Moins d'admin, plus de temps pour votre restaurant.
             </p>
 
@@ -76,7 +76,7 @@ export function HowItWorks() {
                   <div className="mt-1 p-1 bg-success/20 rounded-full">
                     <Check className="h-4 w-4 text-success" />
                   </div>
-                  <span className="text-text-main">{feature}</span>
+                  <span className="text-foreground">{feature}</span>
                 </li>
               ))}
             </ul>

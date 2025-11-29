@@ -58,7 +58,7 @@ export default function ForgotPasswordPage() {
             Si un compte existe avec cet email, vous recevrez un lien pour réinitialiser votre mot de passe.
           </p>
         </div>
-        <Button variant="outline" href="/login" className="w-full">
+        <Button variant="secondary" href="/login" className="w-full">
           Retour à la connexion
         </Button>
       </Card>

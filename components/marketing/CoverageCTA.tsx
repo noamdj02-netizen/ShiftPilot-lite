@@ -18,15 +18,15 @@ export function CoverageCTA() {
   ];
 
   return (
-    <section className="py-20 bg-bg">
+    <section className="py-20 bg-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <p className="text-sm text-text-muted mb-2">POUR TOUS LES TYPES D'ÉTABLISSEMENTS</p>
-          <h2 className="text-4xl md:text-5xl font-semibold text-text-main mb-4">
+          <p className="text-sm text-foreground-muted mb-2">POUR TOUS LES TYPES D'ÉTABLISSEMENTS</p>
+          <h2 className="text-4xl md:text-5xl font-semibold text-foreground mb-4">
             Adapté à tous vos besoins
           </h2>
-          <p className="text-text-muted max-w-2xl mx-auto">
+          <p className="text-foreground-muted max-w-2xl mx-auto">
             Que vous dirigiez un restaurant, une brasserie, un fast-food ou un bar, ShiftPilot s'adapte à votre organisation et vos contraintes.
           </p>
         </div>
@@ -40,7 +40,7 @@ export function CoverageCTA() {
               className={`px-6 py-2.5 rounded-full font-medium text-sm transition-all ${
                 activeSegment === segment
                   ? "bg-navy text-white"
-                  : "bg-bg-soft text-text-main hover:bg-border"
+                  : "bg-gray-50 text-foreground hover:bg-border"
               }`}
             >
               {segment}
@@ -56,17 +56,17 @@ export function CoverageCTA() {
               <div className="w-48 h-48 bg-white/50 rounded-3xl mx-auto mb-6 flex items-center justify-center shadow-lg">
                 <span className="text-6xl">📱</span>
               </div>
-              <p className="text-text-main font-medium">Notifications SMS & WhatsApp</p>
+              <p className="text-foreground font-medium">Notifications SMS & WhatsApp</p>
             </div>
           </div>
 
           {/* Right: Content */}
           <div>
-            <p className="text-sm text-text-muted mb-2">COMMUNICATION SIMPLIFIÉE</p>
-            <h3 className="text-3xl md:text-4xl font-semibold text-text-main mb-6">
+            <p className="text-sm text-foreground-muted mb-2">COMMUNICATION SIMPLIFIÉE</p>
+            <h3 className="text-3xl md:text-4xl font-semibold text-foreground mb-6">
               Communiquez avec votre équipe en un clic
             </h3>
-            <p className="text-text-muted mb-8 leading-relaxed">
+            <p className="text-foreground-muted mb-8 leading-relaxed">
               Plus besoin d'afficher le planning dans le local ou d'envoyer des photos floues. ShiftPilot envoie automatiquement le planning à chaque employé par SMS ou WhatsApp.
             </p>
 
@@ -76,7 +76,7 @@ export function CoverageCTA() {
                   <div className="mt-1 p-1 bg-success/20 rounded-full">
                     <Check className="h-4 w-4 text-success" />
                   </div>
-                  <span className="text-text-main">{feature}</span>
+                  <span className="text-foreground">{feature}</span>
                 </li>
               ))}
             </ul>

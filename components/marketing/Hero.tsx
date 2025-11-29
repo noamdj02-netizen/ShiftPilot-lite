@@ -6,7 +6,7 @@ import { TrendingUp, Users, DollarSign } from "lucide-react";
 
 export function Hero() {
   return (
-    <section className="relative py-20 lg:py-32 bg-bg">
+    <section className="relative py-20 lg:py-32 bg-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Badge */}
         <motion.div
@@ -25,7 +25,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-5xl md:text-6xl lg:text-7xl font-semibold text-text-main mb-6 leading-tight tracking-tight"
+          className="text-5xl md:text-6xl lg:text-7xl font-semibold text-foreground mb-6 leading-tight tracking-tight"
         >
           Vos plannings resto en 2 clics.
         </motion.h1>
@@ -35,7 +35,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-lg md:text-xl text-text-muted mb-10 max-w-2xl mx-auto leading-relaxed"
+          className="text-lg md:text-xl text-foreground-muted mb-10 max-w-2xl mx-auto leading-relaxed"
         >
           Fini les heures perdues sur Excel. ShiftPilot génère vos plannings automatiquement en respectant le code du travail. Simple, rapide, efficace.
         </motion.p>
@@ -55,7 +55,7 @@ export function Hero() {
           </Link>
           <Link
             href="#demo"
-            className="bg-bg border-2 border-border text-navy px-8 py-4 rounded-full font-medium text-base hover:bg-bg-soft transition-all"
+            className="bg-white border-2 border-border text-navy px-8 py-4 rounded-full font-medium text-base hover:bg-gray-50 transition-all"
           >
             Voir la démo
           </Link>
@@ -108,8 +108,8 @@ export function Hero() {
                   <DollarSign className="h-8 w-8 text-success" />
                 </div>
                 <div>
-                  <p className="text-3xl font-bold text-text-main">3h</p>
-                  <p className="text-sm text-text-muted">économisées par semaine</p>
+                  <p className="text-3xl font-bold text-foreground">3h</p>
+                  <p className="text-sm text-foreground-muted">économisées par semaine</p>
                   <div className="mt-2 h-2 bg-success/20 rounded-full overflow-hidden">
                     <div className="h-full bg-success rounded-full" style={{ width: "75%" }}></div>
                   </div>
@@ -121,8 +121,8 @@ export function Hero() {
                   <Users className="h-8 w-8 text-purple" />
                 </div>
                 <div>
-                  <p className="text-3xl font-bold text-text-main">98%</p>
-                  <p className="text-sm text-text-muted">de satisfaction</p>
+                  <p className="text-3xl font-bold text-foreground">98%</p>
+                  <p className="text-sm text-foreground-muted">de satisfaction</p>
                 </div>
               </div>
 
@@ -136,7 +136,7 @@ export function Hero() {
                     ></div>
                   ))}
                 </div>
-                <p className="text-sm text-text-muted ml-2">Rejoignez 500+ restaurants</p>
+                <p className="text-sm text-foreground-muted ml-2">Rejoignez 500+ restaurants</p>
               </div>
             </div>
           </div>

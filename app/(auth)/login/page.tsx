@@ -1,155 +1,114 @@
-"use client";
+'use client'
 
-import { useState, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
-import { useAuth } from "@/hooks/useAuth";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Label } from "@/components/ui/Label";
-import { Card } from "@/components/ui/Card";
-
-function LoginForm() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const { signIn } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setIsLoading(true);
-
-    try {
-      const result = await signIn(email, password);
-      
-      if (result?.user) {
-        // Attendre que la session soit complètement établie
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        
-        // Valider et sécuriser l'URL de redirection pour éviter les open redirects
-        const redirectParam = searchParams.get("redirect");
-        let redirect = "/dashboard";
-        
-        if (redirectParam) {
-          // Valider que c'est un chemin relatif valide (commence par / et ne contient pas de protocole)
-          const isValidRedirect = 
-            redirectParam.startsWith("/") && 
-            !redirectParam.includes("//") &&
-            !redirectParam.match(/^https?:\/\//i);
-          
-          if (isValidRedirect) {
-            redirect = redirectParam;
-          }
-        }
-        
-        // Utiliser window.location pour forcer un rechargement complet
-        // Cela permet au middleware de détecter la session
-        window.location.href = redirect;
-      }
-    } catch (err: unknown) {
-      setError(
-        err instanceof Error ? err.message : "Une erreur est survenue"
-      );
-    } finally {
-      // S'assurer que isLoading est toujours réinitialisé, même en cas de succès
-      // Note: En cas de succès, la redirection va recharger la page, mais si elle échoue,
-      // l'utilisateur ne sera pas bloqué dans un état de chargement
-      setIsLoading(false);
-    }
-  };
-
-  return (
-    <Card className="p-8">
-      <div className="mb-6">
-        <h1 className="font-heading font-bold text-2xl text-foreground dark:text-dark-foreground mb-2">
-          Connexion
-        </h1>
-        <p className="text-sm text-muted dark:text-dark-foreground-muted">
-          Connectez-vous à votre compte ShiftPilot
-        </p>
-      </div>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {error && (
-          <div className="p-3 rounded-lg bg-error/10 border border-error/20 text-error text-sm">
-            {error}
-          </div>
-        )}
-
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="vous@exemple.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            disabled={isLoading}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="password">Mot de passe</Label>
-            <Link
-              href="/forgot-password"
-              className="text-sm text-accent hover:text-accent-hover"
-            >
-              Mot de passe oublié ?
-            </Link>
-          </div>
-          <Input
-            id="password"
-            type="password"
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            disabled={isLoading}
-          />
-        </div>
-
-        <Button
-          type="submit"
-          variant="primary"
-          size="lg"
-          className="w-full"
-          disabled={isLoading}
-        >
-          {isLoading ? "Connexion..." : "Se connecter"}
-        </Button>
-      </form>
-
-      <div className="mt-6 text-center text-sm text-muted dark:text-dark-foreground-muted">
-        Pas encore de compte ?{" "}
-        <Link href="/register" className="text-accent hover:text-accent-hover font-medium">
-          Créer un compte
-        </Link>
-      </div>
-    </Card>
-  );
-}
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { Mail, Lock, ArrowRight } from 'lucide-react'
+import { Button } from '@/components/ui/Button'
+import { Card } from '@/components/ui/Card'
+import Link from 'next/link'
 
 export default function LoginPage() {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  })
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    // TODO: Implement login logic
+    console.log('Login:', formData)
+  }
+
   return (
-    <Suspense fallback={
-      <Card className="p-8">
-        <div className="mb-6">
-          <h1 className="font-heading font-bold text-2xl text-foreground dark:text-dark-foreground mb-2">
-            Connexion
-          </h1>
-          <p className="text-sm text-muted dark:text-dark-foreground-muted">
-            Chargement...
+    <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="w-full max-w-md"
+      >
+        <Card className="p-8 lg:p-12">
+          {/* Logo */}
+          <Link href="/" className="inline-flex items-center gap-3 mb-8 group">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-framer">
+              <span className="text-white font-bold text-xl">S</span>
+            </div>
+            <span className="text-2xl font-bold text-foreground">
+              Shift<span className="text-primary">Pilot</span>
+            </span>
+          </Link>
+
+          {/* Header */}
+          <h1 className="text-3xl font-bold text-foreground mb-2">Connexion</h1>
+          <p className="text-foreground-muted mb-8">
+            Connectez-vous à votre compte ShiftPilot
           </p>
-        </div>
-      </Card>
-    }>
-      <LoginForm />
-    </Suspense>
-  );
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
+                Email
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground-muted" />
+                <input
+                  type="email"
+                  id="email"
+                  required
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="w-full pl-12 pr-4 py-3 rounded-2xl bg-gray-50 border border-border-soft text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                  placeholder="votre@email.com"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-foreground mb-2">
+                Mot de passe
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground-muted" />
+                <input
+                  type="password"
+                  id="password"
+                  required
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  className="w-full pl-12 pr-4 py-3 rounded-2xl bg-gray-50 border border-border-soft text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                  placeholder="••••••••"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <label className="flex items-center gap-2">
+                <input type="checkbox" className="w-4 h-4 rounded border-border-soft text-primary focus:ring-primary" />
+                <span className="text-sm text-foreground-muted">Se souvenir de moi</span>
+              </label>
+              <Link href="/forgot-password" className="text-sm text-primary hover:underline">
+                Mot de passe oublié ?
+              </Link>
+            </div>
+
+            <Button variant="primary" size="lg" className="w-full" type="submit">
+              Se connecter
+              <ArrowRight className="w-5 h-5" />
+            </Button>
+          </form>
+
+          {/* Footer */}
+          <div className="mt-8 text-center">
+            <p className="text-foreground-muted">
+              Pas encore de compte ?{' '}
+              <Link href="/register" className="text-primary font-semibold hover:underline">
+                Créer un compte
+              </Link>
+            </p>
+          </div>
+        </Card>
+      </motion.div>
+    </div>
+  )
 }

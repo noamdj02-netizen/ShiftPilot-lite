@@ -41,16 +41,16 @@ export function FAQSection() {
   ];
 
   return (
-    <section className="py-20 bg-bg-soft">
+    <section className="py-20 bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           {/* Left: FAQ */}
           <div>
-            <p className="text-sm text-text-muted mb-2">QUESTIONS FRÉQUENTES</p>
-            <h2 className="text-4xl md:text-5xl font-semibold text-text-main mb-8">
+            <p className="text-sm text-foreground-muted mb-2">QUESTIONS FRÉQUENTES</p>
+            <h2 className="text-4xl md:text-5xl font-semibold text-foreground mb-8">
               Tout ce que vous devez savoir
             </h2>
-            <p className="text-text-muted mb-8 leading-relaxed">
+            <p className="text-foreground-muted mb-8 leading-relaxed">
               Vous avez des questions ? Nous avons les réponses. Et si vous ne trouvez pas, notre équipe est là pour vous aider.
             </p>
 
@@ -66,18 +66,18 @@ export function FAQSection() {
                 >
                   <button
                     onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                    className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-bg-soft transition-colors"
+                    className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
                   >
-                    <span className="font-medium text-text-main">{faq.question}</span>
+                    <span className="font-medium text-foreground">{faq.question}</span>
                     <ChevronDown
-                      className={`h-5 w-5 text-text-muted transition-transform ${
+                      className={`h-5 w-5 text-foreground-muted transition-transform ${
                         openIndex === i ? "rotate-180" : ""
                       }`}
                     />
                   </button>
                   {openIndex === i && (
                     <div className="px-6 pb-4">
-                      <p className="text-text-muted text-sm leading-relaxed">{faq.answer}</p>
+                      <p className="text-foreground-muted text-sm leading-relaxed">{faq.answer}</p>
                     </div>
                   )}
                 </motion.div>
@@ -92,8 +92,8 @@ export function FAQSection() {
                 <div className="w-32 h-32 bg-white/50 rounded-full mx-auto mb-6 flex items-center justify-center">
                   <span className="text-4xl">📊</span>
                 </div>
-                <p className="text-text-main font-medium">Dashboard ShiftPilot</p>
-                <p className="text-text-muted text-sm mt-2">Planning hebdomadaire</p>
+                <p className="text-foreground font-medium">Dashboard ShiftPilot</p>
+                <p className="text-foreground-muted text-sm mt-2">Planning hebdomadaire</p>
               </div>
             </div>
           </div>

@@ -26,14 +26,14 @@ export function PricingSection() {
             transition={{ duration: 0.5 }}
             className="bg-white rounded-3xl p-8 md:p-12 shadow-landing-card"
           >
-            <h2 className="text-4xl md:text-5xl font-semibold text-text-main mb-4">
+            <h2 className="text-4xl md:text-5xl font-semibold text-foreground mb-4">
               Commencez gratuitement !
             </h2>
             <div className="mb-6">
-              <span className="text-5xl font-bold text-text-main">À partir de 19€</span>
-              <span className="text-text-muted ml-2">/mois</span>
+              <span className="text-5xl font-bold text-foreground">À partir de 19€</span>
+              <span className="text-foreground-muted ml-2">/mois</span>
             </div>
-            <p className="text-text-muted mb-8">14 jours d'essai gratuit • Sans engagement</p>
+            <p className="text-foreground-muted mb-8">14 jours d'essai gratuit • Sans engagement</p>
             <Link
               href="/pricing"
               className="block w-full bg-navy text-white px-8 py-4 rounded-full font-medium text-center hover:bg-opacity-90 transition-all hover:scale-105 mb-8"
@@ -46,7 +46,7 @@ export function PricingSection() {
                   <div className="p-1 bg-success/20 rounded-full">
                     <Check className="h-4 w-4 text-success" />
                   </div>
-                  <span className="text-text-main">{feature}</span>
+                  <span className="text-foreground">{feature}</span>
                 </li>
               ))}
             </ul>
@@ -59,8 +59,8 @@ export function PricingSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <p className="text-sm text-text-muted mb-2">ESSAYEZ GRATUITEMENT</p>
-            <h3 className="text-3xl md:text-4xl font-semibold text-text-main mb-8">
+            <p className="text-sm text-foreground-muted mb-2">ESSAYEZ GRATUITEMENT</p>
+            <h3 className="text-3xl md:text-4xl font-semibold text-foreground mb-8">
               Tout ce dont vous avez besoin pour démarrer
             </h3>
             <ul className="space-y-4">
@@ -69,7 +69,7 @@ export function PricingSection() {
                   <div className="mt-1 p-1 bg-success/20 rounded-full">
                     <Check className="h-4 w-4 text-success" />
                   </div>
-                  <span className="text-text-main">{feature}</span>
+                  <span className="text-foreground">{feature}</span>
                 </li>
               ))}
             </ul>

@@ -1,153 +1,59 @@
+/* Inter est importé via next/font dans layout.tsx */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-  }
-  
   html {
     scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   
   body {
-    @apply bg-background text-foreground antialiased;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    @apply bg-white text-text-bright font-sans antialiased;
   }
   
   ::selection {
-    @apply bg-accent/30 text-white;
+    @apply bg-primary/20 text-primary-dark;
   }
 }
 
 @layer components {
-  /* Glassmorphism card */
-  .glass {
-    @apply bg-background-elevated/50 backdrop-blur-xl border border-border;
+  /* Section padding standard */
+  .section-padding {
+    @apply py-20 lg:py-32;
   }
   
-  .glass-hover {
-    @apply hover:bg-background-elevated/70 hover:border-border-light transition-all duration-300;
+  /* Container widths */
+  .container-narrow {
+    @apply max-w-5xl mx-auto px-4 sm:px-6 lg:px-8;
   }
   
-  /* Gradient text */
-  .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-light via-cyan to-violet;
+  .container-standard {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
-  
-  .gradient-text-subtle {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground-secondary;
+
+  .container-wide {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
-  
-  /* Glow button */
-  .btn-glow {
-    @apply relative overflow-hidden;
-  }
-  
-  .btn-glow::before {
-    content: '';
-    @apply absolute inset-0 bg-gradient-to-r from-accent via-cyan to-accent opacity-0 transition-opacity duration-300;
-    background-size: 200% 100%;
-    animation: gradientShift 3s ease infinite;
-  }
-  
-  .btn-glow:hover::before {
-    @apply opacity-20;
-  }
-  
-  /* Animated border */
-  .animated-border {
-    @apply relative;
-  }
-  
-  .animated-border::before {
-    content: '';
-    @apply absolute -inset-[1px] rounded-xl opacity-0 transition-opacity duration-500;
-    background: linear-gradient(90deg, #3b82f6, #06b6d4, #8b5cf6, #3b82f6);
-    background-size: 300% 100%;
-    animation: borderDance 4s linear infinite;
-    z-index: -1;
-  }
-  
-  .animated-border:hover::before {
-    @apply opacity-100;
-  }
-  
-  /* Grid background pattern */
-  .grid-pattern {
-    background-image: 
-      linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
-    background-size: 60px 60px;
-  }
-  
-  /* Dot pattern */
-  .dot-pattern {
-    background-image: radial-gradient(rgba(59, 130, 246, 0.15) 1px, transparent 1px);
-    background-size: 24px 24px;
-  }
-  
-  /* Noise texture overlay */
-  .noise {
-    position: relative;
-  }
-  
-  .noise::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-    opacity: 0.02;
-    pointer-events: none;
+
+  .container-tight {
+    @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
   }
 }
 
 @layer utilities {
-  /* Text shadow glow */
-  .text-glow {
-    text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, #8976FD 0%, #C08EF3 100%);
   }
-  
-  .text-glow-lg {
-    text-shadow: 0 0 40px rgba(59, 130, 246, 0.5), 0 0 80px rgba(59, 130, 246, 0.3);
-  }
-  
-  /* Hide scrollbar */
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  
-  /* Mask gradients */
-  .mask-fade-bottom {
-    mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
-  }
-  
-  .mask-fade-top {
-    mask-image: linear-gradient(to top, black 60%, transparent 100%);
-  }
-}
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
+  .bg-gradient-hero {
+    background: linear-gradient(135deg, #F5F3FF 0%, #FEFCE8 50%, #FDF2F8 100%);
+  }
 
-::-webkit-scrollbar-track {
-  @apply bg-background-secondary;
-}
-
-::-webkit-scrollbar-thumb {
-  @apply bg-border rounded-full;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-border-light;
+  .bg-gradient-yellow {
+    background: linear-gradient(135deg, #FCA61F 0%, #F1D049 100%);
+  }
 }

@@ -11,6 +11,7 @@ import {
   Check,
   MessageSquare
 } from 'lucide-react'
+import { SectionReveal } from '@/components/ui/SectionReveal'
 
 export function DashboardPreview() {
   const [activeTab, setActiveTab] = useState('planning')
@@ -42,13 +43,7 @@ export function DashboardPreview() {
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header - Design plus raffiné */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, ease: [0.25, 0.4, 0.25, 1] }}
-          className="text-center mb-16 lg:mb-20"
-        >
+        <SectionReveal className="text-center mb-16 lg:mb-20">
           <motion.span
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -65,16 +60,11 @@ export function DashboardPreview() {
             Visualisez, modifiez et partagez vos plannings en quelques clics. 
             Pas besoin de formation, c'est intuitif.
           </p>
-        </motion.div>
+        </SectionReveal>
         
         {/* Dashboard Mockup */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="relative"
-        >
+        <SectionReveal delay={0.2}>
+          <div className="relative">
           {/* Glow effect - Plus subtil */}
           <motion.div
             animate={{
@@ -305,7 +295,8 @@ export function DashboardPreview() {
               </div>
             </div>
           </div>
-        </motion.div>
+          </div>
+        </SectionReveal>
       </div>
     </section>
   )

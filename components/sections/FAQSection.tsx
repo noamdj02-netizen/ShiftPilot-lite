@@ -1,187 +1,127 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { motion, AnimatePresence, useInView } from 'framer-motion'
-import { Plus, Minus, MessageCircle, ArrowRight } from 'lucide-react'
+import { motion, useInView, AnimatePresence } from 'framer-motion'
+import { Plus, Minus, MessageCircle } from 'lucide-react'
+import Link from 'next/link'
 
 const faqs = [
   {
-    question: "Est-ce vraiment plus rapide qu'Excel ?",
-    answer: "Oui, radicalement. Là où vous passiez 3-5 heures par semaine sur vos plannings, ShiftPilot génère un planning optimisé en moins de 10 secondes. L'algorithme prend en compte les disponibilités, compétences et contraintes légales automatiquement.",
-    category: 'general',
+    question: "C'est vraiment plus rapide qu'Excel ?",
+    answer: "Oui ! Ce qui vous prend 3 heures le dimanche soir est fait en 2 minutes. Vous indiquez qui est dispo, on génère le planning optimal automatiquement.",
   },
   {
-    question: "Comment mes employés reçoivent le planning ?",
-    answer: "Par SMS, WhatsApp ou email — vous choisissez. Dès que vous publiez le planning, chaque employé reçoit ses shifts personnalisés avec les horaires et le poste. Plus besoin de l'afficher dans le local ou d'envoyer des photos floues sur le groupe WhatsApp.",
-    category: 'features',
+    question: "Mes employés doivent installer une app ?",
+    answer: "Non. Ils reçoivent leur planning par SMS. S'ils veulent demander un échange, ils cliquent sur un lien dans le SMS. C'est tout.",
   },
   {
-    question: "Est-ce conforme au code du travail français ?",
-    answer: "C'est même notre spécialité. ShiftPilot intègre toutes les règles de la convention HCR : 11h de repos minimum entre deux shifts, 48h maximum par semaine, 1 jour de repos obligatoire, temps de pause... Tout est vérifié automatiquement avant publication.",
-    category: 'legal',
+    question: "C'est conforme au code du travail ?",
+    answer: "Oui, c'est automatique. On vérifie les 11h de repos, les 48h max par semaine, les jours de repos obligatoires... Vous n'avez plus à y penser.",
   },
   {
-    question: "Puis-je annuler à tout moment ?",
-    answer: "Absolument. Pas d'engagement, pas de préavis. Vous pouvez annuler en un clic depuis votre espace client. On vous rembourse même au prorata si vous partez en cours de mois. Vos données restent exportables pendant 30 jours après annulation.",
-    category: 'billing',
+    question: "Je peux essayer avant de payer ?",
+    answer: "Oui, 14 jours gratuits sans donner votre carte bancaire. Si ça ne vous convient pas, vous partez sans rien payer.",
   },
   {
-    question: "Combien de temps pour démarrer ?",
-    answer: "10 minutes chrono. Vous créez votre compte, ajoutez vos employés (import CSV possible), définissez vos postes, et vous pouvez générer votre premier planning immédiatement. Pas de formation nécessaire, l'interface est intuitive.",
-    category: 'general',
+    question: "Comment ça se passe si je veux arrêter ?",
+    answer: "Un clic dans les paramètres et c'est fait. Pas de préavis, pas de frais cachés, pas de piège. Vos données restent disponibles 30 jours.",
   },
   {
-    question: "Y a-t-il une période d'essai ?",
-    answer: "Oui, 14 jours gratuits sans carte bancaire. Vous testez toutes les fonctionnalités du plan Pro, incluant les notifications SMS et les analytics. À la fin de l'essai, vous choisissez le plan qui vous convient ou vous partez sans rien payer.",
-    category: 'billing',
-  },
-  {
-    question: "Comment fonctionnent les échanges de shifts ?",
-    answer: "Un employé qui ne peut pas assurer son shift peut proposer un échange via l'app. Les collègues disponibles et qualifiés reçoivent une notification et peuvent accepter. Vous validez l'échange en un clic, ou configurez la validation automatique.",
-    category: 'features',
-  },
-  {
-    question: "Mes données sont-elles sécurisées ?",
-    answer: "Vos données sont hébergées en France sur des serveurs certifiés ISO 27001. Nous sommes conformes RGPD, avec chiffrement AES-256 au repos et TLS 1.3 en transit. Vous pouvez exporter ou supprimer vos données à tout moment.",
-    category: 'legal',
+    question: "J'ai plusieurs restaurants, ça marche ?",
+    answer: "Oui, avec l'offre Business vous gérez tous vos établissements depuis une seule interface. Chaque resto a son planning, mais vous voyez tout.",
   },
 ]
 
 export function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
-  const sectionRef = useRef(null)
-  const isInView = useInView(sectionRef, { once: true, margin: '-100px' })
-
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true, margin: "-100px" })
+  
   return (
-    <section 
-      ref={sectionRef}
-      className="py-24 lg:py-32 bg-background-secondary relative overflow-hidden"
-      id="faq"
-    >
-      {/* Background */}
-      <div className="absolute inset-0">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-accent/5 rounded-full blur-[120px]" />
-        <div className="absolute inset-0 grid-pattern opacity-20" />
-      </div>
-
-      <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header - Design plus raffiné */}
+    <section ref={ref} className="py-24 lg:py-32 bg-gradient-to-br from-gray-50 to-purple-50/30 relative overflow-hidden">
+      <div className="container-tight">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, ease: [0.25, 0.4, 0.25, 1] }}
-          className="text-center mb-16 lg:mb-20"
+          transition={{ duration: 0.5 }}
+          className="text-center max-w-2xl mx-auto mb-12"
         >
-          <motion.span
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={isInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 0.5, ease: [0.25, 0.4, 0.25, 1] }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border-accent/20 text-sm font-medium text-accent mb-6 backdrop-blur-sm"
-          >
+          <span className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 rounded-full text-sm font-medium text-purple-700 mb-4 border border-purple-200">
             <MessageCircle className="w-4 h-4" />
-            FAQ
-          </motion.span>
-          
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-foreground mb-6 leading-tight tracking-tight">
             Questions fréquentes
-          </h2>
+          </span>
           
-          <p className="text-lg lg:text-xl text-foreground-secondary leading-relaxed font-light">
-            Tout ce que vous devez savoir pour démarrer avec ShiftPilot.
-          </p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
+            Vous avez des questions ?
+          </h2>
         </motion.div>
-
+        
         {/* FAQ items */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="space-y-4"
-        >
+        <div className="space-y-4">
           {faqs.map((faq, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.4, delay: 0.1 * index }}
-              className="group"
+              transition={{ duration: 0.4, delay: index * 0.05 }}
             >
-              <div
-                className={`glass rounded-2xl overflow-hidden transition-all duration-300 ${
-                  openIndex === index 
-                    ? 'border-accent/30 shadow-glow-sm' 
-                    : 'border-border hover:border-border-light'
+              <button
+                onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                className={`w-full bg-white rounded-2xl p-6 text-left transition-all shadow-[0_4px_12px_rgba(0,0,0,0.08)] border ${
+                  openIndex === index ? 'ring-2 ring-purple-200 border-purple-300' : 'border-gray-100 hover:border-purple-200'
                 }`}
               >
-                <motion.button
-                  onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                  whileHover={{ x: 2 }}
-                  className="w-full flex items-center justify-between p-6 text-left group/button"
-                >
-                  <span className={`font-semibold pr-8 transition-colors duration-300 text-base lg:text-lg ${
-                    openIndex === index ? 'text-accent' : 'text-foreground group-hover/button:text-foreground-secondary'
+                <div className="flex items-center justify-between gap-4">
+                  <span className={`font-semibold text-lg ${
+                    openIndex === index ? 'text-purple-600' : 'text-foreground'
                   }`}>
                     {faq.question}
                   </span>
-                  <motion.div
-                    animate={{ rotate: openIndex === index ? 180 : 0 }}
-                    transition={{ duration: 0.3, ease: [0.25, 0.4, 0.25, 1] }}
-                    className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
-                      openIndex === index 
-                        ? 'bg-accent text-white shadow-glow-sm' 
-                        : 'bg-background-elevated text-foreground-secondary group-hover/button:bg-accent/10 group-hover/button:text-accent'
-                    }`}
-                  >
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${
+                    openIndex === index ? 'bg-purple-600 text-white' : 'bg-gray-100 text-foreground-muted'
+                  }`}>
                     {openIndex === index ? (
                       <Minus className="w-4 h-4" />
                     ) : (
                       <Plus className="w-4 h-4" />
                     )}
-                  </motion.div>
-                </motion.button>
-
+                  </div>
+                </div>
+                
                 <AnimatePresence>
-                {openIndex === index && (
+                  {openIndex === index && (
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3, ease: [0.25, 0.4, 0.25, 1] }}
+                      transition={{ duration: 0.2 }}
                       className="overflow-hidden"
                     >
-                      <div className="px-6 pb-6 pt-0">
-                        <div className="h-px bg-border mb-4" />
-                        <p className="text-foreground-secondary leading-relaxed">
-                    {faq.answer}
-                        </p>
-                      </div>
+                      <p className="pt-4 text-foreground-muted leading-relaxed border-t border-gray-200 mt-4">
+                        {faq.answer}
+                      </p>
                     </motion.div>
-                )}
+                  )}
                 </AnimatePresence>
-              </div>
+              </button>
             </motion.div>
           ))}
-        </motion.div>
-
-        {/* CTA */}
+        </div>
+        
+        {/* Contact CTA */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.5 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
           className="text-center mt-12"
         >
-          <p className="text-foreground-secondary mb-4">
-            Vous ne trouvez pas votre réponse ?
+          <p className="text-foreground-muted mb-4">
+            Pas trouvé votre réponse ?
           </p>
-          <motion.a
-            href="/contact"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="inline-flex items-center gap-2 px-6 py-3 glass glass-hover rounded-xl font-medium text-foreground group"
-          >
-            Contactez-nous
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </motion.a>
+          <Link href="/contact" className="btn-secondary">
+            Posez-nous la question
+          </Link>
         </motion.div>
       </div>
     </section>

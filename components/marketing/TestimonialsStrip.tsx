@@ -32,11 +32,11 @@ export function TestimonialsStrip() {
   ];
 
   return (
-    <section className="py-20 bg-bg">
+    <section className="py-20 bg-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <p className="text-sm text-text-muted mb-2">CE QUE DISENT NOS CLIENTS</p>
-          <h2 className="text-4xl md:text-5xl font-semibold text-text-main">Ils nous font confiance</h2>
+          <p className="text-sm text-foreground-muted mb-2">CE QUE DISENT NOS CLIENTS</p>
+          <h2 className="text-4xl md:text-5xl font-semibold text-foreground">Ils nous font confiance</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -62,14 +62,14 @@ export function TestimonialsStrip() {
               </div>
 
               {/* Quote */}
-              <p className="text-text-main mb-6 leading-relaxed text-center">
+              <p className="text-foreground mb-6 leading-relaxed text-center">
                 "{testimonial.quote}"
               </p>
 
               {/* Author */}
               <div className="text-center">
-                <p className="font-semibold text-text-main">{testimonial.name}</p>
-                <p className="text-sm text-text-muted">{testimonial.role}</p>
+                <p className="font-semibold text-foreground">{testimonial.name}</p>
+                <p className="text-sm text-foreground-muted">{testimonial.role}</p>
               </div>
             </motion.div>
           ))}

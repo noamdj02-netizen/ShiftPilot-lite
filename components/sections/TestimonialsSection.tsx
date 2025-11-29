@@ -1,334 +1,184 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
-import { motion, AnimatePresence, useInView } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Quote, Star, Play, Pause } from 'lucide-react'
+import { useState, useRef } from 'react'
+import { motion, useInView, AnimatePresence } from 'framer-motion'
+import { ChevronLeft, ChevronRight, Star, Quote, MapPin } from 'lucide-react'
+import { SectionReveal } from '@/components/ui/SectionReveal'
 
 const testimonials = [
   {
     id: 1,
-    name: 'Marie Fontaine',
-    role: 'Gérante',
-    restaurant: 'Le Comptoir Parisien',
-    location: 'Paris 11e',
-    avatar: '/avatars/marie.jpg',
+    name: "Marie Fontaine",
+    role: "Gérante",
+    restaurant: "Le Comptoir Parisien",
+    location: "Paris 11e",
+    quote: "Avant, je passais tout mon dimanche soir sur les plannings. Maintenant, c'est fait en 10 minutes le lundi matin. J'ai retrouvé mes soirées en famille.",
     rating: 5,
-    quote: "Avant ShiftPilot, je passais mon dimanche soir à faire les plannings sur Excel. Maintenant c'est réglé en 10 minutes le lundi matin. J'ai récupéré ma vie de famille !",
-    metrics: { timeSaved: '4h', employees: 12 },
-    gradient: 'from-accent to-cyan',
+    employees: 12,
+    timeSaved: "4h/semaine",
   },
   {
     id: 2,
-    name: 'Lucas Mercier',
-    role: 'Directeur',
-    restaurant: 'Brasserie du Port',
-    location: 'Marseille',
-    avatar: '/avatars/lucas.jpg',
+    name: "Thomas Mercier",
+    role: "Directeur",
+    restaurant: "Brasserie du Port",
+    location: "Marseille",
+    quote: "Le respect automatique du code du travail, c'est ce qui m'a convaincu. Plus de stress avec l'inspection. Et mes employés adorent recevoir leur planning par SMS.",
     rating: 5,
-    quote: "Le respect automatique du code du travail, c'est ce qui m'a convaincu. Plus de stress avec l'inspection du travail, tout est carré. Et mes employés adorent recevoir leur planning par SMS.",
-    metrics: { timeSaved: '5h', employees: 18 },
-    gradient: 'from-cyan to-violet',
+    employees: 18,
+    timeSaved: "5h/semaine",
   },
   {
     id: 3,
-    name: 'Sophie Durand',
-    role: 'Propriétaire',
-    restaurant: 'Casa Nostra',
-    location: 'Lyon',
-    avatar: '/avatars/sophie.jpg',
+    name: "Sophie Durand",
+    role: "Propriétaire",
+    restaurant: "Casa Nostra",
+    location: "Lyon",
+    quote: "Avec 3 restaurants, c'était un casse-tête permanent. Maintenant tout est centralisé, je vois qui travaille où en un coup d'œil. Un game changer.",
     rating: 5,
-    quote: "J'ai 3 restaurants et je gérais les plannings sur 3 fichiers Excel différents. Avec ShiftPilot Business, tout est centralisé. Je vois en un coup d'œil qui travaille où et quand.",
-    metrics: { timeSaved: '8h', employees: 35 },
-    gradient: 'from-violet to-accent',
+    employees: 35,
+    timeSaved: "8h/semaine",
   },
-  {
-    id: 4,
-    name: 'Thomas Bernard',
-    role: 'Manager',
-    restaurant: 'Le Bistrot des Halles',
-    location: 'Bordeaux',
-    avatar: '/avatars/thomas.jpg',
-    rating: 5,
-    quote: "Les échanges de shifts entre employés, c'est génial. Avant j'avais 10 messages WhatsApp par jour pour gérer ça. Maintenant ils se débrouillent entre eux sur l'app.",
-    metrics: { timeSaved: '3h', employees: 8 },
-    gradient: 'from-success to-cyan',
-  },
-  {
-    id: 5,
-    name: 'Emma Lefevre',
-    role: 'Co-gérante',
-    restaurant: 'La Table d\'Antoine',
-    location: 'Nantes',
-    avatar: '/avatars/emma.jpg',
-    rating: 5,
-    quote: "On a testé Combo et Skello avant. ShiftPilot est beaucoup plus simple à utiliser et moins cher. L'essai gratuit m'a convaincue en 2 jours.",
-    metrics: { timeSaved: '4h', employees: 14 },
-    gradient: 'from-warning to-accent',
-  },
-]
-
-const stats = [
-  { value: '500+', label: 'Restaurants', suffix: '' },
-  { value: '4.9', label: 'Satisfaction', suffix: '/5' },
-  { value: '15K', label: 'Plannings générés', suffix: '+' },
-  { value: '45K', label: 'Heures économisées', suffix: 'h' },
 ]
 
 export function TestimonialsSection() {
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [direction, setDirection] = useState(0)
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true)
-  const sectionRef = useRef(null)
-  const isInView = useInView(sectionRef, { once: true, margin: '-100px' })
-
-  useEffect(() => {
-    if (!isAutoPlaying) return
-    const interval = setInterval(() => {
-      setDirection(1)
-      setCurrentIndex((prev) => (prev + 1) % testimonials.length)
-    }, 6000)
-    return () => clearInterval(interval)
-  }, [isAutoPlaying])
-
-  const paginate = (newDirection: number) => {
-    setIsAutoPlaying(false)
-    setDirection(newDirection)
-    setCurrentIndex((prev) => {
-      if (newDirection === 1) return (prev + 1) % testimonials.length
-      return prev === 0 ? testimonials.length - 1 : prev - 1
-    })
-  }
-
-  const currentTestimonial = testimonials[currentIndex]
-
-  const slideVariants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? 300 : -300,
-      opacity: 0,
-      scale: 0.9,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-      scale: 1,
-    },
-    exit: (direction: number) => ({
-      x: direction < 0 ? 300 : -300,
-      opacity: 0,
-      scale: 0.9,
-    }),
-  }
-
+  const [current, setCurrent] = useState(0)
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true, margin: "-100px" })
+  
+  const next = () => setCurrent((prev) => (prev + 1) % testimonials.length)
+  const prev = () => setCurrent((prev) => (prev - 1 + testimonials.length) % testimonials.length)
+  
+  const testimonial = testimonials[current]
+  
   return (
-    <section 
-      ref={sectionRef}
-      className="py-24 lg:py-32 bg-background relative overflow-hidden"
-      id="testimonials"
-    >
-      {/* Background */}
-      <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-0 w-96 h-96 bg-accent/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-violet/5 rounded-full blur-[120px]" />
-        <div className="absolute inset-0 grid-pattern opacity-30" />
-      </div>
-
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-               {/* Header - Design plus raffiné */}
-               <motion.div
-                 initial={{ opacity: 0, y: 20 }}
-                 animate={isInView ? { opacity: 1, y: 0 } : {}}
-                 transition={{ duration: 0.6, ease: [0.25, 0.4, 0.25, 1] }}
-                 className="text-center mb-16 lg:mb-20"
-               >
-                 <motion.span
-                   initial={{ opacity: 0, scale: 0.9 }}
-                   animate={isInView ? { opacity: 1, scale: 1 } : {}}
-                   transition={{ duration: 0.5, ease: [0.25, 0.4, 0.25, 1] }}
-                   className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border-accent/20 text-sm font-medium text-accent mb-6 backdrop-blur-sm"
-                 >
-                   <Star className="w-4 h-4 fill-accent" />
-                   Témoignages
-                 </motion.span>
-                 
-                 <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-foreground mb-6 leading-tight tracking-tight">
-                   Ils ont transformé leur{' '}
-                   <span className="gradient-text">gestion d'équipe</span>
-                 </h2>
-                 
-                 <p className="text-lg lg:text-xl text-foreground-secondary max-w-2xl mx-auto leading-relaxed font-light">
-                   Plus de 500 restaurateurs nous font confiance au quotidien.
-                 </p>
-               </motion.div>
-
-        {/* Main testimonial */}
-        <div className="relative max-w-4xl mx-auto mb-20">
-                 {/* Navigation arrows - Design plus premium */}
-                 <motion.button
-                   onClick={() => paginate(-1)}
-                   whileHover={{ scale: 1.1, x: -2 }}
-                   whileTap={{ scale: 0.95 }}
-                   className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-16 z-10 w-12 h-12 rounded-full glass border-border hover:border-accent/50 flex items-center justify-center transition-all duration-300 group backdrop-blur-sm"
-                 >
-                   <ChevronLeft className="w-5 h-5 text-foreground-secondary group-hover:text-accent transition-colors duration-300" />
-                 </motion.button>
-                 <motion.button
-                   onClick={() => paginate(1)}
-                   whileHover={{ scale: 1.1, x: 2 }}
-                   whileTap={{ scale: 0.95 }}
-                   className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-16 z-10 w-12 h-12 rounded-full glass border-border hover:border-accent/50 flex items-center justify-center transition-all duration-300 group backdrop-blur-sm"
-                 >
-                   <ChevronRight className="w-5 h-5 text-foreground-secondary group-hover:text-accent transition-colors duration-300" />
-                 </motion.button>
-
-          {/* Autoplay control */}
-          <button
-            onClick={() => setIsAutoPlaying(!isAutoPlaying)}
-            className="absolute -top-12 right-0 p-2 rounded-lg glass border-border hover:border-accent/50 transition-all"
-          >
-            {isAutoPlaying ? (
-              <Pause className="w-4 h-4 text-foreground-secondary" />
-            ) : (
-              <Play className="w-4 h-4 text-foreground-secondary" />
-            )}
-          </button>
-
-          {/* Card */}
+    <section ref={ref} className="py-24 lg:py-32 bg-gradient-to-br from-gray-50 to-purple-50/30 relative overflow-hidden">
+      <div className="container-wide">
+        {/* Header */}
+        <SectionReveal className="text-center max-w-3xl mx-auto mb-16">
+          <span className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 rounded-full text-sm font-medium text-purple-700 mb-4 border border-purple-200">
+            <Star className="w-4 h-4 fill-purple-600" />
+            Témoignages
+          </span>
+          
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6">
+            Ils ont retrouvé du{' '}
+            <span className="text-purple-600">temps pour eux</span>
+          </h2>
+        </SectionReveal>
+        
+        {/* Testimonial card */}
+        <div className="max-w-4xl mx-auto">
           <div className="relative">
-            {/* Glow background */}
-            <div className={`absolute -inset-4 bg-gradient-to-r ${currentTestimonial.gradient} opacity-10 blur-3xl rounded-3xl transition-all duration-500`} />
+            {/* Navigation */}
+            <button
+              onClick={prev}
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-12 z-10 w-12 h-12 rounded-full bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-gray-200 flex items-center justify-center hover:border-purple-300 hover:text-purple-600 transition-colors"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button
+              onClick={next}
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-12 z-10 w-12 h-12 rounded-full bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-gray-200 flex items-center justify-center hover:border-purple-300 hover:text-purple-600 transition-colors"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
             
-            <AnimatePresence mode="wait" custom={direction}>
+            {/* Card */}
+            <AnimatePresence mode="wait">
               <motion.div
-                key={currentIndex}
-                custom={direction}
-                variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{ duration: 0.4, ease: [0.25, 0.4, 0.25, 1] }}
-                className="relative glass rounded-3xl p-8 lg:p-12 border-border"
+                key={current}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.3 }}
+                className="bg-white rounded-3xl p-8 lg:p-12 shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-gray-100"
               >
-                {/* Quote icon */}
-                <div className={`absolute -top-6 left-8 w-12 h-12 rounded-2xl bg-gradient-to-r ${currentTestimonial.gradient} flex items-center justify-center shadow-lg`}>
-                  <Quote className="w-6 h-6 text-white" />
-                </div>
-
-                <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
-                  {/* Left: Content */}
-                  <div className="flex-1">
-                    {/* Rating */}
-                    <div className="flex gap-1 mb-6">
-                      {[...Array(currentTestimonial.rating)].map((_, i) => (
-                        <motion.div
-                          key={i}
-                          initial={{ opacity: 0, scale: 0 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: i * 0.1 }}
-                        >
-                          <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                        </motion.div>
-                      ))}
+                <div className="flex flex-col lg:flex-row gap-8">
+                  {/* Left - Image placeholder */}
+                  <div className="lg:w-1/3">
+                    <div className="relative aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center">
+                      <span className="text-6xl">👩‍🍳</span>
                     </div>
-
-                    {/* Quote */}
-                    <blockquote className="text-xl lg:text-2xl text-foreground leading-relaxed mb-8 font-light">
-                      "{currentTestimonial.quote}"
-                    </blockquote>
-
-                    {/* Author */}
-                    <div className="flex items-center gap-4">
-                      <div className={`w-14 h-14 rounded-full bg-gradient-to-br ${currentTestimonial.gradient} p-[2px]`}>
-                        <div className="w-full h-full rounded-full bg-background-elevated flex items-center justify-center">
-                          <span className="text-2xl">
-                            {currentTestimonial.name.split(' ').map(n => n[0]).join('')}
-                          </span>
-                        </div>
+                    
+                    {/* Stats under photo */}
+                    <div className="grid grid-cols-2 gap-4 mt-4">
+                      <div className="text-center p-3 bg-purple-50 rounded-xl border border-purple-100">
+                        <p className="text-2xl font-bold text-purple-600">{testimonial.timeSaved}</p>
+                        <p className="text-xs text-foreground-secondary">économisées</p>
                       </div>
-                      <div>
-                        <p className="font-semibold text-foreground">{currentTestimonial.name}</p>
-                        <p className="text-sm text-foreground-muted">
-                          {currentTestimonial.role} · {currentTestimonial.restaurant}
-                        </p>
-                        <p className="text-xs text-foreground-subtle">{currentTestimonial.location}</p>
+                      <div className="text-center p-3 bg-pink-50 rounded-xl border border-pink-100">
+                        <p className="text-2xl font-bold text-pink-600">{testimonial.employees}</p>
+                        <p className="text-xs text-foreground-secondary">employés</p>
                       </div>
                     </div>
                   </div>
-
-                  {/* Right: Metrics */}
-                  <div className="lg:w-48 flex flex-row lg:flex-col gap-4">
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.2 }}
-                      className="flex-1 glass rounded-2xl p-6 text-center border-border"
-                    >
-                      <p className={`text-3xl lg:text-4xl font-bold bg-gradient-to-r ${currentTestimonial.gradient} bg-clip-text text-transparent`}>
-                        {currentTestimonial.metrics.timeSaved}
+                  
+                  {/* Right - Content */}
+                  <div className="lg:w-2/3">
+                    {/* Rating */}
+                    <div className="flex gap-1 mb-4">
+                      {[...Array(testimonial.rating)].map((_, i) => (
+                        <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                      ))}
+                    </div>
+                    
+                    {/* Quote */}
+                    <div className="relative mb-6">
+                      <Quote className="absolute -top-2 -left-2 w-8 h-8 text-purple-200" />
+                      <p className="text-xl lg:text-2xl text-foreground leading-relaxed pl-6">
+                        {testimonial.quote}
                       </p>
-                      <p className="text-sm text-foreground-muted mt-1">économisées/sem</p>
-                    </motion.div>
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3 }}
-                      className="flex-1 glass rounded-2xl p-6 text-center border-border"
-                    >
-                      <p className={`text-3xl lg:text-4xl font-bold bg-gradient-to-r ${currentTestimonial.gradient} bg-clip-text text-transparent`}>
-                        {currentTestimonial.metrics.employees}
-                      </p>
-                      <p className="text-sm text-foreground-muted mt-1">employés</p>
-                    </motion.div>
+                    </div>
+                    
+                    {/* Author */}
+                    <div className="flex items-center gap-4">
+                      <div>
+                        <p className="font-semibold text-foreground text-lg">{testimonial.name}</p>
+                        <p className="text-sm text-foreground-muted">{testimonial.role}, {testimonial.restaurant}</p>
+                        <p className="text-sm text-foreground-muted flex items-center gap-1 mt-1">
+                          <MapPin className="w-3 h-3" />
+                          {testimonial.location}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </motion.div>
             </AnimatePresence>
           </div>
-
+          
           {/* Dots */}
           <div className="flex justify-center gap-2 mt-8">
             {testimonials.map((_, index) => (
               <button
                 key={index}
-                onClick={() => {
-                  setIsAutoPlaying(false)
-                  setDirection(index > currentIndex ? 1 : -1)
-                  setCurrentIndex(index)
-                }}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  index === currentIndex
-                    ? 'w-8 bg-accent'
-                    : 'w-2 bg-border hover:bg-border-light'
+                onClick={() => setCurrent(index)}
+                className={`h-2 rounded-full transition-all ${
+                  index === current
+                    ? 'w-8 bg-purple-600'
+                    : 'w-2 bg-gray-300 hover:bg-gray-400'
                 }`}
               />
             ))}
           </div>
         </div>
-
-        {/* Stats */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6"
-        >
-          {stats.map((stat, i) => (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.4 + i * 0.1 }}
-              className="glass rounded-2xl p-6 text-center border-border hover:border-accent/30 transition-colors group"
-            >
-              <p className="text-3xl lg:text-4xl font-bold text-foreground group-hover:text-accent transition-colors">
-                {stat.value}
-                <span className="text-foreground-muted">{stat.suffix}</span>
-              </p>
-              <p className="text-sm text-foreground-muted mt-1">{stat.label}</p>
-            </motion.div>
+        
+        {/* Stats bar */}
+        <SectionReveal delay={0.4} className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 max-w-4xl mx-auto">
+          {[
+            { value: "500+", label: "Restaurants" },
+            { value: "4.9/5", label: "Satisfaction" },
+            { value: "15 000+", label: "Plannings créés" },
+            { value: "45 000h", label: "Économisées" },
+          ].map((stat) => (
+            <div key={stat.label} className="text-center p-6 bg-white rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-gray-100">
+              <p className="text-3xl lg:text-4xl font-bold text-foreground">{stat.value}</p>
+              <p className="text-sm text-foreground-secondary mt-1">{stat.label}</p>
+            </div>
           ))}
-        </motion.div>
+        </SectionReveal>
       </div>
     </section>
   )
 }
-

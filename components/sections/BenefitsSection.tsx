@@ -1,99 +1,63 @@
-"use client";
+'use client'
 
-import { motion } from "framer-motion";
-import { Card } from "@/components/ui/Card";
-import { Clock, MessageSquare, RefreshCw, Shield } from "lucide-react";
-
-const fadeInUp = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5 },
-};
-
-const staggerContainer = {
-  animate: {
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
-
-const benefits = [
-  {
-    icon: Clock,
-    title: "Gagnez 3h/semaine",
-    description: "Plus de tableaux Excel interminables",
-  },
-  {
-    icon: MessageSquare,
-    title: "Partagez en 1 clic",
-    description: "SMS ou WhatsApp à toute l'équipe",
-  },
-  {
-    icon: RefreshCw,
-    title: "Échanges simplifiés",
-    description: "Les employés gèrent leurs swaps",
-  },
-  {
-    icon: Shield,
-    title: "Conformité légale",
-    description: "Respect automatique du code du travail",
-  },
-];
+import { motion } from 'framer-motion'
+import { Sparkles, X, Zap } from 'lucide-react'
 
 export function BenefitsSection() {
-  return (
-    <section className="py-20 sm:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 bg-card">
-      <div className="max-w-6xl mx-auto">
-        <motion.div
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={staggerContainer}
-          className="text-center mb-16"
-        >
-          <motion.h2
-            variants={fadeInUp}
-            className="font-heading font-bold text-3xl sm:text-4xl lg:text-5xl text-foreground mb-4"
-          >
-            Pourquoi ShiftPilot ?
-          </motion.h2>
-          <motion.p
-            variants={fadeInUp}
-            className="text-xl text-muted max-w-2xl mx-auto"
-          >
-            Les avantages qui font la différence
-          </motion.p>
-        </motion.div>
+  const benefits = [
+    {
+      icon: Sparkles,
+      title: 'Automatisation IA',
+      description: 'Génération automatique de plannings optimisés en quelques secondes',
+      color: 'purple',
+      gradient: 'from-purple-100 to-purple-50',
+    },
+    {
+      icon: X,
+      title: 'Zéro Excel',
+      description: 'Fini les tableaux complexes, tout est automatisé et centralisé',
+      color: 'primary-yellow',
+      gradient: 'from-yellow-100 to-yellow-50',
+    },
+    {
+      icon: Zap,
+      title: 'Planning plus rapide',
+      description: 'Réduisez votre temps de planification de 3h à 2 minutes',
+      color: 'secondary-turquoise',
+      gradient: 'from-green-100 to-turquoise-50',
+    },
+  ]
 
-        <motion.div
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={staggerContainer}
-          className="grid grid-cols-1 md:grid-cols-2 gap-6"
-        >
-          {benefits.map((benefit, index) => {
-            const Icon = benefit.icon;
-            return (
-              <motion.div key={index} variants={fadeInUp}>
-                <Card className="flex items-start gap-4 h-full">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center">
-                    <Icon className="w-6 h-6 text-accent" />
-                  </div>
-                  <div>
-                    <h3 className="font-heading font-bold text-xl text-foreground mb-2">
-                      {benefit.title}
-                    </h3>
-                    <p className="text-muted">{benefit.description}</p>
-                  </div>
-                </Card>
-              </motion.div>
-            );
-          })}
-        </motion.div>
+  return (
+    <section className="py-24 lg:py-32 bg-gradient-to-br from-gray-50 to-purple-50/30 relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary-yellow/5 rounded-full blur-3xl" />
+
+      <div className="container-standard relative z-10">
+        <div className="grid md:grid-cols-3 gap-8">
+          {benefits.map((benefit, index) => (
+            <motion.div
+              key={benefit.title}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+              className={`bg-gradient-to-br ${benefit.gradient} rounded-3xl p-8 shadow-pastel hover:shadow-pastel-lg transition-all duration-300 hover:-translate-y-2`}
+            >
+              <div className="w-16 h-16 rounded-2xl bg-white/80 backdrop-blur-sm flex items-center justify-center mb-6">
+                <benefit.icon className={`w-8 h-8 ${
+                  benefit.color === 'purple' ? 'text-primary' :
+                  benefit.color === 'primary-yellow' ? 'text-primary-yellow' :
+                  'text-secondary-turquoise'
+                }`} />
+              </div>
+              <h3 className="text-2xl font-bold text-text-bright mb-3">{benefit.title}</h3>
+              <p className="text-text-mid leading-relaxed">{benefit.description}</p>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
-  );
+  )
 }
-

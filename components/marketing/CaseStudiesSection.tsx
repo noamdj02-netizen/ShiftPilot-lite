@@ -26,11 +26,11 @@ export function CaseStudiesSection() {
   ];
 
   return (
-    <section className="py-20 bg-bg-soft">
+    <section className="py-20 bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <p className="text-sm text-text-muted mb-2">TÉMOIGNAGES</p>
-          <h2 className="text-4xl md:text-5xl font-semibold text-text-main">
+          <p className="text-sm text-foreground-muted mb-2">TÉMOIGNAGES</p>
+          <h2 className="text-4xl md:text-5xl font-semibold text-foreground">
             Des restaurateurs qui ont transformé leur gestion
           </h2>
         </div>
@@ -61,9 +61,9 @@ export function CaseStudiesSection() {
 
               {/* Content */}
               <div className="text-center mb-6">
-                <h3 className="font-semibold text-text-main mb-1">{study.title}</h3>
-                <p className="text-sm text-text-muted mb-4">{study.role}</p>
-                <p className="text-text-main leading-relaxed">{study.description}</p>
+                <h3 className="font-semibold text-foreground mb-1">{study.title}</h3>
+                <p className="text-sm text-foreground-muted mb-4">{study.role}</p>
+                <p className="text-foreground leading-relaxed">{study.description}</p>
               </div>
             </motion.div>
           ))}

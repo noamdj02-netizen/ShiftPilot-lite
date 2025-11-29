@@ -1,227 +1,189 @@
-import { Suspense } from "react";
-import { createClient } from "@/lib/supabase/server";
-import { Users, Calendar, Clock, TrendingUp, AlertTriangle } from "lucide-react";
-import { Card } from "@/components/ui/Card";
-import Link from "next/link";
-import { Button } from "@/components/ui/Button";
+'use client'
 
-async function getStats() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+import { motion } from 'framer-motion'
+import { Users, Calendar, Clock, TrendingUp, Plus, Sparkles, ArrowRight } from 'lucide-react'
+import { Card } from '@/components/ui/Card'
+import { Button } from '@/components/ui/Button'
+import Link from 'next/link'
 
-  if (!user) return null;
+const stats = [
+  {
+    title: 'Employés actifs',
+    value: '12',
+    icon: Users,
+    color: 'purple',
+    change: '+2 cette semaine',
+  },
+  {
+    title: 'Heures totales',
+    value: '320h',
+    icon: Clock,
+    color: 'blue',
+    change: '+15% vs semaine dernière',
+  },
+  {
+    title: 'Coût salarial',
+    value: '4 800€',
+    icon: TrendingUp,
+    color: 'green',
+    change: '-5% vs semaine dernière',
+  },
+  {
+    title: 'Taux de couverture',
+    value: '98%',
+    icon: Calendar,
+    color: 'orange',
+    change: '+3% vs semaine dernière',
+  },
+]
 
-  // Récupérer le profil et l'organisation
-  const { data: profileData, error: profileError } = await supabase
-    .from("profiles")
-    .select("organization_id")
-    .eq("id", user.id)
-    .single();
-
-  if (profileError || !profileData) {
-    return {
-      activeEmployees: 0,
-      weeklyShifts: 0,
-      plannedHours: 0,
-      coverageRate: 0,
-      alerts: ["Vous devez créer une organisation pour commencer."],
-    };
-  }
-
-  const organizationId: string | null = (profileData as { organization_id: string | null }).organization_id;
-
-  if (!organizationId) {
-    return {
-      activeEmployees: 0,
-      weeklyShifts: 0,
-      plannedHours: 0,
-      coverageRate: 0,
-      alerts: ["Vous devez créer une organisation pour commencer."],
-    };
-  }
-
-  // Compter les employés actifs
-  const { count: activeEmployees } = await supabase
-    .from("profiles")
-    .select("*", { count: "exact", head: true })
-    .eq("organization_id", organizationId)
-    .eq("is_active", true);
-
-  // Compter les shifts de la semaine
-  const weekStart = new Date();
-  weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1);
-  weekStart.setHours(0, 0, 0, 0);
-
-  const weekEnd = new Date(weekStart);
-  weekEnd.setDate(weekEnd.getDate() + 6);
-  weekEnd.setHours(23, 59, 59, 999);
-
-  const { count: weeklyShifts } = await supabase
-    .from("shifts")
-    .select("*", { count: "exact", head: true })
-    .eq("organization_id", organizationId)
-    .gte("date", weekStart.toISOString().split("T")[0])
-    .lte("date", weekEnd.toISOString().split("T")[0]);
-
-  return {
-    activeEmployees: activeEmployees || 0,
-    weeklyShifts: weeklyShifts || 0,
-    plannedHours: 0, // TODO: Calculer les heures planifiées
-    coverageRate: 0, // TODO: Calculer le taux de couverture
-    alerts: [] as string[],
-  };
+const colorMap: { [key: string]: { bg: string; text: string } } = {
+  purple: { bg: 'bg-purple-100', text: 'text-purple-600' },
+  blue: { bg: 'bg-blue-100', text: 'text-blue-600' },
+  green: { bg: 'bg-green-100', text: 'text-green-600' },
+  orange: { bg: 'bg-orange-100', text: 'text-orange-600' },
 }
 
-function StatsCard({
-  title,
-  value,
-  icon: Icon,
-  trend,
-}: {
-  title: string;
-  value: string | number;
-  icon: React.ElementType;
-  trend?: number;
-}) {
-  return (
-    <Card className="p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm text-foreground-muted dark:text-dark-foreground-muted">
-            {title}
-          </p>
-          <p className="text-2xl font-heading font-bold text-foreground dark:text-dark-foreground mt-1">
-            {value}
-          </p>
-          {trend !== undefined && (
-            <p
-              className={`text-xs mt-1 ${
-                trend > 0
-                  ? "text-success"
-                  : trend < 0
-                  ? "text-error"
-                  : "text-foreground-muted dark:text-dark-foreground-muted"
-              }`}
-            >
-              {trend > 0 ? "+" : ""}
-              {trend}% vs semaine dernière
-            </p>
-          )}
-        </div>
-        <div className="p-3 rounded-lg bg-accent/10">
-          <Icon className="h-6 w-6 text-accent" />
-        </div>
-      </div>
-    </Card>
-  );
-}
-
-export default async function DashboardPage() {
-  const stats = await getStats();
-
-  if (!stats) {
-    return <div>Chargement...</div>;
-  }
-
+export default function DashboardPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-heading font-bold text-foreground dark:text-dark-foreground">
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-3xl font-bold text-foreground"
+        >
           Tableau de bord
-        </h1>
-        <p className="text-foreground-muted dark:text-dark-foreground-muted mt-1">
+        </motion.h1>
+        <p className="text-foreground-muted mt-2">
           Bienvenue ! Voici un aperçu de votre semaine.
         </p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatsCard
-          title="Employés actifs"
-          value={stats.activeEmployees}
-          icon={Users}
-        />
-        <StatsCard
-          title="Shifts cette semaine"
-          value={stats.weeklyShifts}
-          icon={Calendar}
-        />
-        <StatsCard
-          title="Heures planifiées"
-          value={`${stats.plannedHours}h`}
-          icon={Clock}
-        />
-        <StatsCard
-          title="Taux de couverture"
-          value={`${stats.coverageRate}%`}
-          icon={TrendingUp}
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {stats.map((stat, index) => {
+          const colors = colorMap[stat.color] || colorMap.purple
+          
+          return (
+            <motion.div
+              key={stat.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
+              <Card hover className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className={`w-12 h-12 rounded-xl ${colors.bg} flex items-center justify-center`}>
+                    <stat.icon className={`w-6 h-6 ${colors.text}`} />
+                  </div>
+                </div>
+                <p className="text-sm text-foreground-muted mb-1">{stat.title}</p>
+                <p className="text-3xl font-bold text-foreground mb-1">{stat.value}</p>
+                <p className="text-xs text-green-600">{stat.change}</p>
+              </Card>
+            </motion.div>
+          )
+        })}
       </div>
-
-      {/* Alerts */}
-      {stats.alerts.length > 0 && (
-        <Card className="p-4 border-warning/20 bg-warning/10">
-          <div className="flex items-center gap-2 text-warning mb-2">
-            <AlertTriangle className="w-5 h-5" />
-            <span className="font-medium">Attention requise</span>
-          </div>
-          <ul className="space-y-1 text-sm text-foreground dark:text-dark-foreground">
-            {stats.alerts.map((alert, i) => (
-              <li key={i}>{alert}</li>
-            ))}
-          </ul>
-        </Card>
-      )}
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <Card className="p-6">
-          <h3 className="font-heading font-semibold text-foreground dark:text-dark-foreground mb-2">
-            Actions rapides
-          </h3>
-          <div className="space-y-2">
-            <Button
-              variant="outline"
-              size="sm"
-              href="/dashboard/employees/add"
-              className="w-full justify-start"
-            >
-              Ajouter un employé
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              href="/dashboard/planning"
-              className="w-full justify-start"
-            >
-              Créer un planning
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              href="/dashboard/shifts"
-              className="w-full justify-start"
-            >
-              Voir les shifts
-            </Button>
-          </div>
-        </Card>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Generate Planning */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="lg:col-span-2"
+        >
+          <Card className="p-8 bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-primary/20">
+            <div className="flex items-start justify-between">
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                  <Sparkles className="w-6 h-6 text-primary" />
+                  <h3 className="text-xl font-bold text-foreground">Générer un planning</h3>
+                </div>
+                <p className="text-foreground-muted mb-6">
+                  Créez votre planning de la semaine en 10 secondes avec l'intelligence artificielle.
+                </p>
+                <Button variant="primary" href="/dashboard/planning" size="lg">
+                  Générer par IA
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </motion.div>
 
-        <Card className="p-6">
-          <h3 className="font-heading font-semibold text-foreground dark:text-dark-foreground mb-2">
-            Prochaines étapes
-          </h3>
-          <div className="space-y-2 text-sm text-foreground-muted dark:text-dark-foreground-muted">
-            <p>1. Ajoutez vos employés</p>
-            <p>2. Créez vos postes de travail</p>
-            <p>3. Générez votre premier planning</p>
-          </div>
-        </Card>
+        {/* Quick Actions */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+        >
+          <Card className="p-6">
+            <h3 className="font-semibold text-foreground mb-4">Actions rapides</h3>
+            <div className="space-y-2">
+              <Button
+                variant="secondary"
+                href="/dashboard/employees"
+                size="sm"
+                className="w-full justify-start"
+              >
+                <Users className="w-4 h-4" />
+                Ajouter un employé
+              </Button>
+              <Button
+                variant="secondary"
+                href="/dashboard/planning"
+                size="sm"
+                className="w-full justify-start"
+              >
+                <Calendar className="w-4 h-4" />
+                Créer un planning
+              </Button>
+              <Button
+                variant="secondary"
+                href="/dashboard/shifts"
+                size="sm"
+                className="w-full justify-start"
+              >
+                <Clock className="w-4 h-4" />
+                Voir les shifts
+              </Button>
+            </div>
+          </Card>
+        </motion.div>
       </div>
-    </div>
-  );
-}
 
+      {/* Calendar Preview */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.6 }}
+      >
+        <Card className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-bold text-foreground">Planning de la semaine</h3>
+            <Link href="/dashboard/planning" className="text-sm text-primary hover:underline">
+              Voir tout
+            </Link>
+          </div>
+          
+          {/* Calendar grid placeholder */}
+          <div className="grid grid-cols-7 gap-2">
+            {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((day) => (
+              <div key={day} className="text-center">
+                <p className="text-sm font-medium text-foreground-muted mb-2">{day}</p>
+                <div className="h-16 rounded-xl bg-gray-50 border border-border-soft flex items-center justify-center">
+                  <span className="text-xs text-foreground-muted">—</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </motion.div>
+    </div>
+  )
+}

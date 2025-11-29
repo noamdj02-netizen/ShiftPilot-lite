@@ -1,30 +1,23 @@
-import { Navbar } from '@/components/marketing/Navbar'
-import { HeroSection } from '@/components/sections/HeroSection'
-import { LogosSection } from '@/components/sections/LogosSection'
-import { FeaturesSection } from '@/components/sections/FeaturesSection'
-import { HowItWorks } from '@/components/sections/HowItWorks'
-import { DashboardPreview } from '@/components/sections/DashboardPreview'
-import { TestimonialsSection } from '@/components/sections/TestimonialsSection'
-import { PricingSection } from '@/components/sections/PricingSection'
-import { FAQSection } from '@/components/sections/FAQSection'
-import { CTASection } from '@/components/sections/CTASection'
-import { Footer } from '@/components/marketing/Footer'
+import { Navbar } from '@/components/layout/Navbar'
+import { Hero } from '@/components/sections/Hero'
+import { SocialProof } from '@/components/sections/SocialProof'
+import { Features } from '@/components/sections/Features'
+import { Testimonials } from '@/components/sections/Testimonials'
+import { Pricing } from '@/components/sections/Pricing'
+import { FinalCTA } from '@/components/sections/FinalCTA'
+import { Footer } from '@/components/layout/Footer'
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className="antialiased bg-white text-gray-900 overflow-x-hidden">
       <Navbar />
-      <HeroSection />
-      <LogosSection />
-      <FeaturesSection />
-      <HowItWorks />
-      <DashboardPreview />
-      <TestimonialsSection />
-      <PricingSection />
-      <FAQSection />
-      <CTASection />
+      <Hero />
+      <SocialProof />
+      <Features />
+      <Testimonials />
+      <Pricing />
+      <FinalCTA />
       <Footer />
     </main>
   )
 }
-

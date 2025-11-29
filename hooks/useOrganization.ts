@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import type { Organization } from "@/types/api";
+import type { Organization } from "@/lib/types";
 
 export function useOrganization() {
   const [organization, setOrganization] = useState<Organization | null>(null);
@@ -51,7 +51,7 @@ export function useOrganization() {
         return;
       }
 
-      setOrganization(data);
+      setOrganization(data as Organization);
     } catch (error) {
       console.error("Error:", error);
     } finally {
@@ -85,7 +85,7 @@ export function useOrganization() {
 
     if (profileError) throw profileError;
 
-    setOrganization(data);
+    setOrganization(data as Organization);
     return data;
   };
 
@@ -96,4 +96,3 @@ export function useOrganization() {
     createOrganization,
   };
 }
-

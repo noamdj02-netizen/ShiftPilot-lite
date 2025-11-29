@@ -90,7 +90,13 @@ export function Hero() {
         >
           Planifiez.<br />
           <span className="text-transparent bg-clip-text bg-gradient-to-b from-black to-black/40 dark:from-white dark:to-white/40">
-            Unifiez. Simplifiez.
+            Unifiez.
+          </span>{' '}
+          <span className="relative inline-block">
+            <span className="absolute -inset-1 bg-blue-100 dark:bg-blue-900/30 -skew-y-2 rounded-lg -z-10"></span>
+            <span className="text-blue-600 dark:text-blue-400">
+              Simplifiez.
+            </span>
           </span>
         </motion.h1>
 

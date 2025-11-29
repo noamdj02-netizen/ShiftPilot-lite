@@ -35,30 +35,37 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Routes protégées
+  // Routes d'authentification (accessibles uniquement si NON connecté)
   const isAuthRoute =
     request.nextUrl.pathname.startsWith("/login") ||
     request.nextUrl.pathname.startsWith("/register") ||
     request.nextUrl.pathname.startsWith("/forgot-password") ||
     request.nextUrl.pathname.startsWith("/reset-password");
 
-  const isDashboardRoute = request.nextUrl.pathname.startsWith("/dashboard");
-  const isEmployeeRoute = request.nextUrl.pathname.startsWith("/employee");
-  const isApiRoute = request.nextUrl.pathname.startsWith("/api");
-  const isMarketingRoute =
-    request.nextUrl.pathname === "/" ||
-    request.nextUrl.pathname.startsWith("/pricing") ||
-    request.nextUrl.pathname.startsWith("/success");
+  // Routes protégées (accessibles uniquement si connecté)
+  const protectedRoutes = [
+    "/dashboard",
+    "/planning",
+    "/employees",
+    "/settings",
+    "/billing",
+    "/compliance",
+    "/availabilities",
+  ];
 
-  // Rediriger vers login si non authentifié et accès à dashboard/employee
-  if (!user && (isDashboardRoute || isEmployeeRoute)) {
+  const isProtectedRoute = protectedRoutes.some((route) =>
+    request.nextUrl.pathname.startsWith(route)
+  );
+
+  // Rediriger vers login si non authentifié et accès à une route protégée
+  if (!user && isProtectedRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("redirect", request.nextUrl.pathname);
     return NextResponse.redirect(url);
   }
 
-  // Rediriger vers dashboard si authentifié et sur page auth
+  // Rediriger vers dashboard si authentifié et sur une page d'auth
   if (user && isAuthRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
@@ -67,4 +74,3 @@ export async function updateSession(request: NextRequest) {
 
   return supabaseResponse;
 }
-

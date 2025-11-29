@@ -67,10 +67,10 @@ export function Navbar() {
           <div className="flex items-center gap-4">
             <DarkModeToggle />
             <Link
-              href="/dashboard"
+              href="/login"
               className="text-[12px] bg-black text-white dark:bg-white dark:text-black px-4 py-1.5 rounded-full font-medium hover:scale-[1.02] active:scale-[0.98] transition-transform"
             >
-              Démo
+              Connexion
             </Link>
           </div>
 
@@ -109,10 +109,10 @@ export function Navbar() {
                 ))}
                 <div className="pt-3 space-y-2">
                   <Link
-                    href="/dashboard"
+                    href="/login"
                     className="block w-full text-center text-[12px] bg-black text-white dark:bg-white dark:text-black px-4 py-1.5 rounded-full font-medium"
                   >
-                    Démo
+                    Connexion
                   </Link>
                 </div>
               </div>

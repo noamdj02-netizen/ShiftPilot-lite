@@ -1,196 +1,185 @@
 'use client'
 
+import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
+import { useAuth } from '@/hooks/useAuth'
+import { employeeService } from '@/lib/services'
+import { toast } from 'sonner'
+
 export default function EmployeesPage() {
-  const employees = [
-    {
-      id: 'E001',
-      name: 'Léa Dubois',
-      role: 'Serveuse',
-      department: 'Salle',
-      status: 'Actif',
-      type: 'CDI',
-      hours: '35h',
-      joined: '12/01/2021',
-      img: 'https://i.pravatar.cc/150?u=4',
-    },
-    {
-      id: 'E002',
-      name: 'Julien Petit',
-      role: 'Manager',
-      department: 'Direction',
-      status: 'En congés',
-      type: 'CDI',
-      hours: '39h',
-      joined: '03/05/2019',
-      img: 'https://i.pravatar.cc/150?u=5',
-    },
-    {
-      id: 'E003',
-      name: 'Chloé Martin',
-      role: 'Barista',
-      department: 'Bar',
-      status: 'Actif',
-      type: 'CDD',
-      hours: '25h',
-      joined: '10/09/2022',
-      img: 'https://i.pravatar.cc/150?u=6',
-    },
-    {
-      id: 'E004',
-      name: 'Marc Lefebvre',
-      role: 'Cuisinier',
-      department: 'Cuisine',
-      status: 'Inactif',
-      type: 'Extra',
-      hours: '0h',
-      joined: '15/11/2023',
-      img: 'https://i.pravatar.cc/150?u=7',
-    },
-    {
-      id: 'E005',
-      name: 'Thomas Bernard',
-      role: 'Plongeur',
-      department: 'Cuisine',
-      status: 'Actif',
-      type: 'CDI',
-      hours: '35h',
-      joined: '20/02/2022',
-      img: 'https://i.pravatar.cc/150?u=8',
-    },
-  ]
+  const { restaurant } = useAuth()
+  const [searchQuery, setSearchQuery] = useState('')
+  const [employees, setEmployees] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    if (!restaurant?.id) return
+
+    const loadEmployees = async () => {
+      try {
+        const data = await employeeService.getEmployees(restaurant.id)
+        setEmployees(data || [])
+      } catch (error) {
+        console.error('Error loading employees:', error)
+        toast.error('Erreur lors du chargement des employés')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    loadEmployees()
+  }, [restaurant?.id])
+  
+  const filteredEmployees = employees.filter(emp => {
+    const fullName = `${emp.first_name || ''} ${emp.last_name || ''}`.toLowerCase()
+    return fullName.includes(searchQuery.toLowerCase()) || 
+           emp.role?.toLowerCase().includes(searchQuery.toLowerCase())
+  })
 
   return (
-    <div className="flex flex-col w-full min-h-[calc(100vh-4rem)] bg-background-light dark:bg-background-dark text-slate-900 dark:text-white">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="px-6 py-5 bg-white dark:bg-surface-dark border-b border-steel-dark/30 flex items-center justify-between sticky top-0 z-10">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold">Collaborateurs</h1>
-          <p className="text-xs text-slate-500 mt-1">Gestion administrative et contractuelle</p>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+            Collaborateurs
+          </h1>
+          <p className="text-slate-500 dark:text-slate-400">
+            Gérez vos équipes, contrats et accès
+          </p>
         </div>
-        <div className="flex gap-3">
-          <button className="px-4 py-2 border border-steel-dark/50 rounded text-sm font-medium hover:bg-white/5 transition flex items-center gap-2">
-            <span className="material-symbols-outlined text-sm">upload</span> Import CSV
+        <div className="flex items-center gap-3">
+          <button className="px-4 py-2 text-sm font-medium text-slate-700 dark:text-white border border-slate-200 dark:border-white/10 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors flex items-center gap-2">
+            <span className="material-symbols-outlined text-[20px]">upload</span>
+            Import CSV
           </button>
-          <button className="px-4 py-2 bg-accent text-white rounded text-sm font-medium hover:bg-accent/90 transition flex items-center gap-2 shadow-sm">
-            <span className="material-symbols-outlined text-sm">add</span> Nouveau
+          <button className="px-4 py-2 text-sm font-medium bg-slate-900 dark:bg-white text-white dark:text-black rounded-xl hover:opacity-90 transition-opacity flex items-center gap-2 shadow-sm">
+            <span className="material-symbols-outlined text-[20px]">add</span>
+            Nouveau
           </button>
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="px-6 py-4 flex flex-wrap items-center gap-3">
-        <div className="relative">
-          <span className="material-symbols-outlined absolute left-2.5 top-2 text-slate-400 text-lg">search</span>
+      {/* Filters & Search */}
+      <div className="bg-white dark:bg-[#1C1C1E] p-4 rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm flex flex-col md:flex-row items-center gap-4">
+        <div className="relative flex-1 w-full">
+          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">search</span>
           <input
             type="text"
-            placeholder="Rechercher (Nom, ID, Rôle)..."
-            className="pl-9 pr-4 py-1.5 bg-white dark:bg-surface-dark border border-slate-200 dark:border-steel-dark/30 rounded text-sm w-72 focus:ring-1 focus:ring-accent focus:border-accent"
+            placeholder="Rechercher un employé par nom, rôle..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-sm text-slate-900 dark:text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
           />
         </div>
-        <div className="h-8 w-px bg-steel-dark/30 mx-2"></div>
-        <select className="bg-white dark:bg-surface-dark border border-slate-200 dark:border-steel-dark/30 rounded px-3 py-1.5 text-sm focus:ring-accent">
-          <option>Tous les départements</option>
-          <option>Salle</option>
-          <option>Cuisine</option>
-          <option>Bar</option>
-        </select>
-        <select className="bg-white dark:bg-surface-dark border border-slate-200 dark:border-steel-dark/30 rounded px-3 py-1.5 text-sm focus:ring-accent">
-          <option>Statut: Tous</option>
-          <option>Actif</option>
-          <option>Inactif</option>
-        </select>
+        <div className="flex items-center gap-3 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
+          <select className="px-4 py-2 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-sm text-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent/50 cursor-pointer">
+            <option>Tous les départements</option>
+            <option>Salle</option>
+            <option>Cuisine</option>
+            <option>Bar</option>
+          </select>
+          <select className="px-4 py-2 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-sm text-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent/50 cursor-pointer">
+            <option>Tous les statuts</option>
+            <option>Actif</option>
+            <option>En congés</option>
+            <option>Inactif</option>
+          </select>
+        </div>
       </div>
 
-      {/* Data Grid */}
-      <div className="flex-1 overflow-auto px-6 pb-6">
-        <div className="bg-white dark:bg-surface-dark border border-steel-dark/30 rounded-lg overflow-hidden shadow-sm">
+      {/* Employees Grid */}
+      <div className="bg-white dark:bg-[#1C1C1E] border border-slate-200 dark:border-white/5 rounded-2xl shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 dark:bg-[#151e32] border-b border-steel-dark/30">
+            <thead className="bg-slate-50/50 dark:bg-white/5 border-b border-slate-200 dark:border-white/5">
               <tr>
-                <th className="px-6 py-3 font-semibold text-slate-600 dark:text-slate-300 uppercase text-xs tracking-wider">
-                  Identité
-                </th>
-                <th className="px-6 py-3 font-semibold text-slate-600 dark:text-slate-300 uppercase text-xs tracking-wider">
-                  Poste
-                </th>
-                <th className="px-6 py-3 font-semibold text-slate-600 dark:text-slate-300 uppercase text-xs tracking-wider">
-                  Contrat
-                </th>
-                <th className="px-6 py-3 font-semibold text-slate-600 dark:text-slate-300 uppercase text-xs tracking-wider">
-                  Statut
-                </th>
-                <th className="px-6 py-3 font-semibold text-slate-600 dark:text-slate-300 uppercase text-xs tracking-wider">
-                  Actions
-                </th>
+                <th className="px-6 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-xs">Employé</th>
+                <th className="px-6 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-xs">Rôle</th>
+                <th className="px-6 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-xs">Contrat</th>
+                <th className="px-6 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-xs">Statut</th>
+                <th className="px-6 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-xs text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-steel-dark/20">
-              {employees.map((emp, i) => (
-                <tr key={i} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
+            <tbody className="divide-y divide-slate-200 dark:divide-white/5">
+              {isLoading ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
+                    Chargement...
+                  </td>
+                </tr>
+              ) : filteredEmployees.length === 0 ? (
+                 <tr>
+                  <td colSpan={5} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
+                    Aucun employé trouvé.
+                  </td>
+                </tr>
+              ) : (
+                filteredEmployees.map((emp, i) => (
+                <motion.tr 
+                  key={emp.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group"
+                >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <img
-                        src={emp.img}
-                        alt={emp.name}
-                        className="size-9 rounded-full object-cover border border-steel-dark/30"
-                      />
+                      <div className={`size-10 rounded-full ${emp.color || 'bg-blue-500'} flex items-center justify-center text-white text-sm font-bold shadow-sm`}>
+                        {emp.initials || (emp.first_name?.[0] || '') + (emp.last_name?.[0] || '')}
+                      </div>
                       <div>
-                        <p className="font-medium text-slate-900 dark:text-white">{emp.name}</p>
-                        <p className="text-xs text-slate-500">ID: {emp.id}</p>
+                        <p className="font-medium text-slate-900 dark:text-white">{emp.first_name} {emp.last_name}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">{emp.email}</p>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <p className="text-slate-700 dark:text-slate-300">{emp.role}</p>
-                    <p className="text-xs text-slate-500">{emp.department}</p>
+                    <div className="flex flex-col">
+                      <span className="text-slate-900 dark:text-white font-medium">{emp.role}</span>
+                      <span className="text-xs text-slate-500 dark:text-slate-400">--</span>
+                    </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 border border-steel-dark/30 rounded text-xs font-mono text-slate-500">
-                        {emp.type}
+                      <span className="px-2 py-1 border border-slate-200 dark:border-white/10 rounded text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-white/5">
+                        CDI
                       </span>
-                      <span className="text-xs text-slate-500">{emp.hours}</span>
+                      <span className="text-slate-500 dark:text-slate-400">35h</span>
                     </div>
-                    <p className="text-xs text-slate-500 mt-1">Depuis: {emp.joined}</p>
+                    <p className="text-xs text-slate-400 mt-1">Depuis le {new Date(emp.created_at).toLocaleDateString()}</p>
                   </td>
                   <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
-                        emp.status === 'Actif'
-                          ? 'bg-success/10 text-success border-success/20'
-                          : emp.status === 'En congés'
-                          ? 'bg-warning/10 text-warning border-warning/20'
-                          : 'bg-slate-100 dark:bg-white/5 text-slate-500 border-slate-200 dark:border-white/10'
-                      }`}
-                    >
-                      {emp.status}
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                    }`}>
+                      Actif
                     </span>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2 opacity-50 group-hover:opacity-100 transition-opacity">
-                      <button className="p-1 hover:text-accent">
-                        <span className="material-symbols-outlined text-[18px]">edit</span>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button className="p-2 text-slate-400 hover:text-accent hover:bg-accent/10 rounded-lg transition-colors">
+                        <span className="material-symbols-outlined text-[20px]">edit</span>
                       </button>
-                      <button className="p-1 hover:text-accent">
-                        <span className="material-symbols-outlined text-[18px]">visibility</span>
+                      <button className="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg transition-colors">
+                        <span className="material-symbols-outlined text-[20px]">more_vert</span>
                       </button>
                     </div>
                   </td>
-                </tr>
-              ))}
+                </motion.tr>
+              )))}
             </tbody>
           </table>
         </div>
-
-        <div className="mt-4 flex justify-between items-center text-xs text-slate-500">
-          <p>Affichage de 5 sur 42 collaborateurs</p>
-          <div className="flex gap-1">
-            <button className="px-2 py-1 border border-steel-dark/30 rounded hover:bg-white/5 disabled:opacity-50">
-              Précédent
-            </button>
-            <button className="px-2 py-1 border border-steel-dark/30 rounded hover:bg-white/5">Suivant</button>
+        
+        {/* Pagination - Hide if not needed or implement later */}
+        {!isLoading && filteredEmployees.length > 0 && (
+          <div className="px-6 py-4 border-t border-slate-200 dark:border-white/5 flex items-center justify-between bg-slate-50/50 dark:bg-white/5">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              {filteredEmployees.length} employés
+            </p>
           </div>
-        </div>
+        )}
       </div>
     </div>
   )

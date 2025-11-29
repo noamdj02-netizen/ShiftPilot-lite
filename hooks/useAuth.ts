@@ -1,154 +1,114 @@
-"use client";
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+import { supabaseClient as supabase } from '@/lib/supabase/client'
+import { User } from '@supabase/supabase-js'
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
-import { useAuthStore } from "@/stores/authStore";
-import type { User } from "@supabase/supabase-js";
-
-export function useAuth() {
-  const router = useRouter();
-  const { user, profile, isLoading, setUser, setProfile, setLoading, signOut } =
-    useAuthStore();
-  const supabase = createClient();
-
-  useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-      if (session?.user) {
-        fetchProfile(session.user.id);
-      }
-    });
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id);
-      } else {
-        setProfile(null);
-      }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
-
-  const fetchProfile = async (userId: string) => {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", userId)
-      .single();
-
-    if (error) {
-      console.error("Error fetching profile:", error);
-      return;
-    }
-
-    setProfile(data);
-  };
-
-  const signIn = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      console.error("SignIn error:", error);
-      throw error;
-    }
-    
-    if (data.user) {
-      setUser(data.user);
-      // Attendre un peu pour que la session soit synchronisée
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      await fetchProfile(data.user.id);
-    }
-    
-    return data;
-  };
-
-  const signUp = async (email: string, password: string, metadata?: Record<string, unknown>) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: metadata,
-      },
-    });
-
-    if (error) {
-      console.error("SignUp error:", error);
-      throw error;
-    }
-
-    // Vérifier que le profil a été créé
-    if (data.user) {
-      // Attendre un peu pour que le trigger s'exécute
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", data.user.id)
-        .single();
-
-      if (profileError && profileError.code !== "PGRST116") {
-        // PGRST116 = no rows returned, ce qui est normal si le trigger n'a pas encore tourné
-        console.error("Profile fetch error:", profileError);
-        // Ne pas throw ici car l'utilisateur a été créé, juste le profil manque
-      } else if (profile) {
-        setProfile(profile);
-      }
-    }
-
-    return data;
-  };
-
-  const resetPassword = async (email: string) => {
-    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    });
-
-    if (error) throw error;
-    return data;
-  };
-
-  const updatePassword = async (newPassword: string) => {
-    const { data, error } = await supabase.auth.updateUser({
-      password: newPassword,
-    });
-
-    if (error) throw error;
-    return data;
-  };
-
-  const handleSignOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
-    signOut();
-    router.push("/login");
-  };
-
-  return {
-    user,
-    profile,
-    isLoading,
-    signIn,
-    signUp,
-    signOut: handleSignOut,
-    resetPassword,
-    updatePassword,
-    isAuthenticated: !!user,
-    isOwner: profile?.role === "owner",
-    isManager: profile?.role === "manager" || profile?.role === "owner",
-  };
+interface AuthState {
+  user: User | null
+  profile: any | null
+  restaurant: any | null
+  isLoading: boolean
+  setUser: (user: User | null) => void
+  setProfile: (profile: any) => void
+  setRestaurant: (restaurant: any) => void
+  signIn: (email: string, pass: string) => Promise<void>
+  signUp: (email: string, pass: string, firstName: string, lastName: string, restaurantName: string) => Promise<void>
+  signOut: () => Promise<void>
+  resetPassword: (email: string) => Promise<void>
+  updatePassword: (password: string) => Promise<void>
 }
 
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      user: null,
+      profile: null,
+      restaurant: null,
+      isLoading: true,
+      setUser: (user) => set({ user }),
+      setProfile: (profile) => set({ profile }),
+      setRestaurant: (restaurant) => set({ restaurant }),
+      
+      signIn: async (email, pass) => {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password: pass,
+        })
+        if (error) throw error
+      },
+
+      signUp: async (email, pass, firstName, lastName, restaurantName) => {
+        // 1. Sign up the user
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+          email,
+          password: pass,
+          options: {
+            data: {
+              first_name: firstName,
+              last_name: lastName,
+              role: 'employer', // Default role for new signups is employer
+            },
+          },
+        })
+
+        if (authError) throw authError
+        if (!authData.user) throw new Error('No user created')
+
+        // 2. Create the restaurant (Tenant)
+        // Ideally this should be done via a trigger or a secure RPC to ensure atomicity,
+        // but for simplicity in client-side initiation we do it here. 
+        // RLS policies must allow authenticated users to create a restaurant.
+        
+        // NOTE: Since the profile is created via trigger on auth.users insert (see schema.sql),
+        // we just need to create the restaurant and link it.
+        
+        const { data: restaurantData, error: restaurantError } = await supabase
+          .from('restaurants')
+          .insert({ name: restaurantName })
+          .select()
+          .single()
+
+        if (restaurantError) throw restaurantError
+
+        // 3. Update the profile with the restaurant_id
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({ restaurant_id: restaurantData.id })
+          .eq('id', authData.user.id)
+
+        if (profileError) throw profileError
+      },
+
+      signOut: async () => {
+        await supabase.auth.signOut()
+        set({ user: null, profile: null, restaurant: null })
+      },
+
+      resetPassword: async (email) => {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/reset-password`,
+        })
+        if (error) throw error
+      },
+
+      updatePassword: async (password) => {
+        const { error } = await supabase.auth.updateUser({ password })
+        if (error) throw error
+      },
+    }),
+    {
+      name: 'auth-storage',
+      partialize: (state) => ({ user: state.user, profile: state.profile, restaurant: state.restaurant }),
+    }
+  )
+)
+
+// Hook to initialize auth state listener
+export const useAuth = () => {
+  const store = useAuthStore()
+  
+  // You might want to add a useEffect here to listen to onAuthStateChange
+  // and update the store accordingly, fetching profile and restaurant data.
+
+  return store
+}

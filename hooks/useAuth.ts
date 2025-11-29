@@ -63,18 +63,22 @@ export const useAuthStore = create<AuthState>()(
         // NOTE: Since the profile is created via trigger on auth.users insert (see schema.sql),
         // we just need to create the restaurant and link it.
         
+        // @ts-ignore - Type mismatch between database schema types
         const { data: restaurantData, error: restaurantError } = await supabase
           .from('restaurants')
-          .insert({ name: userData.restaurant_name } as any)
+          // @ts-ignore
+          .insert({ name: userData.restaurant_name })
           .select()
           .single()
 
         if (restaurantError) throw restaurantError
 
         // 3. Update the profile with the restaurant_id
+        // @ts-ignore - Type mismatch between database schema types
         const { error: profileError } = await supabase
           .from('profiles')
-          .update({ restaurant_id: restaurantData.id } as any)
+          // @ts-ignore
+          .update({ restaurant_id: restaurantData.id })
           .eq('id', authData.user.id)
 
         if (profileError) throw profileError

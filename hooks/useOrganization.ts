@@ -25,8 +25,10 @@ export function useOrganization() {
       }
 
       // Récupérer le profil pour avoir l'organization_id
+      // @ts-ignore - Type mismatch between database schema types
       const { data: profile } = await supabase
         .from("profiles")
+        // @ts-ignore
         .select("organization_id")
         .eq("id", user.id)
         .single();

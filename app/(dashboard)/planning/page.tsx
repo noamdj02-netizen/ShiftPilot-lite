@@ -154,11 +154,11 @@ export default function PlanningPage() {
 
              try {
                const savedShift: any = await shiftService.createShift({
-                 restaurant_id: restaurant?.id,
-                 employee_id: empId,
-                 start_time: startTime.toISOString(),
-                 end_time: endTime.toISOString(),
-                 type: shift.type,
+                 organization_id: restaurant?.id,
+                 profile_id: empId,
+                 date: shiftDate.toISOString().split('T')[0],
+                 start_time: startTime.toTimeString().slice(0, 8),
+                 end_time: endTime.toTimeString().slice(0, 8),
                  notes: 'Auto-généré'
                })
                // Update state with real ID to prevent duplicate saves

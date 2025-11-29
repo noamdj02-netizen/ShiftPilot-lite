@@ -1,5 +1,5 @@
 import { supabaseClient as supabase } from '@/lib/supabase/client'
-import { Database } from '@/lib/types/database.types'
+import { Database } from '@/types/database'
 
 export type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row']
 export type Enums<T extends keyof Database['public']['Enums']> = Database['public']['Enums'][T]
@@ -8,8 +8,8 @@ export type Enums<T extends keyof Database['public']['Enums']> = Database['publi
 
 export const shiftService = {
   async getShifts(restaurantId: string, startDate: Date, endDate: Date) {
-    const { data, error } = await supabase
-      .from('shifts')
+    const { data, error } = await (supabase
+      .from('shifts') as any)
       .select('*, employees(first_name, last_name, color, initials)')
       .eq('restaurant_id', restaurantId)
       .gte('start_time', startDate.toISOString())
@@ -21,8 +21,8 @@ export const shiftService = {
   },
 
   async createShift(shift: Database['public']['Tables']['shifts']['Insert']) {
-    const { data, error } = await supabase
-      .from('shifts')
+    const { data, error } = await (supabase
+      .from('shifts') as any)
       .insert(shift)
       .select()
       .single()
@@ -32,8 +32,8 @@ export const shiftService = {
   },
 
   async updateShift(id: string, updates: Database['public']['Tables']['shifts']['Update']) {
-    const { data, error } = await supabase
-      .from('shifts')
+    const { data, error } = await (supabase
+      .from('shifts') as any)
       .update(updates)
       .eq('id', id)
       .select()
@@ -44,8 +44,8 @@ export const shiftService = {
   },
 
   async deleteShift(id: string) {
-    const { error } = await supabase
-      .from('shifts')
+    const { error } = await (supabase
+      .from('shifts') as any)
       .delete()
       .eq('id', id)
 
@@ -57,8 +57,8 @@ export const shiftService = {
 
 export const employeeService = {
   async getEmployees(restaurantId: string) {
-    const { data, error } = await supabase
-      .from('employees')
+    const { data, error } = await (supabase
+      .from('employees') as any)
       .select('*')
       .eq('restaurant_id', restaurantId)
       .order('first_name', { ascending: true })
@@ -67,9 +67,9 @@ export const employeeService = {
     return data
   },
 
-  async createEmployee(employee: Database['public']['Tables']['employees']['Insert']) {
-    const { data, error } = await supabase
-      .from('employees')
+  async createEmployee(employee: any) {
+    const { data, error } = await (supabase
+      .from('employees') as any)
       .insert(employee)
       .select()
       .single()
@@ -78,9 +78,9 @@ export const employeeService = {
     return data
   },
 
-  async updateEmployee(id: string, updates: Database['public']['Tables']['employees']['Update']) {
-    const { data, error } = await supabase
-      .from('employees')
+  async updateEmployee(id: string, updates: any) {
+    const { data, error } = await (supabase
+      .from('employees') as any)
       .update(updates)
       .eq('id', id)
       .select()
@@ -91,8 +91,8 @@ export const employeeService = {
   },
 
   async getEmployeeByProfileId(profileId: string) {
-    const { data, error } = await supabase
-      .from('employees')
+    const { data, error } = await (supabase
+      .from('employees') as any)
       .select('*')
       .eq('profile_id', profileId)
       .single()
@@ -113,8 +113,8 @@ export const employeeService = {
 
 export const messageService = {
   async getMessages(restaurantId: string, limit = 50) {
-    const { data, error } = await supabase
-      .from('messages')
+    const { data, error } = await (supabase
+      .from('messages') as any)
       .select('*, sender:profiles(first_name, last_name, avatar_url)')
       .eq('restaurant_id', restaurantId)
       .order('created_at', { ascending: false })
@@ -124,9 +124,9 @@ export const messageService = {
     return data.reverse() // Return in chronological order for chat UI
   },
 
-  async sendMessage(message: Database['public']['Tables']['messages']['Insert']) {
-    const { data, error } = await supabase
-      .from('messages')
+  async sendMessage(message: any) {
+    const { data, error } = await (supabase
+      .from('messages') as any)
       .insert(message)
       .select()
       .single()
@@ -136,7 +136,7 @@ export const messageService = {
   },
 
   subscribeToMessages(restaurantId: string, callback: (payload: any) => void) {
-    return supabase
+    return (supabase as any)
       .channel(`chat:${restaurantId}`)
       .on(
         'postgres_changes',
@@ -156,8 +156,8 @@ export const messageService = {
 
 export const timeOffService = {
   async getRequests(restaurantId: string) {
-    const { data, error } = await supabase
-      .from('time_off_requests')
+    const { data, error } = await (supabase
+      .from('time_off_requests') as any)
       .select('*, employee:employees(first_name, last_name)')
       .eq('restaurant_id', restaurantId)
       .order('created_at', { ascending: false })
@@ -167,8 +167,8 @@ export const timeOffService = {
   },
 
   async getEmployeeRequests(employeeId: string) {
-    const { data, error } = await supabase
-      .from('time_off_requests')
+    const { data, error } = await (supabase
+      .from('time_off_requests') as any)
       .select('*')
       .eq('employee_id', employeeId)
       .order('created_at', { ascending: false })
@@ -177,9 +177,9 @@ export const timeOffService = {
     return data
   },
 
-  async createRequest(request: Database['public']['Tables']['time_off_requests']['Insert']) {
-    const { data, error } = await supabase
-      .from('time_off_requests')
+  async createRequest(request: any) {
+    const { data, error } = await (supabase
+      .from('time_off_requests') as any)
       .insert(request)
       .select()
       .single()
@@ -189,8 +189,8 @@ export const timeOffService = {
   },
 
   async updateStatus(id: string, status: 'approved' | 'rejected', responseNote?: string) {
-    const { data, error } = await supabase
-      .from('time_off_requests')
+    const { data, error } = await (supabase
+      .from('time_off_requests') as any)
       .update({ status, response_note: responseNote })
       .eq('id', id)
       .select()

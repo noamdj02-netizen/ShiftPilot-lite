@@ -1,9 +1,13 @@
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.EMAIL_API_KEY)
+const resend = process.env.EMAIL_API_KEY ? new Resend(process.env.EMAIL_API_KEY) : null
 
 export const emailService = {
   async sendPlanning(to: string, planningHtml: string) {
+    if (!resend) {
+      console.warn('EMAIL_API_KEY not configured, skipping email send')
+      return { success: false, error: 'Email service not configured' }
+    }
     try {
       await resend.emails.send({
         from: 'ShiftPilot <onboarding@resend.dev>', // Update with verified domain
@@ -19,6 +23,10 @@ export const emailService = {
   },
 
   async sendInvite(to: string, restaurantName: string, inviteLink: string) {
+    if (!resend) {
+      console.warn('EMAIL_API_KEY not configured, skipping email send')
+      return { success: false, error: 'Email service not configured' }
+    }
     try {
       await resend.emails.send({
         from: 'ShiftPilot <onboarding@resend.dev>',

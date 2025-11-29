@@ -25,7 +25,7 @@ export interface Employee {
 }
 
 export interface Shift {
-  id: string
+  id?: string
   start: string
   end: string
   type: 'work' | 'off' | 'admin' | 'kitchen'

@@ -121,7 +121,7 @@ export function Hero() {
             Commencer
           </Link>
           <button className="h-12 px-8 rounded-full text-blue-600 dark:text-blue-400 font-medium text-lg hover:bg-blue-50 dark:hover:bg-white/5 transition-colors flex items-center gap-2">
-            Voir le film <span className="material-symbols-outlined text-xl">play_circle</span>
+            Voir la démo <span className="material-symbols-outlined text-xl">play_circle</span>
           </button>
         </motion.div>
       </div>
@@ -189,64 +189,86 @@ export function Hero() {
           </div>
         </motion.div>
 
-        {/* Hardware Frame - Enhanced */}
+          {/* Hardware Frame - Enhanced */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.5 }}
-          className="relative rounded-[2rem] p-2 bg-gradient-to-b from-black/5 to-black/20 dark:from-white/10 dark:to-white/5 backdrop-blur-2xl border border-black/5 dark:border-white/10 shadow-2xl"
+          className="relative rounded-[2rem] p-2 bg-gradient-to-b from-black/5 to-black/20 dark:from-white/10 dark:to-white/5 backdrop-blur-2xl border border-black/5 dark:border-white/10 shadow-2xl group"
         >
           {/* Glow effect */}
-          <div className="absolute -inset-1 bg-gradient-to-r from-accent/20 via-primary/20 to-accent/20 rounded-[2rem] blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <motion.div
+            className="absolute -inset-1 bg-gradient-to-r from-accent/20 via-primary/20 to-accent/20 rounded-[2rem] blur-xl"
+            animate={{ opacity: [0, 0.3, 0] }}
+            transition={{ duration: 3, repeat: Infinity }}
+          />
           
           {/* Screen Content */}
-          <div className="relative rounded-3xl overflow-hidden bg-[#F2F2F7] dark:bg-[#1C1C1E] aspect-[16/10] border border-black/5 dark:border-white/5 shadow-inner">
-            {/* REAL DASHBOARD UI */}
-            <div className="absolute inset-0 p-4 md:p-6 flex flex-col gap-3 md:gap-4 overflow-hidden">
-              {/* Animated background particles */}
-              <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                {[...Array(6)].map((_, i) => (
-                  <motion.div
-                    key={i}
-                    className="absolute rounded-full bg-accent/10"
-                    style={{
-                      width: Math.random() * 60 + 20,
-                      height: Math.random() * 60 + 20,
-                      left: `${Math.random() * 100}%`,
-                      top: `${Math.random() * 100}%`,
-                    }}
-                    animate={{
-                      y: [0, -30, 0],
-                      x: [0, Math.random() * 20 - 10, 0],
-                      opacity: [0.3, 0.6, 0.3],
-                      scale: [1, 1.2, 1],
-                    }}
-                    transition={{
-                      duration: 4 + Math.random() * 2,
-                      repeat: Infinity,
-                      delay: Math.random() * 2,
-                    }}
-                  />
-                ))}
-              </div>
-
-              {/* Header - Enhanced with dynamic title */}
+          <div className="relative rounded-3xl overflow-hidden bg-white dark:bg-[#1C1C1E] aspect-[16/10] border border-black/5 dark:border-white/5 shadow-inner">
+            {/* REAL DASHBOARD UI with Sidebar */}
+            <div className="absolute inset-0 flex overflow-hidden">
+              {/* Sidebar */}
               <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.6 }}
-                className="relative flex items-center justify-between mb-2"
+                className="w-16 md:w-20 bg-slate-50 dark:bg-[#0F172A] border-r border-slate-200 dark:border-slate-800 flex flex-col items-center py-4 gap-6"
               >
-                <div className="flex items-center gap-3">
-                  <motion.div
-                    className="flex items-center gap-2"
-                    whileHover={{ scale: 1.05 }}
-                  >
-                    <div className="p-1.5 rounded-lg bg-gradient-to-br from-accent to-primary shadow-sm">
-                      <span className="material-symbols-outlined text-white text-xs">
-                        {activeView === 'dashboard' ? 'dashboard' : activeView === 'planning' ? 'calendar_month' : 'group'}
-                      </span>
-                    </div>
+                {/* Logo */}
+                <div className="text-xs md:text-sm font-bold text-slate-900 dark:text-white writing-vertical-rl rotate-180">
+                  SHIFTPILOT
+                </div>
+                
+                {/* Navigation */}
+                <div className="flex flex-col gap-2 flex-1">
+                  {[
+                    { icon: 'dashboard', label: 'Tableau de bord', view: 'dashboard' as DemoView },
+                    { icon: 'calendar_month', label: 'Planning', view: 'planning' as DemoView },
+                    { icon: 'group', label: 'Employés', view: 'employees' as DemoView },
+                    { icon: 'schedule', label: 'Disponibilités', view: 'planning' as DemoView },
+                    { icon: 'verified', label: 'Conformité', view: 'dashboard' as DemoView },
+                  ].map((item, idx) => {
+                    const isActive = activeView === item.view
+                    return (
+                      <motion.button
+                        key={idx}
+                        onClick={() => setActiveView(item.view)}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                        className={`w-10 h-10 rounded-lg flex items-center justify-center cursor-pointer transition-colors ${
+                          isActive
+                            ? 'bg-accent/20 text-accent'
+                            : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                        }`}
+                        title={item.label}
+                      >
+                        <span className="material-symbols-outlined text-xl">{item.icon}</span>
+                      </motion.button>
+                    )
+                  })}
+                </div>
+
+                {/* Settings */}
+                <motion.button
+                  whileHover={{ scale: 1.1, rotate: 90 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-10 h-10 rounded-lg flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors"
+                  title="Paramètres"
+                >
+                  <span className="material-symbols-outlined text-xl">settings</span>
+                </motion.button>
+              </motion.div>
+
+              {/* Main Content */}
+              <div className="flex-1 flex flex-col overflow-hidden">
+                {/* Header */}
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.7 }}
+                  className="px-4 md:px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between"
+                >
+                  <div>
                     <AnimatePresence mode="wait">
                       <motion.h2
                         key={activeView}
@@ -254,439 +276,227 @@ export function Hero() {
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: 10 }}
                         transition={{ duration: 0.2 }}
-                        className="text-sm md:text-base font-bold text-slate-900 dark:text-white"
+                        className="text-lg md:text-xl font-bold text-slate-900 dark:text-white"
                       >
                         {activeView === 'dashboard' ? 'Tableau de bord' : activeView === 'planning' ? 'Planning' : 'Collaborateurs'}
                       </motion.h2>
                     </AnimatePresence>
-                  </motion.div>
-                  <div className="h-4 w-px bg-slate-300 dark:bg-steel-dark hidden md:block"></div>
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    className="hidden md:flex items-center gap-1.5 bg-gradient-to-r from-slate-100 to-slate-50 dark:from-background-dark dark:to-surface-dark px-2.5 py-1.5 rounded-lg text-xs border border-steel-dark/20 shadow-sm"
-                  >
-                    <span className="material-symbols-outlined text-xs text-accent">store</span>
-                    <span className="text-slate-700 dark:text-slate-300 font-medium">Paris - Le Marais</span>
-                  </motion.div>
-                </div>
-                <motion.div
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  className="size-6 md:size-8 rounded-full bg-gradient-to-br from-accent to-primary flex items-center justify-center text-white text-xs font-bold shadow-lg cursor-pointer"
-                >
-                  JD
-                </motion.div>
-              </motion.div>
-
-              {/* Dynamic Content based on activeView */}
-              <AnimatePresence mode="wait">
-                {activeView === 'dashboard' && (
-                  <motion.div
-                    key="dashboard"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.3 }}
-                    className="flex-1 flex flex-col gap-3 md:gap-4 overflow-y-auto"
-                  >
-                    {/* KPI Cards - Enhanced with animations */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
-                {[
-                  { 
-                    label: 'CA Aujourd\'hui', 
-                    val: '4,200€', 
-                    delta: '+8.5%', 
-                    trend: 'up', 
-                    sub: 'vs hier',
-                    icon: 'payments',
-                    gradient: 'from-blue-500 to-cyan-500',
-                    bgGradient: 'from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20'
-                  },
-                  { 
-                    label: 'Couverts', 
-                    val: '156', 
-                    delta: '+12%', 
-                    trend: 'up', 
-                    sub: 'Objectif: 140',
-                    icon: 'restaurant',
-                    gradient: 'from-emerald-500 to-teal-500',
-                    bgGradient: 'from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20'
-                  },
-                  { 
-                    label: 'Factures', 
-                    val: '98', 
-                    delta: '+5', 
-                    trend: 'up', 
-                    sub: 'Panier: 42.86€',
-                    icon: 'receipt_long',
-                    gradient: 'from-purple-500 to-pink-500',
-                    bgGradient: 'from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20'
-                  },
-                  { 
-                    label: 'Productivité', 
-                    val: '84.20€', 
-                    delta: '+5.1%', 
-                    trend: 'up', 
-                    sub: 'CA/heure',
-                    icon: 'trending_up',
-                    gradient: 'from-orange-500 to-amber-500',
-                    bgGradient: 'from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/20'
-                  },
-                ].map((stat, idx) => (
-                  <motion.div
-                    key={idx}
-                    initial={{ opacity: 0, y: 20, scale: 0.9 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ 
-                      duration: 0.6, 
-                      delay: 0.7 + idx * 0.1,
-                      type: "spring",
-                      stiffness: 100
-                    }}
-                    whileHover={{ 
-                      scale: 1.05, 
-                      y: -4,
-                      transition: { duration: 0.2 }
-                    }}
-                    onHoverStart={() => setHoveredCard(idx)}
-                    onHoverEnd={() => setHoveredCard(null)}
-                    className={`relative bg-white dark:bg-surface-dark p-3 md:p-4 rounded-xl border border-steel-dark/30 shadow-sm overflow-hidden group cursor-pointer ${
-                      hoveredCard === idx ? 'shadow-lg shadow-accent/20 border-accent/50' : ''
-                    }`}
-                  >
-                    {/* Animated background gradient */}
-                    <motion.div
-                      className={`absolute inset-0 bg-gradient-to-br ${stat.bgGradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
-                    />
-                    
-                    {/* Icon with gradient */}
-                    <div className="relative flex items-start justify-between mb-2">
-                      <motion.div
-                        className={`p-1.5 rounded-lg bg-gradient-to-br ${stat.gradient} shadow-sm`}
-                        whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
-                        transition={{ duration: 0.5 }}
-                      >
-                        <span className="material-symbols-outlined text-white text-sm md:text-base">
-                          {stat.icon}
-                        </span>
-                      </motion.div>
-                      <motion.span
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ delay: 0.9 + idx * 0.1, type: "spring" }}
-                        className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
-                          stat.trend === 'up' 
-                            ? 'bg-success/20 text-success border border-success/30' 
-                            : 'bg-warning/20 text-warning border border-warning/30'
-                        }`}
-                      >
-                        {stat.delta}
-                      </motion.span>
-                    </div>
-
-                    <div className="relative">
-                      <p className="text-[10px] md:text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">
-                        {stat.label}
-                      </p>
-                      <motion.div 
-                        className="flex items-baseline gap-1.5 mb-1"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 1 + idx * 0.1 }}
-                      >
-                        <p className="text-lg md:text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-200 bg-clip-text text-transparent">
-                          <AnimatedNumber value={stat.val} delay={0.5 + idx * 0.15} />
-                        </p>
-                      </motion.div>
-                      {stat.sub && (
-                        <motion.p 
-                          className="text-[10px] text-slate-500 dark:text-slate-400"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ delay: 1.2 + idx * 0.1 }}
-                        >
-                          {stat.sub}
-                        </motion.p>
-                      )}
-                    </div>
-
-                    {/* Shine effect on hover */}
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"
-                      style={{ width: '200%' }}
-                    />
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Chart Area - Enhanced */}
-              <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-3 min-h-0">
-                {/* Main Chart - Enhanced */}
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: 1.1 }}
-                  whileHover={{ scale: 1.02 }}
-                  className="md:col-span-2 bg-white dark:bg-surface-dark rounded-xl border border-steel-dark/30 shadow-lg p-3 md:p-4 relative overflow-hidden group"
-                >
-                  {/* Animated background */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-cyan-50/50 dark:from-blue-950/10 dark:to-cyan-950/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  
-                  <div className="relative flex justify-between items-center mb-3">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <motion.span
-                          className="material-symbols-outlined text-accent text-base"
-                          animate={{ rotate: [0, 10, -10, 0] }}
-                          transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-                        >
-                          auto_graph
-                        </motion.span>
-                        <h3 className="text-xs md:text-sm font-bold text-slate-900 dark:text-white">Couverts par heure</h3>
-                      </div>
-                      <p className="text-[10px] text-slate-500 hidden md:block">Réel vs Prévision IA</p>
-                    </div>
-                    <div className="flex gap-1">
-                      <motion.div
-                        className="size-2 rounded-full bg-blue-500"
-                        animate={{ scale: [1, 1.2, 1], opacity: [1, 0.7, 1] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                      />
-                      <div className="size-2 rounded-full bg-purple-500/50" />
-                    </div>
+                    <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+                      {activeView === 'dashboard' ? 'Vue d\'ensemble de votre activité' : activeView === 'planning' ? 'Gestion des plannings et shifts' : 'Gestion des équipes'}
+                    </p>
                   </div>
-                  <div className="h-full min-h-[120px] md:min-h-[150px] relative">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart
-                        data={[
-                          { time: '08:00', value: 8, predicted: 10 },
-                          { time: '10:00', value: 25, predicted: 22 },
-                          { time: '12:00', value: 45, predicted: 42 },
-                          { time: '14:00', value: 32, predicted: 35 },
-                          { time: '16:00', value: 18, predicted: 20 },
-                          { time: '18:00', value: 52, predicted: 48 },
-                          { time: '20:00', value: 38, predicted: 40 },
-                        ]}
-                        margin={{ top: 5, right: 5, left: 0, bottom: 0 }}
-                      >
-                        <defs>
-                          <linearGradient id="heroColorVal" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.4} />
-                            <stop offset="50%" stopColor="#3B82F6" stopOpacity={0.2} />
-                            <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
-                          </linearGradient>
-                          <linearGradient id="heroPredicted" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#6C63FF" stopOpacity={0.2} />
-                            <stop offset="95%" stopColor="#6C63FF" stopOpacity={0} />
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} opacity={0.3} />
-                        <XAxis
-                          dataKey="time"
-                          axisLine={false}
-                          tickLine={false}
-                          tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 500 }}
-                          dy={5}
-                        />
-                        <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 500 }} />
-                        <Tooltip
-                          contentStyle={{
-                            backgroundColor: '#1B263B',
-                            borderColor: '#415A77',
-                            borderRadius: '8px',
-                            fontSize: '11px',
-                            padding: '8px 12px',
-                            boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-                          }}
-                          formatter={(value: number) => [`${value} couverts`, '']}
-                          cursor={{ stroke: '#3B82F6', strokeWidth: 2, strokeDasharray: '4 4' }}
-                        />
-                        <Area
-                          name="Réel"
-                          type="monotone"
-                          dataKey="value"
-                          stroke="#3B82F6"
-                          strokeWidth={3}
-                          fillOpacity={1}
-                          fill="url(#heroColorVal)"
-                          animationDuration={1500}
-                          animationBegin={1000}
-                        />
-                        <Area
-                          name="IA"
-                          type="monotone"
-                          dataKey="predicted"
-                          stroke="#6C63FF"
-                          strokeWidth={2.5}
-                          strokeDasharray="5 5"
-                          fill="url(#heroPredicted)"
-                          fillOpacity={0.3}
-                          animationDuration={1500}
-                          animationBegin={1200}
-                        />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </div>
-                </motion.div>
-
-                {/* Side Cards - Enhanced */}
-                <div className="flex flex-col gap-2 md:gap-3">
-                  {/* CA Hebdo Chart */}
-                  <motion.div
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, delay: 1.2 }}
-                    whileHover={{ scale: 1.03, y: -2 }}
-                    className="flex-1 bg-white dark:bg-surface-dark rounded-xl border border-steel-dark/30 shadow-lg p-3 md:p-4 relative overflow-hidden group"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 to-teal-50/50 dark:from-emerald-950/10 dark:to-teal-950/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <div className="relative flex items-center gap-2 mb-2">
-                      <span className="material-symbols-outlined text-emerald-500 text-sm">show_chart</span>
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">CA Hebdo</h4>
-                    </div>
-                    <div className="h-full min-h-[60px] md:min-h-[80px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart
-                          data={[
-                            { day: 'Lun', actual: 4200 },
-                            { day: 'Mar', actual: 3800 },
-                            { day: 'Mer', actual: 4500 },
-                            { day: 'Jeu', actual: 4800 },
-                            { day: 'Ven', actual: 6200 },
-                          ]}
-                        >
-                          <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} opacity={0.3} />
-                          <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 9, fontWeight: 500 }} />
-                          <Tooltip
-                            contentStyle={{
-                              backgroundColor: '#1B263B',
-                              borderColor: '#415A77',
-                              borderRadius: '8px',
-                              fontSize: '10px',
-                              padding: '6px 10px',
-                            }}
-                            formatter={(value: number) => [`${value.toLocaleString()}€`, '']}
-                            cursor={{ fill: 'rgba(59, 130, 246, 0.1)' }}
-                          />
-                          <Bar 
-                            dataKey="actual" 
-                            fill="url(#barGradient)" 
-                            radius={[4, 4, 0, 0]} 
-                            barSize={12}
-                            animationDuration={1500}
-                            animationBegin={1300}
-                          >
-                            <defs>
-                              <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stopColor="#3B82F6" stopOpacity={1} />
-                                <stop offset="100%" stopColor="#60A5FA" stopOpacity={0.8} />
-                              </linearGradient>
-                            </defs>
-                          </Bar>
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </motion.div>
-
-                  {/* Employees Active - Enhanced */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 1.3 }}
-                    whileHover={{ scale: 1.05 }}
-                    className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-surface-dark dark:to-background-dark rounded-xl border border-steel-dark/30 shadow-lg p-3 relative overflow-hidden group"
-                  >
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-accent/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <div className="relative flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-1.5">
-                        <span className="material-symbols-outlined text-accent text-sm">groups</span>
-                        <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">Employés actifs</span>
-                      </div>
-                      <motion.span
-                        className="text-xs font-bold text-accent"
-                        animate={{ scale: [1, 1.1, 1] }}
-                        transition={{ duration: 2, repeat: Infinity, repeatDelay: 2 }}
-                      >
-                        8/12
-                      </motion.span>
-                    </div>
-                    <div className="flex -space-x-1.5">
-                      {['AM', 'BD', 'CL', 'ML', 'TP'].map((initials, i) => (
-                        <motion.div
-                          key={i}
-                          initial={{ scale: 0, rotate: -180 }}
-                          animate={{ scale: 1, rotate: 0 }}
-                          transition={{ 
-                            delay: 1.4 + i * 0.1,
-                            type: "spring",
-                            stiffness: 200
-                          }}
-                          whileHover={{ scale: 1.2, zIndex: 10 }}
-                          className="size-6 rounded-full bg-gradient-to-br from-accent to-primary border-2 border-white dark:border-surface-dark flex items-center justify-center text-[9px] font-bold text-white shadow-md cursor-pointer"
-                        >
-                          {initials}
-                        </motion.div>
-                      ))}
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ delay: 1.9, type: "spring" }}
-                        className="size-6 rounded-full bg-slate-200 dark:bg-slate-700 border-2 border-white dark:border-surface-dark flex items-center justify-center text-[8px] font-bold text-slate-600 dark:text-slate-300 shadow-md"
-                      >
-                        +3
-                      </motion.div>
-                    </div>
-                  </motion.div>
-
-                  {/* Alerts - Enhanced */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 1.4 }}
-                    whileHover={{ scale: 1.03 }}
-                    className="bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-950/20 dark:to-orange-950/20 border border-red-200 dark:border-red-900/30 rounded-xl p-3 relative overflow-hidden group"
-                  >
+                  <div className="flex items-center gap-3">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs md:text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                    >
+                      <span className="text-slate-600 dark:text-slate-300">Semaine 42</span>
+                      <span className="material-symbols-outlined text-sm">expand_more</span>
+                    </motion.button>
                     <motion.div
-                      className="absolute inset-0 bg-red-500/5"
-                      animate={{ opacity: [0.5, 1, 0.5] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    />
-                    <div className="relative flex items-center gap-2 mb-1.5">
-                      <motion.span
-                        className="material-symbols-outlined text-red-500 text-base"
-                        animate={{ rotate: [0, -10, 10, 0] }}
-                        transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 }}
-                      >
-                        warning
-                      </motion.span>
-                      <span className="text-xs font-semibold text-red-700 dark:text-red-400">3 Alertes</span>
-                    </div>
-                    <p className="text-[10px] text-red-600 dark:text-red-400 relative">Violation repos • Heures sup</p>
-                  </motion.div>
-                </div>
-              </div>
+                      whileHover={{ scale: 1.1, rotate: 5 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="size-8 md:size-10 rounded-full bg-accent flex items-center justify-center text-white text-xs font-bold cursor-pointer shadow-lg"
+                    >
+                      AM
                     </motion.div>
-                )}
+                  </div>
+                </motion.div>
 
-                {activeView === 'planning' && (
-                  <motion.div
-                    key="planning"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.3 }}
-                    className="flex-1 overflow-y-auto"
-                  >
-                    <div className="bg-white dark:bg-surface-dark rounded-xl border border-steel-dark/30 shadow-lg p-3 md:p-4 h-full">
+                {/* Dashboard Content */}
+                <div className="flex-1 overflow-y-auto p-4 md:p-6">
+                  <AnimatePresence mode="wait">
+                    {activeView === 'dashboard' && (
+                      <motion.div
+                        key="dashboard"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.3 }}
+                        className="space-y-6 h-full"
+                      >
+                        {/* KPI Cards - Matching image design */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                          {[
+                            { 
+                              label: 'Heures planifiées', 
+                              val: '168h', 
+                              delta: '+12%', 
+                              trend: 'up',
+                              icon: 'schedule',
+                              iconBg: 'bg-purple-100 dark:bg-purple-900/30',
+                              iconColor: 'text-purple-600 dark:text-purple-400'
+                            },
+                            { 
+                              label: 'Coût salarial', 
+                              val: '3 240€', 
+                              delta: '-8%', 
+                              trend: 'down',
+                              icon: 'euro',
+                              iconBg: 'bg-blue-100 dark:bg-blue-900/30',
+                              iconColor: 'text-blue-600 dark:text-blue-400'
+                            },
+                            { 
+                              label: 'Employés actifs', 
+                              val: '12', 
+                              delta: '+2', 
+                              trend: 'up',
+                              icon: 'group',
+                              iconBg: 'bg-orange-100 dark:bg-orange-900/30',
+                              iconColor: 'text-orange-600 dark:text-orange-400'
+                            },
+                            { 
+                              label: 'Shifts créés', 
+                              val: '42', 
+                              delta: '+24%', 
+                              trend: 'up',
+                              icon: 'calendar_month',
+                              iconBg: 'bg-blue-100 dark:bg-blue-900/30',
+                              iconColor: 'text-blue-600 dark:text-blue-400'
+                            },
+                          ].map((stat, idx) => (
+                            <motion.div
+                              key={idx}
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.5, delay: 0.8 + idx * 0.1 }}
+                              whileHover={{ scale: 1.02, y: -2 }}
+                              className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-4 shadow-sm"
+                            >
+                              <div className="flex items-start justify-between mb-3">
+                                <div className={`w-10 h-10 rounded-lg ${stat.iconBg} flex items-center justify-center`}>
+                                  <span className={`material-symbols-outlined ${stat.iconColor} text-xl`}>
+                                    {stat.icon}
+                                  </span>
+                                </div>
+                                <div className={`flex items-center gap-1 text-xs font-semibold ${
+                                  stat.trend === 'up' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+                                }`}>
+                                  {stat.trend === 'up' ? (
+                                    <span className="material-symbols-outlined text-sm">trending_up</span>
+                                  ) : (
+                                    <span className="material-symbols-outlined text-sm">trending_down</span>
+                                  )}
+                                  {stat.delta}
+                                </div>
+                              </div>
+                              <div>
+                                <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">{stat.label}</p>
+                                <p className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">
+                                  {stat.val}
+                                </p>
+                              </div>
+                            </motion.div>
+                          ))}
+                        </div>
+
+                        {/* Weekly Planning Section */}
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.5, delay: 1.2 }}
+                          className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-4 md:p-6 shadow-sm"
+                        >
+                          <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-base md:text-lg font-bold text-slate-900 dark:text-white">Planning de la semaine</h3>
+                            <motion.button
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className="px-3 py-1.5 bg-accent hover:bg-accent/90 text-white rounded-lg text-xs md:text-sm font-medium flex items-center gap-1.5 transition-colors shadow-md hover:shadow-lg"
+                              onClick={(e) => {
+                                e.preventDefault()
+                                // Animation de feedback
+                                const btn = e.currentTarget
+                                btn.style.transform = 'scale(0.95)'
+                                setTimeout(() => {
+                                  btn.style.transform = 'scale(1)'
+                                }, 150)
+                              }}
+                            >
+                              <motion.span
+                                animate={{ rotate: [0, 360] }}
+                                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                                className="material-symbols-outlined text-sm"
+                              >
+                                bolt
+                              </motion.span>
+                              <span className="hidden sm:inline">Générer avec IA</span>
+                              <span className="sm:hidden">IA</span>
+                            </motion.button>
+                          </div>
+                          <div>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">Aperçu des shifts à venir</p>
+                            <div className="space-y-2">
+                              {[
+                                { name: 'Alice Martin', service: 'Service midi', time: '11h-15h', date: 'Lundi 16/10', hours: '4h' },
+                                { name: 'Thomas Bernard', service: 'Service soir', time: '18h-23h', date: 'Mardi 17/10', hours: '5h' },
+                                { name: 'Sophie Dubois', service: 'Service complet', time: '10h-22h', date: 'Mercredi 18/10', hours: '12h' },
+                              ].map((shift, idx) => (
+                                <motion.div
+                                  key={idx}
+                                  initial={{ opacity: 0, x: -10 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                  transition={{ duration: 0.3, delay: 1.3 + idx * 0.1 }}
+                                  className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700"
+                                >
+                                  <div className="size-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-xs font-semibold text-slate-600 dark:text-slate-300">
+                                    {shift.name.split(' ').map(n => n[0]).join('')}
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">{shift.name}</p>
+                                    <p className="text-xs text-slate-600 dark:text-slate-400">
+                                      {shift.service} · {shift.time}
+                                    </p>
+                                  </div>
+                                  <div className="text-right">
+                                    <p className="text-xs font-medium text-slate-900 dark:text-white">{shift.date}</p>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400">{shift.hours}</p>
+                                  </div>
+                                </motion.div>
+                              ))}
+                            </div>
+                          </div>
+                        </motion.div>
+                      </motion.div>
+                    )}
+
+                    {activeView === 'planning' && (
+                      <motion.div
+                        key="planning"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.3 }}
+                        className="h-full"
+                      >
+                        <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm p-4 md:p-6 h-full">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2 text-xs">
-                          <span className="material-symbols-outlined text-accent">chevron_left</span>
+                          <motion.button
+                            whileHover={{ scale: 1.1, x: -2 }}
+                            whileTap={{ scale: 0.9 }}
+                            className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                          >
+                            <span className="material-symbols-outlined text-accent">chevron_left</span>
+                          </motion.button>
                           <span className="font-semibold">Semaine 29 (15-21 Juil)</span>
-                          <span className="material-symbols-outlined text-accent">chevron_right</span>
+                          <motion.button
+                            whileHover={{ scale: 1.1, x: 2 }}
+                            whileTap={{ scale: 0.9 }}
+                            className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                          >
+                            <span className="material-symbols-outlined text-accent">chevron_right</span>
+                          </motion.button>
                         </div>
-                        <button className="px-2 py-1 bg-accent text-white rounded text-[10px] font-medium">
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="px-2 py-1 bg-accent text-white rounded text-[10px] font-medium hover:bg-accent/90 transition-colors"
+                        >
                           <span className="material-symbols-outlined text-xs align-middle mr-1">magic_button</span>
                           IA
-                        </button>
+                        </motion.button>
                       </div>
                       <div className="overflow-x-auto">
                         <div className="min-w-[600px] text-[10px]">
@@ -727,30 +537,41 @@ export function Hero() {
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </motion.div>
-                )}
+                        </div>
+                      </motion.div>
+                    )}
 
-                {activeView === 'employees' && (
-                  <motion.div
-                    key="employees"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.3 }}
-                    className="flex-1 overflow-y-auto"
-                  >
-                    <div className="bg-white dark:bg-surface-dark rounded-xl border border-steel-dark/30 shadow-lg p-3 md:p-4 h-full">
+                    {activeView === 'employees' && (
+                      <motion.div
+                        key="employees"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.3 }}
+                        className="h-full"
+                      >
+                        <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm p-4 md:p-6 h-full">
                       <div className="flex items-center justify-between mb-3">
                         <h3 className="text-xs md:text-sm font-bold text-slate-900 dark:text-white">Collaborateurs</h3>
-                        <button className="px-2 py-1 bg-accent text-white rounded text-[10px] font-medium">
-                          <span className="material-symbols-outlined text-xs align-middle mr-1">add</span>
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="px-2 py-1 bg-accent text-white rounded text-[10px] font-medium hover:bg-accent/90 transition-colors flex items-center gap-1"
+                        >
+                          <span className="material-symbols-outlined text-xs">add</span>
                           Nouveau
-                        </button>
+                        </motion.button>
                       </div>
                       <div className="space-y-2">
                         {demoEmployees.slice(0, 5).map((emp, i) => (
-                          <div key={i} className="flex items-center gap-2 p-2 bg-slate-50 dark:bg-background-dark rounded border border-steel-dark/30">
+                          <motion.div
+                            key={i}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.3, delay: i * 0.1 }}
+                            whileHover={{ scale: 1.02, x: 4 }}
+                            className="flex items-center gap-2 p-2 bg-slate-50 dark:bg-background-dark rounded border border-steel-dark/30 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                          >
                             <div className="size-8 rounded-full bg-accent/20 flex items-center justify-center text-[10px] font-bold text-accent">
                               {emp.avatar}
                             </div>
@@ -766,13 +587,15 @@ export function Hero() {
                               </div>
                               <div className="text-[9px] text-slate-500 mt-0.5">{emp.hoursThisWeek}h</div>
                             </div>
-                          </div>
+                          </motion.div>
                         ))}
                       </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
             </div>
           </div>
         </motion.div>

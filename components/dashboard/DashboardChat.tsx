@@ -57,7 +57,7 @@ export default function DashboardChat() {
         restaurant_id: restaurant.id,
         sender_id: user.id,
         content: newMessage,
-        channel: 'general'
+        // channel: 'general' // Removed as it's not in the type definition
       })
       setNewMessage('')
     } catch (error) {

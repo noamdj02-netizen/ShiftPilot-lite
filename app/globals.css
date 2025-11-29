@@ -1,9 +1,23 @@
-/* Inter est importé via next/font dans layout.tsx */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ===== CSS VARIABLES ===== */
+:root {
+  --font-inter: 'Inter', system-ui, sans-serif;
+  --font-ibm-plex: 'IBM Plex Sans', system-ui, sans-serif;
+}
+
+/* Material Symbols */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+  font-size: 20px;
+}
+
+/* ===== BASE STYLES ===== */
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -12,48 +26,298 @@
   }
   
   body {
-    @apply bg-white text-text-bright font-sans antialiased;
+    @apply bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-sans;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
   
   ::selection {
-    @apply bg-primary/20 text-primary-dark;
+    @apply bg-accent text-white;
+  }
+  
+  /* Focus visible pour accessibilité */
+  :focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background-light dark:ring-offset-background-dark;
+  }
+  
+  /* Headings */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-bold text-foreground dark:text-slate-100;
   }
 }
 
+/* Scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ===== COMPOSANTS RÉUTILISABLES ===== */
 @layer components {
-  /* Section padding standard */
-  .section-padding {
-    @apply py-20 lg:py-32;
+  /* ----- BOUTONS ----- */
+  
+  .btn {
+    @apply inline-flex items-center justify-center gap-2
+           font-semibold
+           rounded-2xl
+           transition-all duration-200
+           focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed
+           active:scale-[0.98];
   }
   
-  /* Container widths */
-  .container-narrow {
-    @apply max-w-5xl mx-auto px-4 sm:px-6 lg:px-8;
+  .btn-sm {
+    @apply px-4 py-2 text-sm;
   }
   
-  .container-standard {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  .btn-md {
+    @apply px-6 py-3 text-base;
   }
-
-  .container-wide {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  
+  .btn-lg {
+    @apply px-8 py-4 text-lg;
   }
-
+  
+  .btn-primary {
+    @apply btn btn-lg
+           bg-gradient-to-r from-primary to-accent
+           text-white
+           shadow-soft-lg shadow-primary/25
+           hover:shadow-soft-xl hover:shadow-primary/30
+           hover:scale-[1.02]
+           focus-visible:ring-primary;
+  }
+  
+  .btn-secondary {
+    @apply btn btn-lg
+           bg-white
+           text-foreground
+           border-2 border-border
+           shadow-soft
+           hover:border-primary hover:text-primary hover:bg-primary-muted
+           focus-visible:ring-primary;
+  }
+  
+  .btn-ghost {
+    @apply btn btn-md
+           bg-transparent
+           text-foreground-secondary
+           hover:bg-background-secondary hover:text-foreground;
+  }
+  
+  .btn-icon {
+    @apply p-3 rounded-xl
+           bg-background-secondary
+           text-foreground-secondary
+           hover:bg-background-tertiary hover:text-foreground
+           transition-colors;
+  }
+  
+  /* ----- CARDS ----- */
+  
+  .card {
+    @apply bg-white rounded-3xl border border-border shadow-soft;
+  }
+  
+  .card-padding {
+    @apply p-6 md:p-8;
+  }
+  
+  .card-hover {
+    @apply hover:shadow-soft-lg hover:border-border-dark hover:-translate-y-1
+           transition-all duration-300;
+  }
+  
+  .card-interactive {
+    @apply card card-hover cursor-pointer;
+  }
+  
+  /* ----- INPUTS ----- */
+  
+  .input {
+    @apply w-full px-5 py-4
+           text-base text-foreground
+           bg-white
+           border-2 border-border
+           rounded-2xl
+           placeholder:text-foreground-light
+           transition-all duration-200
+           focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10;
+  }
+  
+  .input-error {
+    @apply border-error focus:border-error focus:ring-error/10;
+  }
+  
+  .input-label {
+    @apply block text-sm font-medium text-foreground mb-2;
+  }
+  
+  .input-helper {
+    @apply text-sm text-foreground-muted mt-2;
+  }
+  
+  .input-error-message {
+    @apply text-sm text-error mt-2;
+  }
+  
+  /* ----- BADGES ----- */
+  
+  .badge {
+    @apply inline-flex items-center gap-1.5
+           px-3 py-1.5
+           text-sm font-medium
+           rounded-full;
+  }
+  
+  .badge-primary {
+    @apply badge bg-primary-muted text-primary;
+  }
+  
+  .badge-secondary {
+    @apply badge bg-accent-muted text-accent;
+  }
+  
+  .badge-success {
+    @apply badge bg-success-muted text-success;
+  }
+  
+  .badge-warning {
+    @apply badge bg-warning-muted text-warning;
+  }
+  
+  .badge-error {
+    @apply badge bg-error-muted text-error;
+  }
+  
+  .badge-neutral {
+    @apply badge bg-background-secondary text-foreground-secondary;
+  }
+  
+  /* ----- SECTIONS ----- */
+  
+  .section {
+    @apply py-20 md:py-28 lg:py-32;
+  }
+  
+  .section-sm {
+    @apply py-12 md:py-16 lg:py-20;
+  }
+  
   .container-tight {
     @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
   }
+  
+  .container-default {
+    @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .container-wide {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  /* ----- TEXTE GRADIENT ----- */
+  
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+  }
+  
+  .text-gradient-reverse {
+    @apply bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent;
+  }
+  
+  /* ----- PATTERNS ----- */
+  
+  .bg-dots {
+    background-image: radial-gradient(circle, theme('colors.border.DEFAULT') 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  
+  .bg-grid {
+    background-image: 
+      linear-gradient(to right, theme('colors.border.light') 1px, transparent 1px),
+      linear-gradient(to bottom, theme('colors.border.light') 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
 }
 
+/* ===== UTILITIES ===== */
 @layer utilities {
-  .bg-gradient-primary {
-    background: linear-gradient(135deg, #8976FD 0%, #C08EF3 100%);
+  /* Hide scrollbar */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  /* Custom scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-background-secondary rounded-full;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-border-dark rounded-full hover:bg-foreground-light;
+  }
+  
+  /* Gradients */
+  .gradient-mask-b {
+    mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  }
+  .gradient-mask-t {
+    mask-image: linear-gradient(to top, black 60%, transparent 100%);
+  }
+  
+  /* Text balance */
+  .text-balance {
+    text-wrap: balance;
+  }
+}
 
-  .bg-gradient-hero {
-    background: linear-gradient(135deg, #F5F3FF 0%, #FEFCE8 50%, #FDF2F8 100%);
-  }
+/* ===== ANIMATIONS SPÉCIALES ===== */
 
-  .bg-gradient-yellow {
-    background: linear-gradient(135deg, #FCA61F 0%, #F1D049 100%);
+/* Shimmer effect pour loading */
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    theme('colors.background.secondary') 0%,
+    theme('colors.background.tertiary') 50%,
+    theme('colors.background.secondary') 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Glow pulse */
+.glow-pulse {
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 20px -5px rgba(249, 115, 22, 0.4);
   }
+  50% {
+    box-shadow: 0 0 30px -5px rgba(249, 115, 22, 0.6);
+  }
+}
+
+/* ===== CUSTOM SCROLLBAR GLOBAL ===== */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-background-secondary;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-border-dark rounded-full;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-foreground-light;
 }

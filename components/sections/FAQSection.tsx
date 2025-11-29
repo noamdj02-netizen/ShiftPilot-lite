@@ -2,63 +2,73 @@
 
 import { useState, useRef } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
-import { Plus, Minus, MessageCircle } from 'lucide-react'
 import Link from 'next/link'
 
 const faqs = [
   {
-    question: "C'est vraiment plus rapide qu'Excel ?",
-    answer: "Oui ! Ce qui vous prend 3 heures le dimanche soir est fait en 2 minutes. Vous indiquez qui est dispo, on génère le planning optimal automatiquement.",
+    question: "ShiftPilot est-il adapté aux entreprises multi-sites ?",
+    answer: "Absolument. ShiftPilot Enterprise offre une vue unifiée pour gérer plusieurs établissements depuis une seule interface. Comparez les performances en temps réel, centralisez la planification et respectez les contraintes légales de chaque site.",
   },
   {
-    question: "Mes employés doivent installer une app ?",
-    answer: "Non. Ils reçoivent leur planning par SMS. S'ils veulent demander un échange, ils cliquent sur un lien dans le SMS. C'est tout.",
+    question: "Quelle est la conformité légale garantie ?",
+    answer: "ShiftPilot vérifie automatiquement les règles CCN HCR : repos de 11h minimum, 48h max par semaine, jours de repos obligatoires, heures supplémentaires, etc. Notre score de conformité vous indique en temps réel votre niveau de conformité avec un risque zéro de violation.",
   },
   {
-    question: "C'est conforme au code du travail ?",
-    answer: "Oui, c'est automatique. On vérifie les 11h de repos, les 48h max par semaine, les jours de repos obligatoires... Vous n'avez plus à y penser.",
+    question: "Puis-je intégrer ShiftPilot avec mon système de paie existant ?",
+    answer: "Oui. ShiftPilot Enterprise propose des intégrations avec les principaux systèmes de paie (Sage, Cegid, etc.) et des connecteurs API pour synchroniser automatiquement les heures travaillées. Nous proposons également des exports standards pour faciliter l'intégration.",
   },
   {
-    question: "Je peux essayer avant de payer ?",
-    answer: "Oui, 14 jours gratuits sans donner votre carte bancaire. Si ça ne vous convient pas, vous partez sans rien payer.",
+    question: "Quel support est inclus dans les offres Enterprise ?",
+    answer: "L'offre Enterprise inclut un manager dédié, un support 24/7 avec SLA garanti, des formations personnalisées pour vos équipes, et un accompagnement à la mise en place. Nous assurons également la conformité continue avec les évolutions réglementaires.",
   },
   {
-    question: "Comment ça se passe si je veux arrêter ?",
-    answer: "Un clic dans les paramètres et c'est fait. Pas de préavis, pas de frais cachés, pas de piège. Vos données restent disponibles 30 jours.",
+    question: "Comment fonctionne l'auto-planification par IA ?",
+    answer: "Notre IA analyse vos données historiques (CA, fréquentation, météo) pour prédire vos besoins en staffing. Elle génère automatiquement des plannings optimaux en respectant les contraintes légales, les disponibilités et les compétences de vos équipes. Vous gardez le contrôle final.",
   },
   {
-    question: "J'ai plusieurs restaurants, ça marche ?",
-    answer: "Oui, avec l'offre Business vous gérez tous vos établissements depuis une seule interface. Chaque resto a son planning, mais vous voyez tout.",
+    question: "Puis-je essayer avant de m'engager ?",
+    answer: "Oui, nous proposons un essai gratuit de 14 jours sans carte bancaire. Pour les offres Enterprise, nous organisons également des démos personnalisées et des POC (Proof of Concept) pour valider l'adéquation avec vos besoins spécifiques.",
+  },
+  {
+    question: "Quelle est la politique de sécurité des données ?",
+    answer: "ShiftPilot est conforme RGPD et hébergé en France (HDS pour le secteur santé). Nous utilisons un chiffrement de bout en bout, des sauvegardes quotidiennes, et proposons le SSO (Single Sign-On) pour les entreprises. Vos données restent votre propriété.",
+  },
+  {
+    question: "Puis-je personnaliser ShiftPilot selon mes besoins ?",
+    answer: "Oui, l'offre Enterprise inclut des développements sur mesure, des intégrations personnalisées, et l'adaptation de l'interface à vos processus métier. Notre équipe travaille avec vous pour créer une solution sur mesure.",
   },
 ]
 
 export function FAQSection() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0)
+  const [openIndex, setOpenIndex] = useState<number | null>(null)
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: "-100px" })
   
   return (
-    <section ref={ref} className="py-24 lg:py-32 bg-gradient-to-br from-gray-50 to-purple-50/30 relative overflow-hidden">
-      <div className="container-tight">
+    <section ref={ref} className="py-24 lg:py-32 bg-[#F5F5F7] dark:bg-[#000000] relative overflow-hidden">
+      <div className="container mx-auto px-6 max-w-4xl">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="text-center max-w-2xl mx-auto mb-12"
+          className="text-center mb-16"
         >
-          <span className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 rounded-full text-sm font-medium text-purple-700 mb-4 border border-purple-200">
-            <MessageCircle className="w-4 h-4" />
+          <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/40 dark:bg-white/5 rounded-full text-xs font-semibold tracking-wider uppercase text-black/60 dark:text-white/60 mb-6 border border-black/5 dark:border-white/10">
+            <span className="material-symbols-outlined text-base">help</span>
             Questions fréquentes
           </span>
           
-          <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
+          <h2 className="text-4xl md:text-5xl font-semibold text-black dark:text-white tracking-tight mb-4">
             Vous avez des questions ?
           </h2>
+          <p className="text-lg text-black/60 dark:text-white/60 max-w-2xl mx-auto">
+            Tout ce que vous devez savoir sur ShiftPilot Enterprise
+          </p>
         </motion.div>
         
         {/* FAQ items */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           {faqs.map((faq, index) => (
             <motion.div
               key={index}
@@ -68,24 +78,26 @@ export function FAQSection() {
             >
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className={`w-full bg-white rounded-2xl p-6 text-left transition-all shadow-[0_4px_12px_rgba(0,0,0,0.08)] border ${
-                  openIndex === index ? 'ring-2 ring-purple-200 border-purple-300' : 'border-gray-100 hover:border-purple-200'
+                className={`w-full bg-white dark:bg-[#1C1C1E] rounded-xl p-6 text-left transition-all border ${
+                  openIndex === index 
+                    ? 'border-accent/50 shadow-lg shadow-accent/10' 
+                    : 'border-black/5 dark:border-white/5 hover:border-accent/30'
                 }`}
               >
                 <div className="flex items-center justify-between gap-4">
-                  <span className={`font-semibold text-lg ${
-                    openIndex === index ? 'text-purple-600' : 'text-foreground'
+                  <span className={`font-semibold text-base md:text-lg text-left ${
+                    openIndex === index ? 'text-accent' : 'text-black dark:text-white'
                   }`}>
                     {faq.question}
                   </span>
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${
-                    openIndex === index ? 'bg-purple-600 text-white' : 'bg-gray-100 text-foreground-muted'
+                    openIndex === index 
+                      ? 'bg-accent text-white' 
+                      : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400'
                   }`}>
-                    {openIndex === index ? (
-                      <Minus className="w-4 h-4" />
-                    ) : (
-                      <Plus className="w-4 h-4" />
-                    )}
+                    <span className="material-symbols-outlined text-lg">
+                      {openIndex === index ? 'remove' : 'add'}
+                    </span>
                   </div>
                 </div>
                 
@@ -95,10 +107,10 @@ export function FAQSection() {
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
+                      transition={{ duration: 0.3 }}
                       className="overflow-hidden"
                     >
-                      <p className="pt-4 text-foreground-muted leading-relaxed border-t border-gray-200 mt-4">
+                      <p className="pt-4 text-black/60 dark:text-white/60 leading-relaxed border-t border-black/5 dark:border-white/5 mt-4">
                         {faq.answer}
                       </p>
                     </motion.div>
@@ -116,11 +128,15 @@ export function FAQSection() {
           transition={{ duration: 0.5, delay: 0.4 }}
           className="text-center mt-12"
         >
-          <p className="text-foreground-muted mb-4">
+          <p className="text-black/60 dark:text-white/60 mb-6">
             Pas trouvé votre réponse ?
           </p>
-          <Link href="/contact" className="btn-secondary">
-            Posez-nous la question
+          <Link 
+            href="/contact" 
+            className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-white rounded-full font-medium hover:bg-accent/90 transition-colors shadow-lg shadow-accent/20"
+          >
+            Contactez notre équipe
+            <span className="material-symbols-outlined text-lg">arrow_forward</span>
           </Link>
         </motion.div>
       </div>

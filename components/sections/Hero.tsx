@@ -477,72 +477,103 @@ export function Hero() {
                         className="h-full"
                       >
                         <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm p-4 md:p-6 h-full">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-2 text-xs">
-                          <motion.button
-                            whileHover={{ scale: 1.1, x: -2 }}
-                            whileTap={{ scale: 0.9 }}
-                            className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
-                          >
-                            <span className="material-symbols-outlined text-accent">chevron_left</span>
-                          </motion.button>
-                          <span className="font-semibold">Semaine 29 (15-21 Juil)</span>
-                          <motion.button
-                            whileHover={{ scale: 1.1, x: 2 }}
-                            whileTap={{ scale: 0.9 }}
-                            className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
-                          >
-                            <span className="material-symbols-outlined text-accent">chevron_right</span>
-                          </motion.button>
-                        </div>
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="px-2 py-1 bg-accent text-white rounded text-[10px] font-medium hover:bg-accent/90 transition-colors"
-                        >
-                          <span className="material-symbols-outlined text-xs align-middle mr-1">magic_button</span>
-                          IA
-                        </motion.button>
-                      </div>
-                      <div className="overflow-x-auto">
-                        <div className="min-w-[600px] text-[10px]">
-                          <div className="grid grid-cols-[100px_repeat(7,1fr)] gap-1">
-                            <div className="p-1.5 bg-slate-50 dark:bg-[#151e32] rounded font-semibold text-slate-500 text-left text-[9px]">Collaborateur</div>
-                            {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((day) => (
-                              <div key={day} className="p-1.5 bg-slate-50 dark:bg-[#151e32] rounded text-center font-semibold text-slate-500 text-[9px]">
-                                {day}
-                              </div>
-                            ))}
-                            {demoShifts.slice(0, 4).map((shift, i) => (
-                              <React.Fragment key={i}>
-                                <div className="p-1.5 flex items-center gap-1">
-                                  <div className="size-5 rounded-full bg-accent/20 flex items-center justify-center text-[8px] font-bold text-accent">
-                                    {shift.employee.split(' ').map(n => n[0]).join('')}
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-2 text-xs">
+                              <motion.button
+                                whileHover={{ scale: 1.1, x: -2 }}
+                                whileTap={{ scale: 0.9 }}
+                                className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                              >
+                                <span className="material-symbols-outlined text-accent">chevron_left</span>
+                              </motion.button>
+                              <span className="font-semibold">Semaine 29 (15-21 Juil)</span>
+                              <motion.button
+                                whileHover={{ scale: 1.1, x: 2 }}
+                                whileTap={{ scale: 0.9 }}
+                                className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                              >
+                                <span className="material-symbols-outlined text-accent">chevron_right</span>
+                              </motion.button>
+                            </div>
+                            <motion.button
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className="px-2 py-1 bg-accent text-white rounded text-[10px] font-medium hover:bg-accent/90 transition-colors"
+                            >
+                              <span className="material-symbols-outlined text-xs align-middle mr-1">magic_button</span>
+                              IA
+                            </motion.button>
+                          </div>
+                          
+                          {/* Responsive Planning View */}
+                          <div className="overflow-x-auto pb-2">
+                            {/* Mobile View (Vertical List) - Visible on small screens */}
+                            <div className="md:hidden space-y-3">
+                              {demoShifts.slice(0, 3).map((shift, i) => (
+                                <div key={i} className="bg-slate-50 dark:bg-slate-900/50 rounded border border-slate-200 dark:border-slate-700 p-2">
+                                  <div className="flex items-center gap-2 mb-2 pb-2 border-b border-slate-200 dark:border-slate-700">
+                                    <div className="size-6 rounded-full bg-accent/20 flex items-center justify-center text-[10px] font-bold text-accent">
+                                      {shift.employee.split(' ').map(n => n[0]).join('')}
+                                    </div>
+                                    <span className="text-xs font-semibold text-slate-900 dark:text-white">{shift.employee.split(' ')[0]}</span>
                                   </div>
-                                  <div className="text-[9px] font-semibold text-slate-900 dark:text-white truncate">
-                                    {shift.employee.split(' ')[0]}
+                                  <div className="flex gap-2 overflow-x-auto pb-1">
+                                    {['monday', 'wednesday', 'friday'].map((day) => {
+                                      const shiftData = shift[day as keyof typeof shift] as any
+                                      if (!shiftData?.start) return null
+                                      return (
+                                        <div key={day} className="flex-shrink-0 min-w-[80px] rounded border border-blue-500/50 bg-blue-500/20 p-1.5 text-[9px]">
+                                          <div className="font-bold text-blue-700 dark:text-blue-300 mb-0.5">
+                                            {day === 'monday' ? 'Lun' : day === 'wednesday' ? 'Mer' : 'Ven'}
+                                          </div>
+                                          <div>{shiftData.start}-{shiftData.end}</div>
+                                        </div>
+                                      )
+                                    })}
                                   </div>
                                 </div>
-                                {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => {
-                                  const shiftData = shift[day as keyof typeof shift] as any
-                                  return (
-                                    <div key={day} className="p-0.5 min-h-[40px]">
-                                      {shiftData?.start ? (
-                                        <div className="h-full rounded border border-blue-500/50 bg-blue-500/20 p-1 flex flex-col text-[8px]">
-                                          <div className="font-bold text-blue-700 dark:text-blue-300">{shiftData.start}-{shiftData.end}</div>
-                                          {shiftData.covers > 0 && (
-                                            <div className="text-[7px] opacity-80 mt-0.5">{shiftData.covers} cov.</div>
-                                          )}
-                                        </div>
-                                      ) : null}
+                              ))}
+                            </div>
+
+                            {/* Desktop View (Table) - Hidden on small screens */}
+                            <div className="hidden md:block min-w-[600px] text-[10px]">
+                              <div className="grid grid-cols-[100px_repeat(7,1fr)] gap-1">
+                                <div className="p-1.5 bg-slate-50 dark:bg-[#151e32] rounded font-semibold text-slate-500 text-left text-[9px]">Collaborateur</div>
+                                {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((day) => (
+                                  <div key={day} className="p-1.5 bg-slate-50 dark:bg-[#151e32] rounded text-center font-semibold text-slate-500 text-[9px]">
+                                    {day}
+                                  </div>
+                                ))}
+                                {demoShifts.slice(0, 4).map((shift, i) => (
+                                  <React.Fragment key={i}>
+                                    <div className="p-1.5 flex items-center gap-1">
+                                      <div className="size-5 rounded-full bg-accent/20 flex items-center justify-center text-[8px] font-bold text-accent">
+                                        {shift.employee.split(' ').map(n => n[0]).join('')}
+                                      </div>
+                                      <div className="text-[9px] font-semibold text-slate-900 dark:text-white truncate">
+                                        {shift.employee.split(' ')[0]}
+                                      </div>
                                     </div>
-                                  )
-                                })}
-                              </React.Fragment>
-                            ))}
+                                    {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => {
+                                      const shiftData = shift[day as keyof typeof shift] as any
+                                      return (
+                                        <div key={day} className="p-0.5 min-h-[40px]">
+                                          {shiftData?.start ? (
+                                            <div className="h-full rounded border border-blue-500/50 bg-blue-500/20 p-1 flex flex-col text-[8px]">
+                                              <div className="font-bold text-blue-700 dark:text-blue-300">{shiftData.start}-{shiftData.end}</div>
+                                              {shiftData.covers > 0 && (
+                                                <div className="text-[7px] opacity-80 mt-0.5">{shiftData.covers} cov.</div>
+                                              )}
+                                            </div>
+                                          ) : null}
+                                        </div>
+                                      )
+                                    })}
+                                  </React.Fragment>
+                                ))}
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </div>
                         </div>
                       </motion.div>
                     )}

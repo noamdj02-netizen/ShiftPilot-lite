@@ -50,10 +50,18 @@ export function Sidebar() {
     }`
   }
 
+  const handleLinkClick = () => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth',
+    })
+  }
+
   return (
     <div className="hidden lg:flex flex-col w-64 h-screen sticky top-0 bg-white dark:bg-[#0D1B2A] border-r border-slate-200 dark:border-white/5 flex-shrink-0 z-50 transition-colors duration-300">
       <div className="p-6 mb-4">
-        <Link href={AppRoute.DASHBOARD} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+        <Link href={AppRoute.DASHBOARD} onClick={handleLinkClick} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
           <div className="p-2 bg-gradient-to-br from-accent to-blue-600 rounded-lg">
             <span className="material-symbols-outlined text-xl text-white">grid_view</span>
           </div>
@@ -68,15 +76,15 @@ export function Sidebar() {
         <div className="px-4 mb-2 mt-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
           Opérations
         </div>
-        <Link href={AppRoute.DASHBOARD} className={getLinkClass(AppRoute.DASHBOARD)}>
+        <Link href={AppRoute.DASHBOARD} onClick={handleLinkClick} className={getLinkClass(AppRoute.DASHBOARD)}>
           <span className="material-symbols-outlined text-[20px]">dashboard</span>
           Vue d'ensemble
         </Link>
-        <Link href={AppRoute.PLANNING} className={getLinkClass(AppRoute.PLANNING)}>
+        <Link href={AppRoute.PLANNING} onClick={handleLinkClick} className={getLinkClass(AppRoute.PLANNING)}>
           <span className="material-symbols-outlined text-[20px]">calendar_month</span>
           Planification
         </Link>
-        <Link href={AppRoute.EMPLOYEES} className={getLinkClass(AppRoute.EMPLOYEES)}>
+        <Link href={AppRoute.EMPLOYEES} onClick={handleLinkClick} className={getLinkClass(AppRoute.EMPLOYEES)}>
           <span className="material-symbols-outlined text-[20px]">group</span>
           Collaborateurs
         </Link>
@@ -84,15 +92,15 @@ export function Sidebar() {
         <div className="px-4 mt-8 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
           Gestion
         </div>
-        <Link href={AppRoute.COMPLIANCE} className={getLinkClass(AppRoute.COMPLIANCE)}>
+        <Link href={AppRoute.COMPLIANCE} onClick={handleLinkClick} className={getLinkClass(AppRoute.COMPLIANCE)}>
           <span className="material-symbols-outlined text-[20px]">gavel</span>
           Conformité & Audit
         </Link>
-        <Link href={AppRoute.AVAILABILITIES} className={getLinkClass(AppRoute.AVAILABILITIES)}>
+        <Link href={AppRoute.AVAILABILITIES} onClick={handleLinkClick} className={getLinkClass(AppRoute.AVAILABILITIES)}>
           <span className="material-symbols-outlined text-[20px]">fact_check</span>
           Validations
         </Link>
-        <Link href="/billing" className={getLinkClass("/billing")}>
+        <Link href="/billing" onClick={handleLinkClick} className={getLinkClass("/billing")}>
           <span className="material-symbols-outlined text-[20px]">credit_card</span>
           Facturation
         </Link>
@@ -100,7 +108,7 @@ export function Sidebar() {
         <div className="px-4 mt-8 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
           Système
         </div>
-        <Link href="/settings" className={getLinkClass("/settings")}>
+        <Link href="/settings" onClick={handleLinkClick} className={getLinkClass("/settings")}>
           <span className="material-symbols-outlined text-[20px]">settings</span>
           Paramètres
         </Link>

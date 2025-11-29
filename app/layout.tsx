@@ -34,6 +34,8 @@ export const metadata = {
   },
 };
 
+import { ScrollToTop } from "@/components/shared/ScrollToTop";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -52,6 +54,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${ibmPlexSans.variable} font-sans antialiased bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100`}
       >
+        <ScrollToTop />
         {children}
         <Toaster richColors position="top-right" theme="system" />
       </body>

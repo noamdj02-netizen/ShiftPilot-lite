@@ -201,7 +201,7 @@ export const useAuth = () => {
         setProfile(null)
         setRestaurant(null)
       }
-      store.setState({ isLoading: false })
+      useAuthStore.setState({ isLoading: false })
     })
 
     // Listen for auth changes
@@ -216,7 +216,7 @@ export const useAuth = () => {
         setProfile(null)
         setRestaurant(null)
       }
-      store.setState({ isLoading: false })
+      useAuthStore.setState({ isLoading: false })
     })
 
     return () => {

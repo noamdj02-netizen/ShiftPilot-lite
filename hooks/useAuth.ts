@@ -65,7 +65,7 @@ export const useAuthStore = create<AuthState>()(
         
         const { data: restaurantData, error: restaurantError } = await supabase
           .from('restaurants')
-          .insert({ name: userData.restaurant_name })
+          .insert({ name: userData.restaurant_name } as any)
           .select()
           .single()
 

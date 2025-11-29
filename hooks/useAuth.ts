@@ -74,7 +74,7 @@ export const useAuthStore = create<AuthState>()(
         // 3. Update the profile with the restaurant_id
         const { error: profileError } = await supabase
           .from('profiles')
-          .update({ restaurant_id: restaurantData.id })
+          .update({ restaurant_id: restaurantData.id } as any)
           .eq('id', authData.user.id)
 
         if (profileError) throw profileError

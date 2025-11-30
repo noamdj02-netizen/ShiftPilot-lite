@@ -1,12 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Employee, Shift } from '@/lib/types'
+import { Employee, Shift as UIShift } from '@/lib/types'
 import { toast } from 'sonner'
-import { shiftService, employeeService } from '@/lib/services'
 import { useAuth } from '@/hooks/useAuth'
+import { useEmployees } from '@/hooks/useEmployees'
+import { useShifts } from '@/hooks/useShifts'
 import { generateSmartPlanning } from '@/utils/planning-ai'
 
 // Helper to format dates for display
@@ -15,20 +16,39 @@ const formatDate = (dateStr: string) => {
   return new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: 'short' }).format(date)
 }
 
+const getStartOfWeek = (date: Date) => {
+  const d = new Date(date)
+  const day = d.getDay()
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1)
+  const newDate = new Date(d.setDate(diff))
+  newDate.setHours(0, 0, 0, 0)
+  return newDate
+}
+
 export default function PlanningPage() {
   const router = useRouter()
-  const { restaurant } = useAuth()
+  const { restaurant, isLoading: isAuthLoading } = useAuth()
   const [currentView, setCurrentView] = useState<'day' | 'week' | 'month'>('week')
   const [isMobile, setIsMobile] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
   
-  // Real Data State
-  const [employees, setEmployees] = useState<Employee[]>([])
-  const [shifts, setShifts] = useState<Record<string, (Shift | null)[]>>({})
   const [currentDate, setCurrentDate] = useState(new Date())
+  
+  // Calculate date range for shifts
+  const startOfWeek = useMemo(() => getStartOfWeek(currentDate), [currentDate])
+  const endOfWeek = useMemo(() => {
+    const d = new Date(startOfWeek)
+    d.setDate(d.getDate() + 7)
+    return d
+  }, [startOfWeek])
 
-  // Fetch Data
+  // Use our new hooks
+  const { employees, isLoading: isEmployeesLoading, createEmployee } = useEmployees()
+  const { shifts: rawShifts, isLoading: isShiftsLoading, createShift, deleteShift } = useShifts(startOfWeek, endOfWeek)
+
+  const [shiftsMap, setShiftsMap] = useState<Record<string, (UIShift | null)[]>>({})
+
+  // Responsive check
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 1024)
@@ -41,148 +61,95 @@ export default function PlanningPage() {
     return () => window.removeEventListener('resize', checkMobile)
   }, [currentView])
 
+  // Process shifts into grid format when data changes
   useEffect(() => {
-    // Timeout to redirect if no restaurant data loads
-    const redirectTimer = setTimeout(() => {
-      if (isLoading && !restaurant?.id) {
-        toast.error("Aucun établissement configuré")
-        router.push('/settings')
+    if (!employees || !rawShifts) return
+
+    const newMap: Record<string, (UIShift | null)[]> = {}
+    
+    employees.forEach((emp) => {
+      newMap[emp.id] = Array(7).fill(null)
+    })
+
+    rawShifts.forEach((shift: any) => {
+      if (!shift.employee_id) return
+      
+      const shiftDate = new Date(shift.start_time)
+      let dayIndex = shiftDate.getDay() - 1
+      if (dayIndex === -1) dayIndex = 6 
+
+      if (newMap[shift.employee_id] && dayIndex >= 0 && dayIndex < 7) {
+        newMap[shift.employee_id][dayIndex] = {
+          id: shift.id,
+          start: new Date(shift.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          end: new Date(shift.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          type: shift.role === 'Cuisinier' ? 'kitchen' : shift.role === 'Manager' ? 'admin' : 'work',
+          label: shift.notes || 'Service'
+        }
       }
-    }, 5000)
+    })
 
-    if (!restaurant?.id) return () => clearTimeout(redirectTimer)
+    setShiftsMap(newMap)
+  }, [employees, rawShifts, startOfWeek])
 
-    clearTimeout(redirectTimer)
-
-    const fetchData = async () => {
-      setIsLoading(true)
-      try {
-        // 1. Get Employees
-        const emps = await employeeService.getEmployees(restaurant.id)
-        setEmployees(emps as any) // Casting for now as types align closely
-
-        // 2. Get Shifts for the week
-        const startOfWeek = getStartOfWeek(currentDate)
-        const endOfWeek = new Date(startOfWeek)
-        endOfWeek.setDate(endOfWeek.getDate() + 7)
-
-        const shiftsData = await shiftService.getShifts(restaurant.id, startOfWeek, endOfWeek)
-        
-        // Transform shifts into the grid format expected by UI
-        const shiftsMap: Record<string, (Shift | null)[]> = {}
-        
-        // Initialize empty week for everyone
-        emps.forEach((emp: any) => {
-          shiftsMap[emp.id] = Array(7).fill(null)
-        })
-
-        // Populate with actual shifts
-        shiftsData?.forEach((shift: any) => {
-          const shiftDate = new Date(shift.start_time)
-          // Simple day index calculation (0=Monday, 6=Sunday) - Adjust based on your locale/logic
-          let dayIndex = shiftDate.getDay() - 1
-          if (dayIndex === -1) dayIndex = 6 
-
-          if (shiftsMap[shift.employee_id]) {
-            shiftsMap[shift.employee_id][dayIndex] = {
-              id: shift.id,
-              start: new Date(shift.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-              end: new Date(shift.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-              type: shift.role === 'Cuisinier' ? 'kitchen' : shift.role === 'Manager' ? 'admin' : 'work', // Simple mapping
-              label: shift.notes || 'Service'
-            }
-          }
-        })
-
-        setShifts(shiftsMap)
-
-      } catch (error) {
-        console.error('Error loading planning:', error)
-        toast.error('Impossible de charger le planning')
-      } finally {
-        setIsLoading(false)
-      }
+  // Auth redirect
+  useEffect(() => {
+    if (!isAuthLoading && !restaurant?.id) {
+        // Optional: redirect if no restaurant, but maybe we are just waiting for it to load initially
+        // router.push('/settings')
     }
+  }, [isAuthLoading, restaurant, router])
 
-    fetchData()
-  }, [restaurant?.id, currentDate, router])
-
-  const getStartOfWeek = (date: Date) => {
-    const d = new Date(date)
-    const day = d.getDay()
-    const diff = d.getDate() - day + (day === 0 ? -6 : 1)
-    return new Date(d.setDate(diff))
-  }
+  const isLoading = isAuthLoading || isEmployeesLoading || isShiftsLoading
 
   const handleAutoPlan = async () => {
     setIsGenerating(true)
     try {
-      // 1. Generate shifts locally
-      // We need to cast existing shifts to Record<string, Shift[]> where nulls are handled or filtered
-      // The utility expects Shift[], but our state has (Shift | null)[]
-      // We'll map nulls to something or filter them out for the utility if needed, 
-      // but actually the utility fills nulls. 
-      // Let's cast force it for now as the utility structure matches
-      
-      const startOfWeek = getStartOfWeek(currentDate)
-      
-      // Clean input for AI: Replace nulls with empty logic or let AI handle it
-      // The AI util expects Record<string, Shift[]> but our state is (Shift|null)[]
-      // We will need to adapt the AI util or cast here.
-      // Let's assume AI util handles the array index mapping
-      
       const newPlanning = await generateSmartPlanning(
          employees, 
-         shifts as any, // Casting to satisfy TS, util needs to be robust
+         shiftsMap as any, 
          startOfWeek
       )
-
-      // 2. Update State
-      setShifts(newPlanning)
+      
+      setShiftsMap(newPlanning)
       toast.success('Planning généré avec succès !')
       
-      // 3. Persist to DB (Optional / Background)
-      // This is complex because we need to convert UI time strings "09:00" back to Date objects for the current week
-      // And create DB records.
-      // For this demo step, we just show the UI update.
-      toast.info('Sauvegarde automatique en cours...')
-      
-      // Simple persistence loop (best effort)
-      Object.entries(newPlanning).forEach(([empId, empShifts]) => {
-        empShifts.forEach(async (shift, dayIndex) => {
-           // If it's a new shift (no ID) and exists
+      // Persist generated shifts
+      toast.info('Sauvegarde en cours...')
+      for (const [empId, empShifts] of Object.entries(newPlanning)) {
+        for (let dayIndex = 0; dayIndex < empShifts.length; dayIndex++) {
+           const shift = empShifts[dayIndex]
+           // Only save new shifts that have data
            if (shift && !shift.id) {
              const shiftDate = new Date(startOfWeek)
              shiftDate.setDate(shiftDate.getDate() + dayIndex)
              
-             const startTime = new Date(shiftDate)
              const [sh, sm] = shift.start.split(':').map(Number)
+             const startTime = new Date(shiftDate)
              startTime.setHours(sh, sm)
              
-             const endTime = new Date(shiftDate)
              const [eh, em] = shift.end.split(':').map(Number)
+             const endTime = new Date(shiftDate)
              endTime.setHours(eh, em)
-             if (endTime < startTime) endTime.setDate(endTime.getDate() + 1) // Next day
+             if (endTime < startTime) endTime.setDate(endTime.getDate() + 1)
 
              try {
-               const savedShift: any = await shiftService.createShift({
-                 organization_id: restaurant?.id,
-                 profile_id: empId,
-                 date: shiftDate.toISOString().split('T')[0],
-                 start_time: startTime.toTimeString().slice(0, 8),
-                 end_time: endTime.toTimeString().slice(0, 8),
-                 notes: 'Auto-généré'
+               const savedShift: any = await createShift({
+                 profile_id: empId, // Note: API expects profile_id (which acts as employee_id in some contexts, but better check)
+                 employee_id: empId, // Using empId as employee_id since keys are employee IDs
+                 start_time: startTime.toISOString(),
+                 end_time: endTime.toISOString(),
+                 role: shift.type === 'kitchen' ? 'Cuisinier' : shift.type === 'admin' ? 'Manager' : 'Serveur',
+                 notes: shift.label
                })
-               // Update state with real ID to prevent duplicate saves
-               if (savedShift) {
-                 shift.id = savedShift.id
-               }
+               // We rely on refetching or optimistic updates, but here we just let the loop finish
              } catch (err) {
                console.error('Failed to save auto shift', err)
              }
            }
-        })
-      })
+        }
+      }
+      toast.success('Sauvegarde terminée')
 
     } catch (error) {
       console.error('Auto planning error:', error)
@@ -193,11 +160,11 @@ export default function PlanningPage() {
   }
 
   const handleRemoveShift = async (empId: string, dayIndex: number) => {
-    const shiftToRemove = shifts[empId][dayIndex]
-    if (!shiftToRemove) return // Already empty
+    const shiftToRemove = shiftsMap[empId]?.[dayIndex]
+    if (!shiftToRemove) return
 
     // Optimistic update
-    setShifts(prev => {
+    setShiftsMap(prev => {
       const newShifts = { ...prev }
       if (newShifts[empId]) {
         const updatedEmployeeShifts = [...newShifts[empId]]
@@ -209,17 +176,16 @@ export default function PlanningPage() {
 
     if (shiftToRemove.id) {
       try {
-        await shiftService.deleteShift(shiftToRemove.id)
+        await deleteShift(shiftToRemove.id)
         toast.success('Shift supprimé')
       } catch (error) {
         toast.error('Erreur lors de la suppression')
-        // Revert could be here
+        // Should revert here ideally
       }
     }
   }
 
   // Generate days for header
-  const startOfWeek = getStartOfWeek(currentDate)
   const days = Array.from({ length: 7 }).map((_, i) => {
     const d = new Date(startOfWeek)
     d.setDate(d.getDate() + i)
@@ -241,8 +207,7 @@ export default function PlanningPage() {
     }
   }
 
-  // Calculate weekly hours
-  const calculateHours = (empShifts: (Shift | null)[]) => {
+  const calculateHours = (empShifts: (UIShift | null)[]) => {
     if (!empShifts) return 0
     return empShifts.reduce((acc, shift) => {
       if (!shift) return acc
@@ -266,7 +231,7 @@ export default function PlanningPage() {
           
           <div className="grid gap-3">
             {employees.map((res) => {
-              const shift = shifts[res.id]?.[i]
+              const shift = shiftsMap[res.id]?.[i]
               if (!shift) return null
               return (
                 <div key={res.id} className={`relative p-4 rounded-xl border shadow-sm ${getShiftStyles(shift.type)}`}>
@@ -298,7 +263,7 @@ export default function PlanningPage() {
                 </div>
               )
             })}
-            {!employees.some(r => shifts[r.id]?.[i]) && (
+            {!employees.some(r => shiftsMap[r.id]?.[i]) && (
               <div className="text-center py-8 text-slate-400 dark:text-slate-500 text-sm border-2 border-dashed border-slate-200 dark:border-white/10 rounded-xl">
                 Aucun shift prévu
               </div>
@@ -446,7 +411,7 @@ export default function PlanningPage() {
                     </div>
                   )}
                   {employees.map((res, i) => {
-                    const empShifts = shifts[res.id] || Array(7).fill(null)
+                    const empShifts = shiftsMap[res.id] || Array(7).fill(null)
                     const weeklyHours = calculateHours(empShifts)
                     
                     return (

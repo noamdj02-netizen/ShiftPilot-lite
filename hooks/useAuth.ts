@@ -53,29 +53,39 @@ export const useAuthStore = create<AuthState>()(
         
         // After successful login, fetch user profile and restaurant
         if (data?.user) {
-          // Fetch profile
-          const { data: profileData } = await (supabase
-            .from('profiles') as any)
-            .select('*')
-            .eq('id', data.user.id)
-            .single()
-          
-          if (profileData) {
-            set({ profile: profileData })
+          try {
+            // Fetch profile
+            const { data: profileData, error: profileError } = await (supabase
+              .from('profiles') as any)
+              .select('*')
+              .eq('id', data.user.id)
+              .single()
             
-            // Fetch restaurant/organization if exists
-            if (profileData.organization_id || profileData.restaurant_id) {
-              const orgId = profileData.organization_id || profileData.restaurant_id
-              const { data: orgData } = await (supabase
-                .from(profileData.organization_id ? 'organizations' : 'restaurants') as any)
-                .select('*')
-                .eq('id', orgId)
-                .single()
+            if (profileError) {
+              console.error('Error fetching profile:', profileError)
+              // Don't throw here, just log. We still want the user to be logged in.
+            }
+            
+            if (profileData) {
+              set({ profile: profileData })
               
-              if (orgData) {
-                set({ restaurant: orgData })
+              // Fetch restaurant/organization if exists
+              if (profileData.organization_id || profileData.restaurant_id) {
+                const orgId = profileData.organization_id || profileData.restaurant_id
+                const tableName = profileData.organization_id ? 'organizations' : 'restaurants'
+                const { data: orgData } = await (supabase
+                  .from(tableName) as any)
+                  .select('*')
+                  .eq('id', orgId)
+                  .single()
+                
+                if (orgData) {
+                  set({ restaurant: orgData })
+                }
               }
             }
+          } catch (err) {
+             console.error('Unexpected error loading user data:', err)
           }
         }
       },

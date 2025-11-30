@@ -1,77 +1,41 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
-import type { Profile } from "@/types/api";
+import { Employee } from "@/lib/types"; // Assuming types are here
 
 export function useEmployees() {
-  const [employees, setEmployees] = useState<Profile[]>([]);
+  const [employees, setEmployees] = useState<Employee[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const supabase = createClient();
 
-  const fetchEmployees = async () => {
+  const fetchEmployees = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) {
-        setIsLoading(false);
-        return;
+      const response = await fetch("/api/employees");
+      if (!response.ok) {
+        throw new Error("Failed to fetch employees");
       }
-
-      // Récupérer l'organization_id du profil
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("organization_id")
-        .eq("id", user.id)
-        .single();
-
-      const profileData = profile as { organization_id: string | null } | null;
-
-      if (!profileData?.organization_id) {
-        setIsLoading(false);
-        return;
-      }
-
-      // Récupérer tous les employés de l'organisation
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("organization_id", profileData.organization_id)
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        console.error("Error fetching employees:", error);
-        setIsLoading(false);
-        return;
-      }
-
-      setEmployees(data || []);
-    } catch (error) {
-      console.error("Error:", error);
+      const data = await response.json();
+      setEmployees(data.employees || data); // Handle both {employees: []} and [] formats
+    } catch (err) {
+      console.error("Error:", err);
+      setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchEmployees();
-  }, []);
+  }, [fetchEmployees]);
 
-  const createEmployee = async (employeeData: {
-    email: string;
-    first_name?: string;
-    last_name?: string;
-    phone?: string;
-    role?: "owner" | "manager" | "employee";
-    hourly_rate?: number;
-  }) => {
+  const createEmployee = async (employeeData: any) => {
     const response = await fetch("/api/employees", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(employeeData),
     });
 
@@ -80,46 +44,50 @@ export function useEmployees() {
       throw new Error(error.error || "Failed to create employee");
     }
 
-    const { employee } = await response.json();
-    await fetchEmployees();
-    return employee;
+    const newEmployee = await response.json();
+    setEmployees((prev) => [...prev, newEmployee]);
+    return newEmployee;
   };
 
-  const updateEmployee = async (
-    employeeId: string,
-    updates: Partial<Profile>
-  ) => {
-    const { data, error } = await (supabase
-      .from("profiles") as any)
-      .update(updates)
-      .eq("id", employeeId)
-      .select()
-      .single();
+  const updateEmployee = async (id: string, updates: any) => {
+    const response = await fetch(`/api/employees/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updates),
+    });
 
-    if (error) throw error;
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || "Failed to update employee");
+    }
 
-    await fetchEmployees();
-    return data;
+    const updatedEmployee = await response.json();
+    setEmployees((prev) =>
+      prev.map((emp) => (emp.id === id ? updatedEmployee : emp))
+    );
+    return updatedEmployee;
   };
 
-  const deleteEmployee = async (employeeId: string) => {
-    const { error } = await (supabase
-      .from("profiles") as any)
-      .update({ is_active: false })
-      .eq("id", employeeId);
+  const deleteEmployee = async (id: string) => {
+    const response = await fetch(`/api/employees/${id}`, {
+      method: "DELETE",
+    });
 
-    if (error) throw error;
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || "Failed to delete employee");
+    }
 
-    await fetchEmployees();
+    setEmployees((prev) => prev.filter((emp) => emp.id !== id));
   };
 
   return {
     employees,
     isLoading,
+    error,
     refetch: fetchEmployees,
     createEmployee,
     updateEmployee,
     deleteEmployee,
   };
 }
-

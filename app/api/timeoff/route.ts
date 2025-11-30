@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const supabase = await createClient();
     const {
@@ -12,7 +12,6 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get user's profile to find their restaurant_id
     const { data: profile } = await supabase
       .from("profiles")
       .select("restaurant_id")
@@ -20,18 +19,16 @@ export async function GET() {
       .single();
 
     if (!profile?.restaurant_id) {
-      return NextResponse.json({ employees: [] });
+      return NextResponse.json([]);
     }
 
-    // Fetch employees for this restaurant
     const { data, error } = await supabase
-      .from("employees")
-      .select("*")
+      .from("time_off_requests")
+      .select("*, employees(first_name, last_name)")
       .eq("restaurant_id", profile.restaurant_id)
-      .order("first_name", { ascending: true });
+      .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Error fetching employees:", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
@@ -57,7 +54,6 @@ export async function POST(request: Request) {
 
     const body = await request.json();
 
-    // Get user's restaurant_id
     const { data: profile } = await supabase
       .from("profiles")
       .select("restaurant_id")
@@ -65,25 +61,19 @@ export async function POST(request: Request) {
       .single();
 
     if (!profile?.restaurant_id) {
-      return NextResponse.json(
-        { error: "No restaurant found for this user" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "No restaurant found" }, { status: 400 });
     }
 
-    // Insert new employee
     const { data, error } = await supabase
-      .from("employees")
+      .from("time_off_requests")
       .insert({
         ...body,
-        restaurant_id: profile.restaurant_id,
-        status: body.status || 'active'
+        restaurant_id: profile.restaurant_id
       })
       .select()
       .single();
 
     if (error) {
-      console.error("Error creating employee:", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
@@ -95,3 +85,4 @@ export async function POST(request: Request) {
     );
   }
 }
+

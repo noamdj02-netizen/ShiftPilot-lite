@@ -12,7 +12,6 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get user's profile to find their restaurant_id
     const { data: profile } = await supabase
       .from("profiles")
       .select("restaurant_id")
@@ -20,22 +19,20 @@ export async function GET() {
       .single();
 
     if (!profile?.restaurant_id) {
-      return NextResponse.json({ employees: [] });
+      return NextResponse.json({ error: "No restaurant associated" }, { status: 404 });
     }
 
-    // Fetch employees for this restaurant
     const { data, error } = await supabase
-      .from("employees")
+      .from("restaurants")
       .select("*")
-      .eq("restaurant_id", profile.restaurant_id)
-      .order("first_name", { ascending: true });
+      .eq("id", profile.restaurant_id)
+      .single();
 
     if (error) {
-      console.error("Error fetching employees:", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json(data || []);
+    return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Unknown error" },
@@ -44,7 +41,7 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+export async function PATCH(request: Request) {
   try {
     const supabase = await createClient();
     const {
@@ -57,7 +54,6 @@ export async function POST(request: Request) {
 
     const body = await request.json();
 
-    // Get user's restaurant_id
     const { data: profile } = await supabase
       .from("profiles")
       .select("restaurant_id")
@@ -65,25 +61,17 @@ export async function POST(request: Request) {
       .single();
 
     if (!profile?.restaurant_id) {
-      return NextResponse.json(
-        { error: "No restaurant found for this user" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "No restaurant associated" }, { status: 404 });
     }
 
-    // Insert new employee
     const { data, error } = await supabase
-      .from("employees")
-      .insert({
-        ...body,
-        restaurant_id: profile.restaurant_id,
-        status: body.status || 'active'
-      })
+      .from("restaurants")
+      .update(body)
+      .eq("id", profile.restaurant_id)
       .select()
       .single();
 
     if (error) {
-      console.error("Error creating employee:", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
@@ -95,3 +83,4 @@ export async function POST(request: Request) {
     );
   }
 }
+

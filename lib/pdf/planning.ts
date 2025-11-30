@@ -1,92 +1,80 @@
-import { jsPDF } from 'jspdf'
-import 'jspdf-autotable'
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
-import { Shift, Employee } from '@/lib/types'
 
-// Extend jsPDF type to include autotable
-interface jsPDFWithAutoTable extends jsPDF {
-  autoTable: (options: any) => void
+interface PdfData {
+  restaurantName: string
+  weekStart: Date
+  weekEnd: Date
+  employees: any[]
+  shifts: any[]
 }
 
-export const generatePlanningPDF = (
-  restaurantName: string,
-  startDate: Date,
-  endDate: Date,
-  employees: Employee[],
-  shifts: Record<string, (Shift | null)[]>
-) => {
-  const doc = new jsPDF() as jsPDFWithAutoTable
+export async function generatePlanningPDF({ restaurantName, weekStart, weekEnd, employees, shifts }: PdfData) {
+  const doc = new jsPDF()
 
-  // --- Header ---
+  // Title
   doc.setFontSize(20)
   doc.text(restaurantName, 14, 22)
   
   doc.setFontSize(12)
-  doc.text(`Planning du ${format(startDate, 'dd MMMM', { locale: fr })} au ${format(endDate, 'dd MMMM yyyy', { locale: fr })}`, 14, 32)
+  doc.text(`Planning du ${format(weekStart, 'dd MMMM', { locale: fr })} au ${format(weekEnd, 'dd MMMM yyyy', { locale: fr })}`, 14, 32)
 
-  // --- Table ---
-  
-  // Columns: Employee + 7 days
+  // Prepare table data
   const days = []
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(startDate)
-    d.setDate(d.getDate() + i)
-    days.push(format(d, 'EEE dd', { locale: fr }))
+  const current = new Date(weekStart)
+  while (current <= weekEnd) {
+    days.push(new Date(current))
+    current.setDate(current.getDate() + 1)
   }
 
-  const columns = [
-    { header: 'Employé', dataKey: 'employee' },
-    ...days.map((day, i) => ({ header: day, dataKey: `day_${i}` }))
-  ]
-
-  // Rows
-  const rows = employees.map(emp => {
-    const row: any = { employee: `${emp.first_name} ${emp.last_name}` }
-    const empShifts = shifts[emp.id] || []
+  const head = [['Employé', ...days.map(d => format(d, 'EEE dd', { locale: fr }))]]
+  
+  const body = employees.map(emp => {
+    const row = [`${emp.first_name} ${emp.last_name}`]
     
-    empShifts.forEach((shift, i) => {
-      row[`day_${i}`] = shift ? `${shift.start} - ${shift.end}\n${shift.type}` : ''
+    days.forEach(day => {
+      const dayStr = format(day, 'yyyy-MM-dd')
+      // Find shifts for this employee on this day
+      // Note: This assumes shifts have a date property or start_time iso string
+      // We need to match the logic from the UI or ensure shifts data is processed
+      const empShifts = shifts.filter(s => 
+        s.employee_id === emp.id && 
+        (s.date === dayStr || s.start_time.startsWith(dayStr))
+      )
+      
+      if (empShifts.length > 0) {
+        const shiftText = empShifts.map((s: any) => {
+            const start = new Date(s.start_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+            const end = new Date(s.end_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+            return `${start}-${end}`
+        }).join('\n')
+        row.push(shiftText)
+      } else {
+        row.push('')
+      }
     })
-    
     return row
   })
 
-  doc.autoTable({
+  autoTable(doc, {
+    head: head,
+    body: body,
     startY: 40,
-    head: [columns.map(c => c.header)],
-    body: rows.map(r => columns.map(c => r[c.dataKey])),
-    styles: {
-      fontSize: 8,
-      cellPadding: 3,
-      valign: 'middle',
-      overflow: 'linebreak',
-      cellWidth: 'wrap'
-    },
-    headStyles: {
-      fillColor: [59, 130, 246], // Brand Blue
-      textColor: 255,
-      fontStyle: 'bold'
-    },
-    columnStyles: {
-      0: { cellWidth: 30, fontStyle: 'bold' } // Employee Name Column
-    },
-    didParseCell: (data: any) => {
-        // You could add custom styling for different shift types here if needed
-        // e.g., coloring cells based on content
-    }
+    styles: { fontSize: 8, cellPadding: 2 },
+    headStyles: { fillColor: [59, 130, 246] }, // Blue primary
+    alternateRowStyles: { fillColor: [245, 247, 250] },
+    theme: 'grid'
   })
 
-  // --- Footer ---
+  // Footer
   const pageCount = doc.getNumberOfPages()
-  doc.setFontSize(8)
-  for(let i = 1; i <= pageCount; i++) {
+  for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i)
-    doc.text(`Généré par ShiftPilot le ${format(new Date(), 'dd/MM/yyyy HH:mm')}`, 14, doc.internal.pageSize.height - 10)
-    doc.text(`Page ${i} sur ${pageCount}`, doc.internal.pageSize.width - 20, doc.internal.pageSize.height - 10)
+    doc.setFontSize(8)
+    doc.text(`Généré par ShiftPilot - Page ${i} sur ${pageCount}`, 14, doc.internal.pageSize.height - 10)
   }
 
-  // Save
-  doc.save(`planning_${format(startDate, 'yyyy-MM-dd')}.pdf`)
+  return doc.output('arraybuffer')
 }
-

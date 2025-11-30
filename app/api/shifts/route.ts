@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const supabase = await createClient();
     const {
@@ -12,6 +12,10 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const { searchParams } = new URL(request.url);
+    const start = searchParams.get("start");
+    const end = searchParams.get("end");
+
     // Get user's profile to find their restaurant_id
     const { data: profile } = await supabase
       .from("profiles")
@@ -20,18 +24,25 @@ export async function GET() {
       .single();
 
     if (!profile?.restaurant_id) {
-      return NextResponse.json({ employees: [] });
+      return NextResponse.json([]);
     }
 
-    // Fetch employees for this restaurant
-    const { data, error } = await supabase
-      .from("employees")
-      .select("*")
-      .eq("restaurant_id", profile.restaurant_id)
-      .order("first_name", { ascending: true });
+    let query = supabase
+      .from("shifts")
+      .select("*, employees(first_name, last_name, color, initials)")
+      .eq("restaurant_id", profile.restaurant_id);
+
+    if (start) {
+      query = query.gte("start_time", start);
+    }
+    if (end) {
+      query = query.lte("end_time", end);
+    }
+
+    const { data, error } = await query.order("start_time", { ascending: true });
 
     if (error) {
-      console.error("Error fetching employees:", error);
+      console.error("Error fetching shifts:", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
@@ -57,7 +68,6 @@ export async function POST(request: Request) {
 
     const body = await request.json();
 
-    // Get user's restaurant_id
     const { data: profile } = await supabase
       .from("profiles")
       .select("restaurant_id")
@@ -66,24 +76,22 @@ export async function POST(request: Request) {
 
     if (!profile?.restaurant_id) {
       return NextResponse.json(
-        { error: "No restaurant found for this user" },
+        { error: "No restaurant found" },
         { status: 400 }
       );
     }
 
-    // Insert new employee
     const { data, error } = await supabase
-      .from("employees")
+      .from("shifts")
       .insert({
         ...body,
-        restaurant_id: profile.restaurant_id,
-        status: body.status || 'active'
+        restaurant_id: profile.restaurant_id
       })
       .select()
       .single();
 
     if (error) {
-      console.error("Error creating employee:", error);
+      console.error("Error creating shift:", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
@@ -95,3 +103,4 @@ export async function POST(request: Request) {
     );
   }
 }
+

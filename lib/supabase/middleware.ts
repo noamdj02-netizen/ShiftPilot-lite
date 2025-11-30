@@ -31,9 +31,16 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  let user = null;
+  try {
+    const {
+      data: { user: supabaseUser },
+    } = await supabase.auth.getUser();
+    user = supabaseUser;
+  } catch (error) {
+    console.error("Middleware Auth Error:", error);
+    // On continue sans user, ce qui forcera le login sur les routes protégées
+  }
 
   // Routes d'authentification (accessibles uniquement si NON connecté)
   const isAuthRoute =

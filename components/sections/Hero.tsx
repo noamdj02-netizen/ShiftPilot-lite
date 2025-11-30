@@ -200,17 +200,17 @@ export function Hero() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.5 }}
-          className="relative rounded-[2rem] p-2 bg-gradient-to-b from-black/5 to-black/20 dark:from-white/10 dark:to-white/5 backdrop-blur-2xl border border-black/5 dark:border-white/10 shadow-2xl group"
+          className="relative rounded-[1.5rem] md:rounded-[2rem] p-1 md:p-2 bg-gradient-to-b from-black/5 to-black/20 dark:from-white/10 dark:to-white/5 backdrop-blur-2xl border border-black/5 dark:border-white/10 shadow-2xl group mx-auto max-w-[95vw]"
         >
           {/* Glow effect */}
           <motion.div
-            className="absolute -inset-1 bg-gradient-to-r from-accent/20 via-primary/20 to-accent/20 rounded-[2rem] blur-xl"
+            className="absolute -inset-0.5 md:-inset-1 bg-gradient-to-r from-accent/20 via-primary/20 to-accent/20 rounded-[1.5rem] md:rounded-[2rem] blur-lg md:blur-xl"
             animate={{ opacity: [0, 0.3, 0] }}
             transition={{ duration: 3, repeat: Infinity }}
           />
           
           {/* Screen Content */}
-          <div className="relative rounded-3xl overflow-hidden bg-white dark:bg-[#1C1C1E] aspect-[16/10] border border-black/5 dark:border-white/5 shadow-inner">
+          <div className="relative rounded-2xl md:rounded-3xl overflow-hidden bg-white dark:bg-[#1C1C1E] aspect-[9/16] md:aspect-[16/10] border border-black/5 dark:border-white/5 shadow-inner h-[600px] md:h-auto">
             {/* REAL DASHBOARD UI with Sidebar */}
             <div className="absolute inset-0 flex overflow-hidden">
               {/* Sidebar */}
@@ -218,7 +218,7 @@ export function Hero() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.6 }}
-                className="w-16 md:w-20 bg-slate-50 dark:bg-[#0F172A] border-r border-slate-200 dark:border-slate-800 flex flex-col items-center py-4 gap-6"
+                className="hidden md:flex w-16 md:w-20 bg-slate-50 dark:bg-[#0F172A] border-r border-slate-200 dark:border-slate-800 flex-col items-center py-4 gap-6"
               >
                 {/* Logo */}
                 <div className="text-xs md:text-sm font-bold text-slate-900 dark:text-white writing-vertical-rl rotate-180">
@@ -272,38 +272,44 @@ export function Hero() {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.7 }}
-                  className="px-4 md:px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between"
+                  className="px-4 md:px-6 py-3 md:py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between"
                 >
-                  <div>
-                    <AnimatePresence mode="wait">
-                      <motion.h2
-                        key={activeView}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 10 }}
-                        transition={{ duration: 0.2 }}
-                        className="text-lg md:text-xl font-bold text-slate-900 dark:text-white"
-                      >
-                        {activeView === 'dashboard' ? 'Tableau de bord' : activeView === 'planning' ? 'Planning' : 'Collaborateurs'}
-                      </motion.h2>
-                    </AnimatePresence>
-                    <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-                      {activeView === 'dashboard' ? 'Vue d\'ensemble de votre activité' : activeView === 'planning' ? 'Gestion des plannings et shifts' : 'Gestion des équipes'}
-                    </p>
-                  </div>
                   <div className="flex items-center gap-3">
+                    {/* Mobile Menu Button */}
+                    <button className="md:hidden p-1 -ml-1 text-slate-500">
+                        <span className="material-symbols-outlined">menu</span>
+                    </button>
+                    <div>
+                        <AnimatePresence mode="wait">
+                          <motion.h2
+                            key={activeView}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 10 }}
+                            transition={{ duration: 0.2 }}
+                            className="text-base md:text-xl font-bold text-slate-900 dark:text-white"
+                          >
+                            {activeView === 'dashboard' ? 'Tableau de bord' : activeView === 'planning' ? 'Planning' : 'Collaborateurs'}
+                          </motion.h2>
+                        </AnimatePresence>
+                        <p className="text-[10px] md:text-sm text-slate-500 dark:text-slate-400 mt-0.5 hidden sm:block">
+                          {activeView === 'dashboard' ? 'Vue d\'ensemble de votre activité' : activeView === 'planning' ? 'Gestion des plannings et shifts' : 'Gestion des équipes'}
+                        </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 md:gap-3">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs md:text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                      className="flex items-center gap-2 px-2 md:px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg text-[10px] md:text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
                     >
-                      <span className="text-slate-600 dark:text-slate-300">Semaine 42</span>
+                      <span className="text-slate-600 dark:text-slate-300 truncate max-w-[60px] md:max-w-none">Semaine 42</span>
                       <span className="material-symbols-outlined text-sm">expand_more</span>
                     </motion.button>
                     <motion.div
                       whileHover={{ scale: 1.1, rotate: 5 }}
                       whileTap={{ scale: 0.95 }}
-                      className="size-8 md:size-10 rounded-full bg-accent flex items-center justify-center text-white text-xs font-bold cursor-pointer shadow-lg"
+                      className="size-7 md:size-10 rounded-full bg-accent flex items-center justify-center text-white text-[10px] md:text-xs font-bold cursor-pointer shadow-lg"
                     >
                       AM
                     </motion.div>
@@ -323,7 +329,7 @@ export function Hero() {
                         className="space-y-6 h-full"
                       >
                         {/* KPI Cards - Matching image design */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                        <div className="grid grid-cols-2 gap-2 md:gap-4">
                           {[
                             { 
                               label: 'Heures planifiées', 
@@ -368,28 +374,28 @@ export function Hero() {
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ duration: 0.5, delay: 0.8 + idx * 0.1 }}
                               whileHover={{ scale: 1.02, y: -2 }}
-                              className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-4 shadow-sm"
+                              className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-3 md:p-4 shadow-sm"
                             >
-                              <div className="flex items-start justify-between mb-3">
-                                <div className={`w-10 h-10 rounded-lg ${stat.iconBg} flex items-center justify-center`}>
-                                  <span className={`material-symbols-outlined ${stat.iconColor} text-xl`}>
+                              <div className="flex items-start justify-between mb-2 md:mb-3">
+                                <div className={`size-8 md:size-10 rounded-lg ${stat.iconBg} flex items-center justify-center`}>
+                                  <span className={`material-symbols-outlined ${stat.iconColor} text-lg md:text-xl`}>
                                     {stat.icon}
                                   </span>
                                 </div>
-                                <div className={`flex items-center gap-1 text-xs font-semibold ${
+                                <div className={`flex items-center gap-0.5 md:gap-1 text-[10px] md:text-xs font-semibold ${
                                   stat.trend === 'up' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
                                 }`}>
                                   {stat.trend === 'up' ? (
-                                    <span className="material-symbols-outlined text-sm">trending_up</span>
+                                    <span className="material-symbols-outlined text-xs md:text-sm">trending_up</span>
                                   ) : (
-                                    <span className="material-symbols-outlined text-sm">trending_down</span>
+                                    <span className="material-symbols-outlined text-xs md:text-sm">trending_down</span>
                                   )}
                                   {stat.delta}
                                 </div>
                               </div>
                               <div>
-                                <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">{stat.label}</p>
-                                <p className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">
+                                <p className="text-[10px] md:text-xs text-slate-500 dark:text-slate-400 mb-0.5 md:mb-1 truncate">{stat.label}</p>
+                                <p className="text-lg md:text-2xl font-bold text-slate-900 dark:text-white">
                                   {stat.val}
                                 </p>
                               </div>

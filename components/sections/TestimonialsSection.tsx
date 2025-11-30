@@ -52,7 +52,7 @@ export function TestimonialsSection() {
   const testimonial = testimonials[current]
   
   return (
-    <section ref={ref} className="py-24 lg:py-32 bg-gradient-to-br from-gray-50 to-purple-50/30 relative overflow-hidden">
+    <section id="temoignages" ref={ref} className="py-24 lg:py-32 bg-gradient-to-br from-gray-50 to-purple-50/30 relative overflow-hidden">
       <div className="container-wide">
         {/* Header */}
         <SectionReveal className="text-center max-w-3xl mx-auto mb-16">

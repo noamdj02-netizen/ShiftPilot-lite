@@ -41,19 +41,9 @@ export function LoginForm() {
       
       router.push('/dashboard')
     } catch (err) {
-      console.error('Login error:', err)
+      // Login error handling
       const errorMessage = err instanceof Error ? err.message : 'Une erreur est survenue'
       setError(errorMessage)
-      
-      // Log for debugging
-      if (typeof window !== 'undefined') {
-        console.error('Login failed:', {
-          email: formData.email,
-          error: errorMessage,
-          userAgent: navigator.userAgent,
-          platform: navigator.platform
-        })
-      }
     } finally {
       setIsLoading(false)
     }

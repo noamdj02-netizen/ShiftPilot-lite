@@ -28,7 +28,7 @@ export default function RHPage() {
       
       toast.success('Document uploadé avec succès')
     } catch (error) {
-      console.error(error)
+      console.error("Upload error:", error)
       toast.error("Erreur lors de l'upload")
     } finally {
       setUploading(false)

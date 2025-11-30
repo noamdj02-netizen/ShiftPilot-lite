@@ -1,31 +1,44 @@
 export enum AppRoute {
   LANDING = '/',
   DASHBOARD = '/dashboard',
-  PLANNING = '/planning',
-  EMPLOYEES = '/employees',
-  COMPLIANCE = '/compliance',
-  AVAILABILITIES = '/availabilities',
+  PLANNING = '/dashboard/planning',
+  EMPLOYEES = '/dashboard/employees',
+  COMPLIANCE = '/dashboard/compliance',
+  AVAILABILITIES = '/dashboard/availabilities',
 }
 
 export interface Employee {
   id: string
-  name: string
-  first_name?: string
-  last_name?: string
+  restaurant_id?: string
+  first_name: string
+  last_name: string
+  email?: string
+  phone?: string
   role: string
   department?: string
-  avatar: string
+  avatar?: string
   color?: string
   initials?: string
-  hours: number
-  status: 'Actif' | 'Inactif' | 'En congés' | string
-  type?: 'CDI' | 'CDD' | 'Extra' | string
-  joined?: string
-  statusColor: string
+  contract_type?: string
+  weekly_hours?: number
+  status: 'active' | 'inactive' | 'vacation' | string
+  joined_at?: string
+  
+  // Legacy/UI helpers
+  name?: string
+  hours?: number
+  statusColor?: string
 }
 
 export interface Shift {
   id?: string
+  employee_id?: string
+  start_time?: string
+  end_time?: string
+  role?: string
+  notes?: string
+  
+  // UI types
   start: string
   end: string
   type: 'work' | 'off' | 'admin' | 'kitchen'
@@ -38,7 +51,9 @@ export interface UserProfile {
   first_name?: string
   last_name?: string
   avatar_url?: string
-  role: 'admin' | 'manager' | 'employee'
+  role: 'admin' | 'manager' | 'employee' | 'employer'
+  restaurant_id?: string
+  organization_id?: string // Deprecated?
   preferences?: {
     theme?: 'light' | 'dark' | 'system'
     notifications?: {
@@ -47,6 +62,14 @@ export interface UserProfile {
       push: boolean
     }
   }
+}
+
+export interface Restaurant {
+  id: string
+  name: string
+  address?: string
+  phone?: string
+  settings?: any
 }
 
 export interface Organization {

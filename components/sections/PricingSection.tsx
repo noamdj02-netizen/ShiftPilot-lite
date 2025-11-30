@@ -98,7 +98,7 @@ export function PricingSection() {
   const isInView = useInView(ref, { once: true, margin: "-100px" })
   
   return (
-    <section ref={ref} className="py-24 lg:py-32 bg-white dark:bg-[#000000] relative overflow-hidden" id="pricing">
+    <section ref={ref} className="py-24 lg:py-32 bg-white dark:bg-[#000000] relative overflow-hidden" id="tarifs">
       <div className="container mx-auto px-6 max-w-7xl">
         {/* Header */}
         <motion.div

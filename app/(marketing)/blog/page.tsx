@@ -1,11 +1,8 @@
-import { Navbar } from '@/components/marketing/Navbar'
-import { Footer } from '@/components/marketing/Footer'
 import { Newspaper, Calendar, Tag } from 'lucide-react'
 
 export default function BlogPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Navbar />
       
       {/* Hero */}
       <section className="py-20 lg:py-32 bg-background relative overflow-hidden">
@@ -39,8 +36,6 @@ export default function BlogPage() {
           </div>
         </div>
       </section>
-
-      <Footer />
     </div>
   )
 }

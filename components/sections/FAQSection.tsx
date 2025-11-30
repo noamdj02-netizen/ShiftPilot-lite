@@ -45,7 +45,7 @@ export function FAQSection() {
   const isInView = useInView(ref, { once: true, margin: "-100px" })
   
   return (
-    <section ref={ref} className="py-24 lg:py-32 bg-[#F5F5F7] dark:bg-[#000000] relative overflow-hidden">
+    <section id="faq" ref={ref} className="py-24 lg:py-32 bg-[#F5F5F7] dark:bg-[#000000] relative overflow-hidden">
       <div className="container mx-auto px-6 max-w-4xl">
         {/* Header */}
         <motion.div

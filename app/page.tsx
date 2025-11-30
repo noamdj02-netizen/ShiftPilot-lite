@@ -1,4 +1,4 @@
-import { Navbar } from '@/components/layout/Navbar'
+import { Navbar } from '@/components/landing/Navbar'
 import { Hero } from '@/components/sections/Hero'
 import { TrustSection } from '@/components/sections/TrustSection'
 import { BentoFeatures } from '@/components/sections/BentoFeatures'
@@ -6,7 +6,7 @@ import { BeforeAfterSection } from '@/components/sections/BeforeAfterSection'
 import { InteractiveDemoSection } from '@/components/sections/InteractiveDemoSection'
 import { PricingSection } from '@/components/sections/PricingSection'
 import { FAQSection } from '@/components/sections/FAQSection'
-import { Footer } from '@/components/layout/Footer'
+import { Footer } from '@/components/landing/Footer'
 
 export const metadata = {
   title: 'ShiftPilot Enterprise | Planifiez. Unifiez. Simplifiez.',

@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { Menu, X, Sparkles } from 'lucide-react'
-import { Logo } from '@/components/shared/Logo'
 
 const navigation = [
   { name: 'Accueil', href: '/' },
@@ -57,7 +56,15 @@ export function Navbar() {
       >
         <nav className="container-default">
           <div className="flex items-center justify-between h-16 lg:h-20">
-            <Logo size="md" />
+            {/* Logo */}
+            <Link href="/" className="flex items-center gap-2.5 group">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-soft group-hover:scale-105 transition-transform duration-300">
+                <span className="text-white font-bold text-lg">S</span>
+              </div>
+              <span className="text-xl font-bold text-foreground group-hover:opacity-80 transition-opacity">
+                Shift<span className="text-primary">Pilot</span>
+              </span>
+            </Link>
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-1">
@@ -133,7 +140,16 @@ export function Navbar() {
             >
               <div className="flex flex-col h-full">
                 <div className="flex items-center justify-between p-4 border-b border-border">
-                  <Logo size="md" />
+                  {/* Mobile Menu Logo */}
+                  <Link href="/" className="flex items-center gap-2.5" onClick={() => setIsMobileMenuOpen(false)}>
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-soft">
+                      <span className="text-white font-bold text-lg">S</span>
+                    </div>
+                    <span className="text-xl font-bold text-foreground">
+                      Shift<span className="text-primary">Pilot</span>
+                    </span>
+                  </Link>
+                  
                   <button
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="p-2 rounded-xl hover:bg-background-secondary"
@@ -190,4 +206,3 @@ export function Navbar() {
     </>
   )
 }
-

@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { Logo } from '@/components/shared/Logo'
 import { Mail, Phone, MapPin, Twitter, Linkedin, Instagram } from 'lucide-react'
 
 const footerLinks = {
@@ -44,8 +43,13 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 lg:gap-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-3 lg:col-span-2">
-            <Link href="/" className="inline-flex items-center gap-2.5 mb-6">
-              <Logo size="md" variant="white" />
+            <Link href="/" className="inline-flex items-center gap-2.5 mb-6 group">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-soft group-hover:scale-105 transition-transform duration-300">
+                <span className="text-white font-bold text-lg">S</span>
+              </div>
+              <span className="text-xl font-bold text-white group-hover:opacity-80 transition-opacity">
+                Shift<span className="text-primary">Pilot</span>
+              </span>
             </Link>
             <p className="text-white/70 mb-6 max-w-xs">
               La solution de planification intelligente pour restaurants.
@@ -181,4 +185,3 @@ export function Footer() {
     </footer>
   )
 }
-

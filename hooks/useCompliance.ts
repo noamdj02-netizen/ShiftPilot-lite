@@ -16,24 +16,31 @@ export function useCompliance(initialDate: Date = new Date()) {
     if (!employees || !shifts) return []
 
     return employees.map(emp => {
-      const empShifts = shifts.filter(s => s.employee_id === emp.id)
+      const empShifts = shifts.filter(s => s.employee_id === emp.id && s.start_time && s.end_time)
       
       // Rule 1: Total Hours
       const totalHours = empShifts.reduce((acc, s) => {
-        const start = new Date(s.start_time)
-        const end = new Date(s.end_time)
+        if (!s.start_time || !s.end_time) return acc
+        const start = new Date(s.start_time as string)
+        const end = new Date(s.end_time as string)
         return acc + (end.getTime() - start.getTime()) / (1000 * 60 * 60)
       }, 0)
 
       // Rule 2: Max consecutive days (simplified check for this week)
-      const daysWorked = new Set(empShifts.map(s => new Date(s.start_time).toDateString())).size
+      const daysWorked = new Set(
+        empShifts
+          .filter(s => s.start_time)
+          .map(s => new Date(s.start_time as string).toDateString())
+      ).size
       
       // Rule 3: Rest time (check if any shift ends < 11h before next start)
-      const sortedShifts = [...empShifts].sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime())
+      const sortedShifts = [...empShifts]
+        .filter(s => s.start_time && s.end_time)
+        .sort((a, b) => new Date(a.start_time as string).getTime() - new Date(b.start_time as string).getTime())
       let restViolation = false
       for (let i = 0; i < sortedShifts.length - 1; i++) {
-        const currentEnd = new Date(sortedShifts[i].end_time)
-        const nextStart = new Date(sortedShifts[i+1].start_time)
+        const currentEnd = new Date(sortedShifts[i].end_time as string)
+        const nextStart = new Date(sortedShifts[i+1].start_time as string)
         const diffHours = (nextStart.getTime() - currentEnd.getTime()) / (1000 * 60 * 60)
         if (diffHours < 11) restViolation = true
       }

@@ -40,6 +40,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Créer le planning
+    // Note: Type assertion nécessaire - régénérer les types après migration
     const { data: schedule, error: scheduleError } = await supabase
       .from('schedules')
       .insert({
@@ -48,7 +49,7 @@ export async function POST(request: NextRequest) {
         week_start_date,
         status: 'DRAFT',
         created_by: user.id
-      })
+      } as any)
       .select()
       .single();
 
@@ -65,7 +66,7 @@ export async function POST(request: NextRequest) {
         actor_id: user.id,
         action: 'SCHEDULE_CREATED',
         payload: { schedule_id: schedule.id, week_start_date, location_id }
-      });
+      } as any);
 
     return successResponse({ schedule }, 201);
 

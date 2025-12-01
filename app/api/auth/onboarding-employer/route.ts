@@ -38,6 +38,8 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient();
 
     // 1. Créer l'organisation
+    // Note: Type assertion nécessaire car les types générés ne correspondent pas encore au nouveau schéma
+    // Après avoir appliqué la migration 001_complete_schema.sql, régénérer les types avec: npm run db:generate
     const { data: org, error: orgError } = await supabase
       .from('organizations')
       .insert({
@@ -46,8 +48,9 @@ export async function POST(request: NextRequest) {
         address,
         city,
         country,
-        timezone
-      })
+        timezone,
+        slug: businessName.toLowerCase().replace(/[^a-z0-9]/g, '-') + '-' + Math.random().toString(36).substring(2, 7)
+      } as any)
       .select()
       .single();
 
@@ -65,7 +68,7 @@ export async function POST(request: NextRequest) {
         address: locationAddress || address,
         city,
         is_active: true
-      })
+      } as any)
       .select()
       .single();
 
@@ -81,7 +84,7 @@ export async function POST(request: NextRequest) {
         organization_id: org.id,
         role: 'OWNER',
         default_location_id: location?.id || null
-      })
+      } as any)
       .eq('id', user.id);
 
     if (profileError) {
@@ -100,7 +103,7 @@ export async function POST(request: NextRequest) {
         max_consecutive_days: 6,
         sunday_premium_rate: 1.2,
         night_premium_rate: 1.1
-      });
+      } as any);
 
     // 5. Créer un canal de messagerie général
     if (location) {
@@ -110,7 +113,7 @@ export async function POST(request: NextRequest) {
           organization_id: org.id,
           name: 'Général',
           type: 'TEAM'
-        });
+        } as any);
     }
 
     // 6. Log audit
@@ -121,7 +124,7 @@ export async function POST(request: NextRequest) {
         actor_id: user.id,
         action: 'ORGANIZATION_CREATED',
         payload: { businessName, city, country }
-      });
+      } as any);
 
     return successResponse({
       success: true,

@@ -85,7 +85,7 @@ export async function PATCH(
           }
         }));
 
-        await supabase.from('notifications').insert(notifications);
+        await supabase.from('notifications').insert(notifications as any);
       }
     }
 
@@ -101,7 +101,7 @@ export async function PATCH(
           old_status: schedule.status,
           new_status: status
         }
-      });
+      } as any);
 
     return successResponse({ schedule: updatedSchedule });
 

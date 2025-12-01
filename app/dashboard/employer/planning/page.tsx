@@ -1,10 +1,6 @@
-import ScheduleWeekView from "@/components/planning/ScheduleWeekView";
+import { PlanningView } from "@/components/dashboard/employer/PlanningView";
 
 export default function PlanningPage() {
-  return (
-    <div className="h-full flex flex-col">
-        <ScheduleWeekView />
-    </div>
-  )
+  return <PlanningView />;
 }
 

@@ -79,7 +79,10 @@ CREATE TABLE IF NOT EXISTS locations (
 );
 
 -- Profiles (extension de auth.users)
-CREATE TABLE IF NOT EXISTS profiles (
+-- Supprimer la table si elle existe pour recréer avec la bonne structure
+DROP TABLE IF EXISTS profiles CASCADE;
+
+CREATE TABLE profiles (
     id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
     full_name VARCHAR(255),
     first_name VARCHAR(100),
@@ -564,12 +567,13 @@ BEGIN
     INSERT INTO public.profiles (id, email, full_name, first_name, last_name, role)
     VALUES (
         NEW.id,
-        NEW.email,
+        COALESCE(NEW.email, ''),
         COALESCE(NEW.raw_user_meta_data->>'full_name', NULL),
         COALESCE(NEW.raw_user_meta_data->>'first_name', NULL),
         COALESCE(NEW.raw_user_meta_data->>'last_name', NULL),
-        'EMPLOYEE' -- Default role, will be updated during onboarding
-    );
+        'EMPLOYEE'::user_role -- Default role, will be updated during onboarding
+    )
+    ON CONFLICT (id) DO NOTHING;
     RETURN NEW;
 EXCEPTION
     WHEN others THEN

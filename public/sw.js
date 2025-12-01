@@ -8,7 +8,7 @@ const RUNTIME_CACHE = 'shiftpilot-runtime-v1';
 const PRECACHE_ASSETS = [
   '/',
   '/dashboard',
-  '/offline', // Fallback page
+  '/offline.html', // Fallback page
 ];
 
 // Install event - Cache static assets
@@ -77,7 +77,7 @@ self.addEventListener('fetch', (event) => {
 
           // If it's a navigation request and no cache, show offline page
           if (event.request.mode === 'navigate') {
-            return caches.match('/offline') || new Response('Offline', {
+            return caches.match('/offline.html') || new Response('Offline', {
               status: 503,
               statusText: 'Service Unavailable',
             });

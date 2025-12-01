@@ -1,10 +1,8 @@
 'use client'
 
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { 
-  AreaChart, Area, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend 
-} from 'recharts'
-import Link from 'next/link'
+import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 
 const dataActivity = [
   { time: '08:00', value: 20, predicted: 22 },
@@ -18,7 +16,7 @@ const dataActivity = [
 ]
 
 const dataRevenue = [
-  { day: 'Lun', actual: 4200, target: 4000 },
+  { day: 'Lun', actual: 0, target: 0 },
   { day: 'Mar', actual: 3800, target: 3900 },
   { day: 'Mer', actual: 4500, target: 4100 },
   { day: 'Jeu', actual: 4800, target: 4600 },
@@ -27,201 +25,156 @@ const dataRevenue = [
   { day: 'Dim', actual: 5100, target: 5500 },
 ]
 
+const alerts = [
+  { id: 1, severity: 'critical', message: 'Sous-effectif prévu vendredi soir (-2 serveurs)', action: 'Recruter' },
+  { id: 2, severity: 'warning', message: 'Dépassement budget masse salariale de 3.2%', action: 'Ajuster' },
+  { id: 3, severity: 'info', message: 'Nouvelle demande de congé de Marie pour le 15/12', action: 'Voir' },
+]
+
 export default function DashboardPage() {
+  const [selectedPeriod, setSelectedPeriod] = useState('semaine')
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
-            Tableau de bord
-          </h1>
-          <p className="text-slate-500 dark:text-slate-400">
-            Aperçu de l'activité et des performances
-          </p>
+          <h1 className="text-3xl font-bold text-white">Tableau de bord</h1>
+          <p className="text-slate-400 mt-1">Vue d'ensemble de votre activité</p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg px-3 py-2 flex items-center gap-2 text-sm">
-            <span className="material-symbols-outlined text-slate-400">calendar_today</span>
-            <span className="text-slate-700 dark:text-slate-200 font-medium">Cette semaine</span>
-          </div>
-          <Link 
-            href="/planning" 
-            className="bg-accent hover:bg-accent/90 text-white rounded-lg px-4 py-2 text-sm font-medium flex items-center gap-2 transition-colors"
-          >
-            <span className="material-symbols-outlined text-[20px]">add</span>
+          <button className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm text-white hover:bg-white/10 transition-colors">
+            Cette semaine
+          </button>
+          <button className="px-4 py-2 bg-gradient-to-r from-[#6C63FF] to-[#4F46E5] rounded-xl text-sm text-white hover:opacity-90 transition-opacity shadow-lg shadow-[#6C63FF]/25">
             Nouveau planning
-          </Link>
+          </button>
         </div>
       </div>
 
-      {/* KPI Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { label: 'Masse Salariale', val: '24,500€', delta: '-2.4%', trend: 'down', sub: 'vs N-1', icon: 'payments', color: 'text-blue-500' },
-          { label: 'Productivité / Heure', val: '84.20€', delta: '+5.1%', trend: 'up', sub: 'Objectif: 80€', icon: 'trending_up', color: 'text-green-500' },
-          { label: 'Heures Planifiées', val: '1,240h', delta: '+0.8%', trend: 'neutral', sub: '98% Staffing', icon: 'schedule', color: 'text-purple-500' },
-          { label: 'Score Conformité', val: '98/100', delta: '+2pts', trend: 'up', sub: 'Aucune violation', icon: 'gavel', color: 'text-orange-500' },
-        ].map((stat, idx) => (
-          <motion.div
-            key={idx}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: idx * 0.1 }}
-            className="bg-white dark:bg-[#1C1C1E] p-6 rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm hover:shadow-md transition-all group"
-          >
-            <div className="flex justify-between items-start mb-4">
-              <div className={`p-2 rounded-lg bg-slate-100 dark:bg-white/5 ${stat.color}`}>
-                <span className="material-symbols-outlined">{stat.icon}</span>
-              </div>
-              <span className={`text-xs font-bold px-2 py-1 rounded-full ${
-                stat.trend === 'up' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 
-                stat.trend === 'down' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 
-                'bg-slate-100 text-slate-700 dark:bg-white/10 dark:text-slate-400'
-              }`}>
-                {stat.delta}
-              </span>
+      {/* KPIs Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-[#1C1C1E] border border-white/5 rounded-2xl p-4 sm:p-5 lg:p-6">
+          <div className="flex items-center justify-between mb-3">
+            <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center">
+              <span className="material-symbols-outlined text-blue-400">payments</span>
             </div>
-            <div>
-              <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{stat.label}</p>
-              <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{stat.val}</p>
-              <p className="text-xs text-slate-400 mt-1">{stat.sub}</p>
+            <span className="text-xs text-red-400 font-medium">-2.4%</span>
+          </div>
+          <p className="text-2xl font-bold text-white mb-1">24,500€</p>
+          <p className="text-sm text-slate-400">Masse Salariale</p>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-[#1C1C1E] border border-white/5 rounded-2xl p-5">
+          <div className="flex items-center justify-between mb-3">
+            <div className="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center">
+              <span className="material-symbols-outlined text-green-400">trending_up</span>
             </div>
-          </motion.div>
-        ))}
+            <span className="text-xs text-green-400 font-medium">+5.1%</span>
+          </div>
+          <p className="text-2xl font-bold text-white mb-1">84.20€</p>
+          <p className="text-sm text-slate-400">Productivité/Heure</p>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-[#1C1C1E] border border-white/5 rounded-2xl p-5">
+          <div className="flex items-center justify-between mb-3">
+            <div className="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center">
+              <span className="material-symbols-outlined text-purple-400">schedule</span>
+            </div>
+            <span className="text-xs text-green-400 font-medium">+0.8%</span>
+          </div>
+          <p className="text-2xl font-bold text-white mb-1">186h</p>
+          <p className="text-sm text-slate-400">Heures Planifiées</p>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="bg-[#1C1C1E] border border-white/5 rounded-2xl p-5">
+          <div className="flex items-center justify-between mb-3">
+            <div className="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center">
+              <span className="material-symbols-outlined text-orange-400">gavel</span>
+            </div>
+            <span className="text-xs text-green-400 font-medium">+2pts</span>
+          </div>
+          <p className="text-2xl font-bold text-white mb-1">98/100</p>
+          <p className="text-sm text-slate-400">Score Conformité</p>
+        </motion.div>
       </div>
 
       {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Chart */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="lg:col-span-2 bg-white dark:bg-[#1C1C1E] p-6 rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm"
-        >
-          <div className="flex justify-between items-center mb-6">
-            <div>
-              <h3 className="font-bold text-slate-900 dark:text-white">Prévision d'activité vs Réel</h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400">Comparaison du chiffre d'affaires et staffing</p>
-            </div>
-            <div className="flex bg-slate-100 dark:bg-white/5 rounded-lg p-1">
-              <button className="px-3 py-1 text-xs font-medium rounded bg-white dark:bg-white/10 text-slate-900 dark:text-white shadow-sm">Hebdo</button>
-              <button className="px-3 py-1 text-xs font-medium rounded text-slate-500 hover:text-slate-900 dark:hover:text-white">Mensuel</button>
-            </div>
-          </div>
-          <div className="h-[300px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={dataActivity} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="colorVal" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} opacity={0.2} />
-                <XAxis dataKey="time" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12 }} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12 }} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#1C1C1E',
-                    borderColor: 'rgba(255,255,255,0.1)',
-                    borderRadius: '12px',
-                    fontSize: '12px',
-                    color: '#fff'
-                  }}
-                  itemStyle={{ color: '#fff' }}
-                />
-                <Legend verticalAlign="top" height={36} iconType="circle" wrapperStyle={{ paddingTop: '10px' }} />
-                <Area
-                  name="Réel"
-                  type="monotone"
-                  dataKey="value"
-                  stroke="#3B82F6"
-                  strokeWidth={3}
-                  fillOpacity={1}
-                  fill="url(#colorVal)"
-                />
-                <Area
-                  name="Prévisionnel (IA)"
-                  type="monotone"
-                  dataKey="predicted"
-                  stroke="#6C63FF"
-                  strokeWidth={3}
-                  strokeDasharray="4 4"
-                  fill="transparent"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="lg:col-span-2 bg-[#1C1C1E] border border-white/5 rounded-2xl p-6">
+          <h3 className="text-lg font-semibold text-white mb-6">Prévision d'activité vs Réel</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <AreaChart data={dataActivity}>
+              <defs>
+                <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#6C63FF" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#6C63FF" stopOpacity={0} />
+                </linearGradient>
+                <linearGradient id="colorPredicted" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.2} />
+                  <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} opacity={0.2} />
+              <XAxis dataKey="time" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} />
+              <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: '#1C1C1E',
+                  borderColor: 'rgba(255,255,255,0.1)',
+                  borderRadius: '12px',
+                  fontSize: '12px',
+                  color: '#fff'
+                }}
+              />
+              <Area type="monotone" dataKey="value" stroke="#6C63FF" fillOpacity={1} fill="url(#colorValue)" />
+              <Area type="monotone" dataKey="predicted" stroke="#8B5CF6" strokeDasharray="5 5" fillOpacity={1} fill="url(#colorPredicted)" />
+              <Legend />
+            </AreaChart>
+          </ResponsiveContainer>
         </motion.div>
 
-        {/* Secondary Chart - Revenue */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="bg-white dark:bg-[#1C1C1E] p-6 rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm flex flex-col"
-        >
-          <h3 className="font-bold text-slate-900 dark:text-white mb-1">Revenus Hebdo</h3>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">Performance vs Objectifs</p>
-          <div className="flex-1 w-full min-h-[200px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={dataRevenue}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} opacity={0.2} />
-                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12 }} />
-                <Tooltip
-                  cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-                  contentStyle={{
-                    backgroundColor: '#1C1C1E',
-                    borderColor: 'rgba(255,255,255,0.1)',
-                    borderRadius: '12px',
-                    fontSize: '12px',
-                    color: '#fff'
-                  }}
-                />
-                <Bar dataKey="actual" name="Réel" fill="#3B82F6" radius={[4, 4, 0, 0]} barSize={16} />
-                <Bar dataKey="target" name="Cible" fill="#334155" radius={[4, 4, 0, 0]} barSize={16} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="bg-[#1C1C1E] border border-white/5 rounded-2xl p-6">
+          <h3 className="text-lg font-semibold text-white mb-6">Revenus Hebdo</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={dataRevenue}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} opacity={0.2} />
+              <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} />
+              <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: '#1C1C1E',
+                  borderColor: 'rgba(255,255,255,0.1)',
+                  borderRadius: '12px',
+                  fontSize: '12px',
+                  color: '#fff'
+                }}
+              />
+              <Bar dataKey="actual" fill="#6C63FF" radius={[8, 8, 0, 0]} />
+              <Bar dataKey="target" fill="#8B5CF6" fillOpacity={0.3} radius={[8, 8, 0, 0]} />
+              <Legend />
+            </BarChart>
+          </ResponsiveContainer>
         </motion.div>
       </div>
 
       {/* Bottom Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Alerts Panel */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="bg-white dark:bg-[#1C1C1E] rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm overflow-hidden"
-        >
-          <div className="px-6 py-4 border-b border-slate-200 dark:border-white/5 flex justify-between items-center bg-slate-50 dark:bg-white/5">
-            <h3 className="font-bold text-slate-900 dark:text-white">
-              Alertes Opérationnelles
-            </h3>
-            <span className="px-2 py-1 rounded-full bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 text-xs font-bold">3 Critiques</span>
-          </div>
-          <div className="divide-y divide-slate-200 dark:divide-white/5">
-            {[
-              { title: 'Violation Règle de Repos', desc: 'Lucas M. - Repos < 11h entre shift soir et matin.', severity: 'critical' },
-              { title: 'Heures Supplémentaires', desc: 'Léa D. - Dépassement contractuel (+2h) cette semaine.', severity: 'warning' },
-              { title: 'Contrat à renouveler', desc: 'Thomas P. - Fin de CDD dans 7 jours.', severity: 'info' },
-            ].map((alert, i) => (
-              <div key={i} className="p-4 flex gap-4 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors cursor-pointer group">
-                <div className={`mt-1 size-2 rounded-full shrink-0 ${
-                  alert.severity === 'critical' ? 'bg-red-500' : alert.severity === 'warning' ? 'bg-yellow-500' : 'bg-blue-500'
-                }`}></div>
-                <div>
-                  <p className="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-accent transition-colors">
-                    {alert.title}
-                  </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{alert.desc}</p>
-                </div>
-                <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button className="text-xs font-medium text-accent border border-accent/30 px-3 py-1 rounded hover:bg-accent/10">
-                    Traiter
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }} className="bg-[#1C1C1E] border border-white/5 rounded-2xl p-6">
+          <h3 className="text-lg font-semibold text-white mb-4">Alertes Opérationnelles</h3>
+          <div className="space-y-3">
+            {alerts.map((alert) => (
+              <div key={alert.id} className={`p-4 rounded-xl border ${
+                alert.severity === 'critical' ? 'bg-red-500/10 border-red-500/30' :
+                alert.severity === 'warning' ? 'bg-amber-500/10 border-amber-500/30' :
+                'bg-blue-500/10 border-blue-500/30'
+              }`}>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1">
+                    <p className="text-sm text-white">{alert.message}</p>
+                  </div>
+                  <button className="px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-lg text-xs text-white transition-colors whitespace-nowrap">
+                    {alert.action}
                   </button>
                 </div>
               </div>
@@ -229,56 +182,24 @@ export default function DashboardPage() {
           </div>
         </motion.div>
 
-        {/* Quick Actions */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-          className="bg-white dark:bg-[#1C1C1E] rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm p-6"
-        >
-          <h3 className="font-bold text-slate-900 dark:text-white mb-6">
-            État du service
-          </h3>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }} className="bg-[#1C1C1E] border border-white/5 rounded-2xl p-6">
+          <h3 className="text-lg font-semibold text-white mb-4">État du service</h3>
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5">
+            <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                  <span className="material-symbols-outlined text-green-600 dark:text-green-400">cloud_done</span>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-slate-900 dark:text-white">Synchronisation Paie</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">Dernier export: Aujourd'hui 02:00</p>
-                </div>
+                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                <span className="text-sm text-white">Service en cours</span>
               </div>
-              <span className="text-xs font-bold text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded">OK</span>
+              <span className="text-sm text-slate-400">Midi</span>
             </div>
-            <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                  <span className="material-symbols-outlined text-blue-600 dark:text-blue-400">sync</span>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-slate-900 dark:text-white">Connecteur POS (Zettle)</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">Données temps réel actives</p>
-                </div>
-              </div>
-              <span className="text-xs font-bold text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded">OK</span>
-            </div>
-          </div>
-
-          <div className="mt-8 pt-6 border-t border-slate-200 dark:border-white/5">
-            <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Actions Rapides</h4>
-            <div className="grid grid-cols-2 gap-4">
-              <Link
-                href="/planning"
-                className="flex items-center justify-center gap-2 py-2.5 bg-accent text-white rounded-xl text-sm font-medium hover:bg-accent/90 transition shadow-lg shadow-accent/25"
-              >
-                <span className="material-symbols-outlined text-[18px]">calendar_add_on</span>
-                Nouveau Planning
-              </Link>
-              <button className="flex items-center justify-center gap-2 py-2.5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-white rounded-xl text-sm font-medium hover:bg-slate-50 dark:hover:bg-white/5 transition">
-                <span className="material-symbols-outlined text-[18px]">download</span>
-                Export RH
+            <div className="grid grid-cols-2 gap-3">
+              <button className="p-3 bg-white/5 hover:bg-white/10 rounded-xl text-sm text-white transition-colors flex items-center justify-center gap-2">
+                <span className="material-symbols-outlined text-lg">add</span>
+                Ajouter shift
+              </button>
+              <button className="p-3 bg-white/5 hover:bg-white/10 rounded-xl text-sm text-white transition-colors flex items-center justify-center gap-2">
+                <span className="material-symbols-outlined text-lg">swap_horiz</span>
+                Échanger
               </button>
             </div>
           </div>

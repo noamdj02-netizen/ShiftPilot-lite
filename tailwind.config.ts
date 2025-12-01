@@ -28,6 +28,9 @@ const config: Config = {
           muted: '#E8E6FF',
         },
         
+        // Dashboard specific colors
+        card: '#1C1C1E',
+        
         // Backgrounds
         background: {
           DEFAULT: '#F3F4F6',       // Cool Gray (Light mode)
@@ -179,7 +182,9 @@ const config: Config = {
       
       // ===== ANIMATIONS =====
       animation: {
-        'fade-in': 'fadeIn 0.5s ease-out forwards',
+        'fade-in': 'fadeIn 0.5s ease-out',
+        'slide-up': 'slideUp 0.5s ease-out',
+        'pulse-slow': 'pulse 3s infinite',
         'fade-in-up': 'fadeInUp 0.5s ease-out forwards',
         'fade-in-down': 'fadeInDown 0.5s ease-out forwards',
         'fade-in-left': 'fadeInLeft 0.5s ease-out forwards',
@@ -198,6 +203,10 @@ const config: Config = {
         fadeIn: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
         },
         fadeInUp: {
           '0%': { opacity: '0', transform: 'translateY(20px)' },

@@ -1,0 +1,44 @@
+{
+  "name": "ShiftPilot - Planification Intelligente",
+  "short_name": "ShiftPilot",
+  "description": "La plateforme de planification intelligente pour les équipes de restauration. Gagnez 5h par semaine sur vos plannings.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0A0A0B",
+  "theme_color": "#6C63FF",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity", "food"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Planning",
+      "short_name": "Planning",
+      "description": "Accéder au planning",
+      "url": "/dashboard/planning",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Employés",
+      "short_name": "Employés",
+      "description": "Gérer les employés",
+      "url": "/dashboard/employer/employees",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
+

@@ -23,21 +23,26 @@ export async function POST(request: Request) {
       );
     }
 
-    // Fetch shifts for the restaurant
-    const { data: profile } = await supabase
+    // Fetch shifts for the organization
+    const { data: profile, error: profileError } = await supabase
       .from("profiles")
-      .select("restaurant_id")
+      .select("organization_id")
       .eq("id", user.id)
       .single();
 
-    if (!profile?.restaurant_id) {
-      return NextResponse.json({ error: "No restaurant found" }, { status: 404 });
+    if (profileError || !profile) {
+      return NextResponse.json({ error: "No organization found" }, { status: 404 });
+    }
+
+    const organizationId = (profile as { organization_id: string | null }).organization_id;
+    if (!organizationId) {
+      return NextResponse.json({ error: "No organization found" }, { status: 404 });
     }
 
     const { data: shifts } = await supabase
       .from("shifts")
-      .select("*, employees(first_name, last_name)")
-      .eq("restaurant_id", profile.restaurant_id)
+      .select("*, profiles:profile_id(first_name, last_name)")
+      .eq("organization_id", organizationId)
       .gte("start_time", weekStart)
       .lte("end_time", weekEnd)
       .order("start_time");
@@ -60,7 +65,7 @@ export async function POST(request: Request) {
           <tbody>
             ${shifts?.map((shift: any) => `
               <tr>
-                <td>${shift.employees?.first_name} ${shift.employees?.last_name}</td>
+                <td>${shift.profiles?.first_name} ${shift.profiles?.last_name}</td>
                 <td>${new Date(shift.start_time).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'short' })}</td>
                 <td>
                   ${new Date(shift.start_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })} - 

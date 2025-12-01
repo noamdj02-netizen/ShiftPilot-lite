@@ -22,7 +22,8 @@ export async function PATCH(
     // We rely on RLS policies: "Employers manage restaurant employees"
 
     const { data, error } = await supabase
-      .from("employees")
+      .from("profiles")
+      // @ts-ignore - Supabase type inference issue with dynamic body
       .update(body)
       .eq("id", id)
       .select()
@@ -59,7 +60,7 @@ export async function DELETE(
     const { id } = params;
 
     const { error } = await supabase
-      .from("employees")
+      .from("profiles")
       .delete()
       .eq("id", id);
 

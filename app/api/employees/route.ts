@@ -12,22 +12,28 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get user's profile to find their restaurant_id
-    const { data: profile } = await supabase
+    // Get user's profile to find their organization_id
+    const { data: profile, error: profileError } = await supabase
       .from("profiles")
-      .select("restaurant_id")
+      .select("organization_id")
       .eq("id", user.id)
       .single();
 
-    if (!profile?.restaurant_id) {
+    if (profileError || !profile) {
       return NextResponse.json({ employees: [] });
     }
 
-    // Fetch employees for this restaurant
+    const organizationId = (profile as { organization_id: string | null }).organization_id;
+    if (!organizationId) {
+      return NextResponse.json({ employees: [] });
+    }
+
+    // Fetch employees for this organization
     const { data, error } = await supabase
-      .from("employees")
+      .from("profiles")
       .select("*")
-      .eq("restaurant_id", profile.restaurant_id)
+      .eq("organization_id", organizationId)
+      .eq("role", "employee")
       .order("first_name", { ascending: true });
 
     if (error) {
@@ -57,37 +63,35 @@ export async function POST(request: Request) {
 
     const body = await request.json();
 
-    // Get user's restaurant_id
-    const { data: profile } = await supabase
+    // Get user's organization_id
+    const { data: profile, error: profileError } = await supabase
       .from("profiles")
-      .select("restaurant_id")
+      .select("organization_id")
       .eq("id", user.id)
       .single();
 
-    if (!profile?.restaurant_id) {
+    if (profileError || !profile) {
       return NextResponse.json(
-        { error: "No restaurant found for this user" },
+        { error: "No organization found for this user" },
         { status: 400 }
       );
     }
 
-    // Insert new employee
-    const { data, error } = await supabase
-      .from("employees")
-      .insert({
-        ...body,
-        restaurant_id: profile.restaurant_id,
-        status: body.status || 'active'
-      })
-      .select()
-      .single();
-
-    if (error) {
-      console.error("Error creating employee:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+    const organizationId = (profile as { organization_id: string | null }).organization_id;
+    if (!organizationId) {
+      return NextResponse.json(
+        { error: "No organization found for this user" },
+        { status: 400 }
+      );
     }
 
-    return NextResponse.json(data);
+    // Note: Creating a profile requires an auth user first
+    // This endpoint should use Supabase Admin API or invitation flow
+    // For now, return an error indicating this needs admin privileges
+    return NextResponse.json(
+      { error: "Employee creation requires admin privileges. Use invitation flow." },
+      { status: 501 }
+    );
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Unknown error" },

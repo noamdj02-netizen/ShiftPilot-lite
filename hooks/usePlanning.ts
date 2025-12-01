@@ -65,6 +65,11 @@ export function usePlanning(initialDate: Date = new Date()) {
   const handleAutoPlan = async () => {
     setIsGenerating(true)
     try {
+      // Vérifier que les employés sont disponibles
+      if (!employees || employees.length === 0) {
+        throw new Error('Aucun employé disponible. Veuillez d\'abord ajouter des employés.')
+      }
+
       const newPlanning = await generateSmartPlanning(
          employees, 
          shiftsMap as any, 
@@ -76,42 +81,65 @@ export function usePlanning(initialDate: Date = new Date()) {
       
       // Persist generated shifts
       toast.info('Sauvegarde en cours...')
+      let savedCount = 0
+      let errorCount = 0
+      
       for (const [empId, empShifts] of Object.entries(newPlanning)) {
+        if (!empShifts || !Array.isArray(empShifts)) continue
+        
         for (let dayIndex = 0; dayIndex < empShifts.length; dayIndex++) {
            const shift = empShifts[dayIndex]
-           if (shift && !shift.id) {
-             const shiftDate = new Date(startOfWeek)
-             shiftDate.setDate(shiftDate.getDate() + dayIndex)
-             
-             const [sh, sm] = shift.start.split(':').map(Number)
-             const startTime = new Date(shiftDate)
-             startTime.setHours(sh, sm)
-             
-             const [eh, em] = shift.end.split(':').map(Number)
-             const endTime = new Date(shiftDate)
-             endTime.setHours(eh, em)
-             if (endTime < startTime) endTime.setDate(endTime.getDate() + 1)
-
+           if (shift && !shift.id && shift.start && shift.end) {
              try {
+               const shiftDate = new Date(startOfWeek)
+               shiftDate.setDate(shiftDate.getDate() + dayIndex)
+               
+               const [sh, sm] = shift.start.split(':').map(Number)
+               if (isNaN(sh) || isNaN(sm)) {
+                 console.warn('Invalid start time:', shift.start)
+                 continue
+               }
+               
+               const startTime = new Date(shiftDate)
+               startTime.setHours(sh, sm, 0, 0)
+               
+               const [eh, em] = shift.end.split(':').map(Number)
+               if (isNaN(eh) || isNaN(em)) {
+                 console.warn('Invalid end time:', shift.end)
+                 continue
+               }
+               
+               const endTime = new Date(shiftDate)
+               endTime.setHours(eh, em, 0, 0)
+               if (endTime < startTime) endTime.setDate(endTime.getDate() + 1)
+
                await createShift({
                  profile_id: empId,
                  employee_id: empId,
                  start_time: startTime.toISOString(),
                  end_time: endTime.toISOString(),
                  role: shift.type === 'kitchen' ? 'Cuisinier' : shift.type === 'admin' ? 'Manager' : 'Serveur',
-                 notes: shift.label
+                 notes: shift.label || `Service ${shift.start}-${shift.end}`
                })
+               savedCount++
              } catch (err) {
                console.error('Failed to save auto shift', err)
+               errorCount++
              }
            }
         }
       }
-      toast.success('Sauvegarde terminée')
+      
+      if (errorCount > 0) {
+        toast.warning(`${savedCount} shifts sauvegardés, ${errorCount} erreurs`)
+      } else {
+        toast.success(`${savedCount} shifts sauvegardés avec succès`)
+      }
 
     } catch (error) {
       console.error('Auto planning error:', error)
-      toast.error('Erreur lors de la génération')
+      const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue'
+      toast.error(`Erreur lors de la génération: ${errorMessage}`)
     } finally {
       setIsGenerating(false)
     }
@@ -193,4 +221,5 @@ export function usePlanning(initialDate: Date = new Date()) {
     days
   }
 }
+
 

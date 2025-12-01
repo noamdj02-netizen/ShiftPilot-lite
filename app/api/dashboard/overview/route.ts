@@ -35,16 +35,16 @@ export async function GET(request: NextRequest) {
     // 2. Heures planifiées semaine courante
     const { data: currentSchedule } = await supabase
       .from('schedules')
-      .select('total_hours')
+      .select('total_hours, total_cost, compliance_score')
       .eq('organization_id', organization_id)
       .eq('week_start_date', weekStart.toISOString().split('T')[0])
       .single();
 
     // 3. Coût estimé (total_cost du planning)
-    const totalCost = currentSchedule?.total_cost || 0;
+    const totalCost = (currentSchedule as any)?.total_cost || 0;
 
     // 4. Score de conformité
-    const complianceScore = currentSchedule?.compliance_score || null;
+    const complianceScore = (currentSchedule as any)?.compliance_score || null;
 
     // 5. Demandes de congés en attente
     const { count: pendingTimeOff } = await supabase

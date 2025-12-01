@@ -29,13 +29,23 @@ export async function GET(request: NextRequest) {
       .eq('is_active', true);
 
     if (establishmentId) {
-      // Filter by establishment if user_establishments table exists
-      query = query.in('id', 
-        supabase
-          .from('user_establishments')
-          .select('user_id')
-          .eq('establishment_id', establishmentId)
-      );
+      // Filter by establishment via user_establishments (2-step query)
+      const { data: userEstablishments, error: ueError } = await supabase
+        .from('user_establishments')
+        .select('user_id')
+        .eq('establishment_id', establishmentId);
+
+      if (ueError) {
+        // On ne bloque pas totalement, mais on log pour debug
+        console.error('Error fetching user_establishments:', ueError);
+      } else if (userEstablishments && userEstablishments.length > 0) {
+        const userIds = userEstablishments.map((ue: { user_id: string }) => ue.user_id);
+        query = query.in('id', userIds);
+      } else {
+        // Aucun utilisateur lié à cet établissement → retourner une liste vide
+        const empty: any[] = [];
+        return NextResponse.json({ employees: empty });
+      }
     }
 
     const { data, error } = await query.order('first_name', { ascending: true });

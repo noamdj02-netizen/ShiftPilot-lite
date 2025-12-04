@@ -21,25 +21,25 @@ export function KPICard({
   color = 'blue'
 }: KPICardProps) {
   const colorClasses = {
-    blue: 'text-blue-500',
-    green: 'text-green-500',
-    amber: 'text-amber-500',
-    purple: 'text-purple-500',
-    red: 'text-red-500',
+    blue: 'text-blue-600 dark:text-blue-400',
+    green: 'text-green-600 dark:text-green-400',
+    amber: 'text-amber-600 dark:text-amber-400',
+    purple: 'text-purple-600 dark:text-purple-400',
+    red: 'text-red-600 dark:text-red-400',
   }
 
   const bgColorClasses = {
-    blue: 'bg-blue-500/20',
-    green: 'bg-green-500/20',
-    amber: 'bg-amber-500/20',
-    purple: 'bg-purple-500/20',
-    red: 'bg-red-500/20',
+    blue: 'bg-blue-100 dark:bg-blue-900/30',
+    green: 'bg-green-100 dark:bg-green-900/30',
+    amber: 'bg-amber-100 dark:bg-amber-900/30',
+    purple: 'bg-purple-100 dark:bg-purple-900/30',
+    red: 'bg-red-100 dark:bg-red-900/30',
   }
 
   const deltaColors = {
-    positive: 'text-green-400',
-    negative: 'text-red-400',
-    neutral: 'text-slate-400',
+    positive: 'text-green-600 dark:text-green-400',
+    negative: 'text-orange-600 dark:text-orange-400',
+    neutral: 'text-black/60 dark:text-white/60',
   }
 
   return (

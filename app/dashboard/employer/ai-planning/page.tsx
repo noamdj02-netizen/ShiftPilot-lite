@@ -13,7 +13,6 @@ export default function AIPlanningPage() {
     {
       id: 'balanced' as PlanningVariant,
       name: 'Équilibré',
-      icon: '⚖️',
       gradient: 'from-blue-500 to-cyan-500',
       description: 'Compromis optimal entre coût, équité et satisfaction',
       features: ['Respect des contraintes légales', 'Distribution équitable', 'Coût maîtrisé']
@@ -21,7 +20,6 @@ export default function AIPlanningPage() {
     {
       id: 'economical' as PlanningVariant,
       name: 'Économique',
-      icon: '💰',
       gradient: 'from-green-500 to-emerald-500',
       description: 'Minimise les coûts tout en respectant les obligations',
       features: ['Optimisation maximum des coûts', 'Heures supplémentaires minimisées', 'Budget préservé']
@@ -29,7 +27,6 @@ export default function AIPlanningPage() {
     {
       id: 'staff-friendly' as PlanningVariant,
       name: 'Staff-Friendly',
-      icon: '❤️',
       gradient: 'from-purple-500 to-pink-500',
       description: 'Priorise le bien-être et les préférences de l\'équipe',
       features: ['Disponibilités respectées', 'Repos optimisés', 'Satisfaction maximale']
@@ -37,11 +34,11 @@ export default function AIPlanningPage() {
   ]
 
   const constraints = [
-    { icon: '📋', label: 'Disponibilités employés', value: '12/15 déclarées', status: 'good' },
-    { icon: '⚖️', label: 'Règles légales HCR', value: '100% activées', status: 'good' },
-    { icon: '👥', label: 'Compétences & postes', value: '8 postes définis', status: 'good' },
-    { icon: '💰', label: 'Budget hebdomadaire', value: '3,500€ max', status: 'warning' },
-    { icon: '⏰', label: 'Heures contractuelles', value: '145h/semaine', status: 'good' }
+    { label: 'Disponibilités employés', value: '12/15 déclarées', status: 'good' },
+    { label: 'Règles légales HCR', value: '100% activées', status: 'good' },
+    { label: 'Compétences & postes', value: '8 postes définis', status: 'good' },
+    { label: 'Budget hebdomadaire', value: '3,500€ max', status: 'warning' },
+    { label: 'Heures contractuelles', value: '145h/semaine', status: 'good' }
   ]
 
   const generatePlanning = () => {
@@ -52,16 +49,15 @@ export default function AIPlanningPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 relative z-10">
       {/* Header */}
       <div>
         <div className="flex items-center gap-3 mb-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-500 rounded-xl flex items-center justify-center text-2xl">
-            🤖
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Planning IA</h1>
-            <p className="text-slate-600 dark:text-slate-400">Générez un planning optimal en 30 secondes</p>
+            <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-black dark:text-white">Planning IA</h1>
+            <p className="text-black/60 dark:text-white/60">Générez un planning optimal en 30 secondes</p>
           </div>
         </div>
       </div>
@@ -69,26 +65,25 @@ export default function AIPlanningPage() {
       {/* Steps */}
       <div className="flex items-center justify-center gap-4">
         {[
-          { key: 'config', label: 'Configuration', icon: '⚙️' },
-          { key: 'generating', label: 'Génération', icon: '⚡' },
-          { key: 'results', label: 'Résultats', icon: '✨' }
+          { key: 'config', label: 'Configuration' },
+          { key: 'generating', label: 'Génération' },
+          { key: 'results', label: 'Résultats' }
         ].map((s, index) => (
           <div key={s.key} className="flex items-center gap-4">
             <div className={`
-              flex items-center gap-3 px-6 py-3 rounded-xl transition-all
+              flex items-center gap-3 px-6 py-3 rounded-full transition-all text-sm
               ${step === s.key
-                ? 'bg-gradient-to-r from-violet-500 to-purple-500 text-white shadow-lg'
-                : 'bg-white/80 dark:bg-slate-900/80 text-slate-600 dark:text-slate-400'
+                ? 'bg-blue-600 text-white shadow-lg'
+                : 'bg-white dark:bg-[#1C1C1E] text-black/60 dark:text-white/60 border border-black/5 dark:border-white/5'
               }
             `}>
-              <span className="text-xl">{s.icon}</span>
               <span className="font-medium">{s.label}</span>
             </div>
             {index < 2 && (
               <div className={`w-12 h-1 rounded-full ${
                 ['generating', 'results'].includes(step) && index === 0 || step === 'results' && index === 1
-                  ? 'bg-gradient-to-r from-violet-500 to-purple-500'
-                  : 'bg-slate-200 dark:bg-slate-800'
+                  ? 'bg-blue-600'
+                  : 'bg-black/10 dark:bg-white/10'
               }`} />
             )}
           </div>
@@ -106,19 +101,17 @@ export default function AIPlanningPage() {
             className="space-y-6"
           >
             {/* Contraintes Summary */}
-            <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-200/50 dark:border-slate-800/50">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                <span>📊</span>
+            <div className="bg-white dark:bg-[#1C1C1E] rounded-lg p-4 md:p-6 border border-black/5 dark:border-white/5 shadow-sm">
+              <h2 className="text-lg md:text-xl font-semibold text-black dark:text-white mb-4">
                 Résumé des contraintes
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {constraints.map((constraint) => (
-                  <div key={constraint.label} className="flex items-start gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50">
-                    <span className="text-2xl">{constraint.icon}</span>
+                  <div key={constraint.label} className="flex items-start gap-3 p-4 rounded-lg bg-black/5 dark:bg-white/5">
                     <div className="flex-1">
-                      <p className="text-sm text-slate-600 dark:text-slate-400">{constraint.label}</p>
-                      <p className="font-medium text-slate-900 dark:text-white">{constraint.value}</p>
+                      <p className="text-xs md:text-sm text-black/60 dark:text-white/60">{constraint.label}</p>
+                      <p className="font-medium text-black dark:text-white">{constraint.value}</p>
                     </div>
                     <div className={`
                       w-2 h-2 rounded-full flex-shrink-0 mt-2
@@ -131,8 +124,7 @@ export default function AIPlanningPage() {
 
             {/* Variant Selection */}
             <div>
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                <span>🎯</span>
+              <h2 className="text-lg md:text-xl font-semibold text-black dark:text-white mb-4">
                 Choisissez votre mode de génération
               </h2>
 
@@ -144,10 +136,10 @@ export default function AIPlanningPage() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     className={`
-                      relative overflow-hidden text-left rounded-2xl p-6 transition-all
+                      relative overflow-hidden text-left rounded-lg p-4 md:p-6 transition-all
                       ${selectedVariant === variant.id
-                        ? `bg-gradient-to-br ${variant.gradient} text-white shadow-2xl scale-105`
-                        : 'bg-white/80 dark:bg-slate-900/80 border border-slate-200/50 dark:border-slate-800/50 hover:border-slate-300 dark:hover:border-slate-700'
+                        ? 'bg-blue-600 text-white shadow-lg scale-105'
+                        : 'bg-white dark:bg-[#1C1C1E] border border-black/5 dark:border-white/5 hover:border-blue-600/30 dark:hover:border-blue-400/30'
                       }
                     `}
                   >
@@ -157,19 +149,18 @@ export default function AIPlanningPage() {
                       </div>
                     )}
 
-                    <span className="text-5xl mb-4 block">{variant.icon}</span>
-                    <h3 className={`text-xl font-bold mb-2 ${selectedVariant === variant.id ? 'text-white' : 'text-slate-900 dark:text-white'}`}>
+                    <h3 className={`text-lg md:text-xl font-semibold mb-2 ${selectedVariant === variant.id ? 'text-white' : 'text-black dark:text-white'}`}>
                       {variant.name}
                     </h3>
-                    <p className={`text-sm mb-4 ${selectedVariant === variant.id ? 'text-white/90' : 'text-slate-600 dark:text-slate-400'}`}>
+                    <p className={`text-xs md:text-sm mb-4 ${selectedVariant === variant.id ? 'text-white/90' : 'text-black/60 dark:text-white/60'}`}>
                       {variant.description}
                     </p>
 
                     <div className="space-y-2">
                       {variant.features.map((feature) => (
                         <div key={feature} className="flex items-center gap-2">
-                          <span className={selectedVariant === variant.id ? 'text-white' : 'text-green-500'}>✓</span>
-                          <span className={`text-sm ${selectedVariant === variant.id ? 'text-white/90' : 'text-slate-700 dark:text-slate-300'}`}>
+                          <span className={selectedVariant === variant.id ? 'text-white' : 'text-green-600 dark:text-green-400'}>✓</span>
+                          <span className={`text-xs md:text-sm ${selectedVariant === variant.id ? 'text-white/90' : 'text-black dark:text-white'}`}>
                             {feature}
                           </span>
                         </div>
@@ -186,9 +177,8 @@ export default function AIPlanningPage() {
                 onClick={generatePlanning}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-12 py-4 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-bold text-lg shadow-2xl shadow-purple-500/30 hover:shadow-purple-500/50 transition-all flex items-center gap-3"
+                className="px-8 md:px-12 py-3 md:py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-semibold text-base md:text-lg shadow-lg shadow-blue-500/20 transition-all"
               >
-                <span className="text-2xl">🚀</span>
                 Générer le planning IA
               </motion.button>
             </div>
@@ -213,15 +203,14 @@ export default function AIPlanningPage() {
                 rotate: { duration: 2, repeat: Infinity, ease: "linear" },
                 scale: { duration: 1, repeat: Infinity }
               }}
-              className="w-32 h-32 bg-gradient-to-br from-violet-500 to-purple-500 rounded-3xl flex items-center justify-center text-6xl mb-8 shadow-2xl"
+              className="w-24 h-24 md:w-32 md:h-32 bg-blue-600 rounded-lg md:rounded-xl flex items-center justify-center mb-8 shadow-lg"
             >
-              🤖
             </motion.div>
 
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">
+            <h2 className="text-2xl md:text-3xl font-semibold text-black dark:text-white mb-4">
               Génération en cours...
             </h2>
-            <p className="text-slate-600 dark:text-slate-400 text-lg mb-8">
+            <p className="text-black/60 dark:text-white/60 text-base md:text-lg mb-8">
               L'IA analyse vos contraintes et crée le planning optimal
             </p>
 
@@ -243,9 +232,9 @@ export default function AIPlanningPage() {
                   <motion.div
                     animate={{ scale: [1, 1.2, 1] }}
                     transition={{ duration: 0.5, repeat: Infinity, delay: item.delay }}
-                    className="w-2 h-2 bg-violet-500 rounded-full"
+                    className="w-2 h-2 bg-blue-600 rounded-full"
                   />
-                  <span className="text-slate-700 dark:text-slate-300">{item.label}</span>
+                  <span className="text-black dark:text-white">{item.label}</span>
                 </motion.div>
               ))}
             </div>
@@ -265,46 +254,42 @@ export default function AIPlanningPage() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", duration: 0.5 }}
-              className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl p-8 text-white text-center"
+              className="bg-green-600 rounded-lg p-6 md:p-8 text-white text-center"
             >
-              <div className="text-6xl mb-4">✨</div>
-              <h2 className="text-3xl font-bold mb-2">Planning généré avec succès !</h2>
+              <h2 className="text-2xl md:text-3xl font-semibold mb-2">Planning généré avec succès !</h2>
               <p className="text-white/90">Votre planning optimal est prêt. Économie de 4h de travail manuel.</p>
             </motion.div>
 
             {/* Comparison */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white/80 dark:bg-slate-900/80 rounded-2xl p-6 border border-slate-200/50 dark:border-slate-800/50">
-                <div className="text-3xl mb-3">💰</div>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Coût total</p>
-                <p className="text-3xl font-bold text-slate-900 dark:text-white">3,180€</p>
-                <p className="text-green-600 dark:text-green-400 text-sm font-medium">-320€ vs manuel</p>
+              <div className="bg-white dark:bg-[#1C1C1E] rounded-lg p-4 md:p-6 border border-black/5 dark:border-white/5 shadow-sm">
+                <p className="text-xs md:text-sm text-black/60 dark:text-white/60 mb-1">Coût total</p>
+                <p className="text-2xl md:text-3xl font-semibold text-black dark:text-white">3,180€</p>
+                <p className="text-green-600 dark:text-green-400 text-xs md:text-sm font-medium">-320€ vs manuel</p>
               </div>
 
-              <div className="bg-white/80 dark:bg-slate-900/80 rounded-2xl p-6 border border-slate-200/50 dark:border-slate-800/50">
-                <div className="text-3xl mb-3">⚖️</div>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Conformité</p>
-                <p className="text-3xl font-bold text-slate-900 dark:text-white">100%</p>
-                <p className="text-green-600 dark:text-green-400 text-sm font-medium">0 conflit détecté</p>
+              <div className="bg-white dark:bg-[#1C1C1E] rounded-lg p-4 md:p-6 border border-black/5 dark:border-white/5 shadow-sm">
+                <p className="text-xs md:text-sm text-black/60 dark:text-white/60 mb-1">Conformité</p>
+                <p className="text-2xl md:text-3xl font-semibold text-black dark:text-white">100%</p>
+                <p className="text-green-600 dark:text-green-400 text-xs md:text-sm font-medium">0 conflit détecté</p>
               </div>
 
-              <div className="bg-white/80 dark:bg-slate-900/80 rounded-2xl p-6 border border-slate-200/50 dark:border-slate-800/50">
-                <div className="text-3xl mb-3">❤️</div>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Satisfaction équipe</p>
-                <p className="text-3xl font-bold text-slate-900 dark:text-white">94%</p>
-                <p className="text-green-600 dark:text-green-400 text-sm font-medium">+12% vs manuel</p>
+              <div className="bg-white dark:bg-[#1C1C1E] rounded-lg p-4 md:p-6 border border-black/5 dark:border-white/5 shadow-sm">
+                <p className="text-xs md:text-sm text-black/60 dark:text-white/60 mb-1">Satisfaction équipe</p>
+                <p className="text-2xl md:text-3xl font-semibold text-black dark:text-white">94%</p>
+                <p className="text-green-600 dark:text-green-400 text-xs md:text-sm font-medium">+12% vs manuel</p>
               </div>
             </div>
 
             {/* Actions */}
             <div className="flex gap-4 justify-center">
-              <button className="px-8 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-medium hover:shadow-lg transition-all">
+              <button className="px-6 md:px-8 py-2 md:py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-medium shadow-lg shadow-blue-500/20 transition-all">
                 Valider et publier
               </button>
-              <button className="px-8 py-3 bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-white rounded-xl font-medium border border-slate-200/50 dark:border-slate-800/50 hover:border-slate-300 dark:hover:border-slate-700 transition-all">
+              <button className="px-6 md:px-8 py-2 md:py-3 bg-white dark:bg-[#1C1C1E] text-black dark:text-white rounded-lg font-medium border border-black/5 dark:border-white/5 hover:bg-black/5 dark:hover:bg-white/5 transition-all">
                 Modifier manuellement
               </button>
-              <button className="px-8 py-3 bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-white rounded-xl font-medium border border-slate-200/50 dark:border-slate-800/50 hover:border-slate-300 dark:hover:border-slate-700 transition-all">
+              <button className="px-6 md:px-8 py-2 md:py-3 bg-white dark:bg-[#1C1C1E] text-black dark:text-white rounded-lg font-medium border border-black/5 dark:border-white/5 hover:bg-black/5 dark:hover:bg-white/5 transition-all">
                 Générer à nouveau
               </button>
             </div>

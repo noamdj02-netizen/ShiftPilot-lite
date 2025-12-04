@@ -76,10 +76,10 @@ export default function BotPage() {
               transition={{ duration: 0.3, delay: i * 0.1 }}
               className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
-              <div className={`max-w-[70%] rounded-2xl p-4 ${
+              <div className={`max-w-[70%] rounded-lg p-4 ${
                 msg.role === 'user'
-                  ? 'bg-slate-200 dark:bg-slate-700 rounded-br-none'
-                  : 'bg-gradient-to-br from-blue-500 to-cyan-600 text-white rounded-bl-none'
+                  ? 'bg-black/5 dark:bg-white/5 rounded-br-none'
+                  : 'bg-blue-600 text-white rounded-bl-none'
               }`}>
                 {msg.role === 'assistant' && (
                   <div className="text-xs text-blue-100 mb-1 font-medium">PilotBot</div>

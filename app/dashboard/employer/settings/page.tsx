@@ -9,12 +9,12 @@ export default function SettingsPage() {
   const [activeSection, setActiveSection] = useState<SettingsSection>('restaurant')
 
   const sections = [
-    { key: 'restaurant', label: 'Informations restaurant', icon: '🏪' },
-    { key: 'hours', label: 'Horaires d\'ouverture', icon: '⏰' },
-    { key: 'legal', label: 'Paramètres légaux', icon: '⚖️' },
-    { key: 'billing', label: 'Facturation & Abonnement', icon: '💳' },
-    { key: 'notifications', label: 'Notifications', icon: '🔔' },
-    { key: 'team', label: 'Équipe & Permissions', icon: '👥' }
+    { key: 'restaurant', label: 'Informations restaurant' },
+    { key: 'hours', label: 'Horaires d\'ouverture' },
+    { key: 'legal', label: 'Paramètres légaux' },
+    { key: 'billing', label: 'Facturation & Abonnement' },
+    { key: 'notifications', label: 'Notifications' },
+    { key: 'team', label: 'Équipe & Permissions' }
   ]
 
   const openingHours = [
@@ -34,13 +34,13 @@ export default function SettingsPage() {
   ]
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 relative z-10">
       {/* Header */}
       <div>
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-600 via-gray-600 to-slate-600 bg-clip-text text-transparent">
+        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-black dark:text-white">
           Paramètres
         </h1>
-        <p className="text-slate-600 dark:text-slate-400 mt-2">
+        <p className="text-black/60 dark:text-white/60 mt-2">
           Gérez votre restaurant et vos préférences
         </p>
       </div>
@@ -49,20 +49,19 @@ export default function SettingsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Sidebar */}
         <div className="lg:col-span-1">
-          <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl p-4 border border-slate-200/50 dark:border-slate-800/50 space-y-2">
+          <div className="bg-white dark:bg-[#1C1C1E] rounded-lg p-4 border border-black/5 dark:border-white/5 space-y-2 shadow-sm">
             {sections.map((section) => (
               <motion.button
                 key={section.key}
                 onClick={() => setActiveSection(section.key as SettingsSection)}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-all flex items-center gap-3 ${
+                className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-all text-sm ${
                   activeSection === section.key
-                    ? 'bg-gradient-to-r from-slate-500 to-gray-500 text-white'
-                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
                 }`}
               >
-                <span className="text-xl">{section.icon}</span>
                 <span className="text-sm">{section.label}</span>
               </motion.button>
             ))}
@@ -79,9 +78,8 @@ export default function SettingsPage() {
               transition={{ duration: 0.3 }}
               className="space-y-6"
             >
-              <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-200/50 dark:border-slate-800/50">
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
-                  <span>🏪</span>
+              <div className="bg-white dark:bg-[#1C1C1E] rounded-lg p-4 md:p-6 border border-black/5 dark:border-white/5 shadow-sm">
+                <h2 className="text-lg md:text-xl font-semibold text-black dark:text-white mb-6">
                   Informations du restaurant
                 </h2>
 
@@ -117,9 +115,9 @@ export default function SettingsPage() {
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="px-6 py-2 bg-gradient-to-r from-slate-500 to-gray-500 text-white rounded-lg font-medium hover:shadow-lg transition-all"
+                      className="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-medium shadow-lg shadow-blue-500/20 transition-all"
                     >
-                      💾 Enregistrer les modifications
+                      Enregistrer les modifications
                     </motion.button>
                   </div>
                 </div>
@@ -135,9 +133,8 @@ export default function SettingsPage() {
               transition={{ duration: 0.3 }}
               className="space-y-6"
             >
-              <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-200/50 dark:border-slate-800/50">
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
-                  <span>⏰</span>
+              <div className="bg-white dark:bg-[#1C1C1E] rounded-lg p-4 md:p-6 border border-black/5 dark:border-white/5 shadow-sm">
+                <h2 className="text-lg md:text-xl font-semibold text-black dark:text-white mb-6">
                   Horaires d'ouverture
                 </h2>
 
@@ -148,17 +145,17 @@ export default function SettingsPage() {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.05 }}
-                      className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700"
+                      className="flex items-center justify-between p-4 bg-black/5 dark:bg-white/5 rounded-lg border border-black/5 dark:border-white/5"
                     >
-                      <span className="font-medium text-slate-900 dark:text-white w-24">{schedule.day}</span>
+                      <span className="font-medium text-black dark:text-white w-24">{schedule.day}</span>
                       {!schedule.closed ? (
                         <div className="flex items-center gap-4">
-                          <input type="time" defaultValue={schedule.open} className="px-3 py-2 bg-white dark:bg-slate-700 rounded-lg text-sm text-slate-900 dark:text-white border border-slate-200 dark:border-slate-600" />
-                          <span className="text-slate-400">→</span>
-                          <input type="time" defaultValue={schedule.close} className="px-3 py-2 bg-white dark:bg-slate-700 rounded-lg text-sm text-slate-900 dark:text-white border border-slate-200 dark:border-slate-600" />
+                          <input type="time" defaultValue={schedule.open} className="px-3 py-2 bg-white dark:bg-[#1C1C1E] rounded-lg text-sm text-black dark:text-white border border-black/5 dark:border-white/5" />
+                          <span className="text-black/40 dark:text-white/40">→</span>
+                          <input type="time" defaultValue={schedule.close} className="px-3 py-2 bg-white dark:bg-[#1C1C1E] rounded-lg text-sm text-black dark:text-white border border-black/5 dark:border-white/5" />
                         </div>
                       ) : (
-                        <span className="text-slate-500 dark:text-slate-400 font-medium">Fermé</span>
+                        <span className="text-black/60 dark:text-white/60 font-medium">Fermé</span>
                       )}
                     </motion.div>
                   ))}
@@ -185,9 +182,8 @@ export default function SettingsPage() {
               transition={{ duration: 0.3 }}
               className="space-y-6"
             >
-              <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-200/50 dark:border-slate-800/50">
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
-                  <span>⚖️</span>
+              <div className="bg-white dark:bg-[#1C1C1E] rounded-lg p-4 md:p-6 border border-black/5 dark:border-white/5 shadow-sm">
+                <h2 className="text-lg md:text-xl font-semibold text-black dark:text-white mb-6">
                   Paramètres légaux HCR
                 </h2>
 
@@ -253,9 +249,8 @@ export default function SettingsPage() {
               transition={{ duration: 0.3 }}
               className="space-y-6"
             >
-              <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-200/50 dark:border-slate-800/50">
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
-                  <span>💳</span>
+              <div className="bg-white dark:bg-[#1C1C1E] rounded-lg p-4 md:p-6 border border-black/5 dark:border-white/5 shadow-sm">
+                <h2 className="text-lg md:text-xl font-semibold text-black dark:text-white mb-6">
                   Facturation & Abonnement
                 </h2>
 
@@ -286,7 +281,6 @@ export default function SettingsPage() {
                     <h3 className="font-medium text-slate-900 dark:text-white mb-3">Méthode de paiement</h3>
                     <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <span className="text-2xl">💳</span>
                         <div>
                           <p className="font-medium text-slate-900 dark:text-white">Carte bancaire</p>
                           <p className="text-sm text-slate-600 dark:text-slate-400">Visa **** 4242</p>
@@ -314,10 +308,10 @@ export default function SettingsPage() {
                           </div>
                           <div className="flex items-center gap-3">
                             <span className="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-bold rounded-full">
-                              ✅ {invoice.status}
+                              {invoice.status}
                             </span>
-                            <button className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
-                              📥
+                            <button className="text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white">
+                              Télécharger
                             </button>
                           </div>
                         </div>
@@ -337,33 +331,31 @@ export default function SettingsPage() {
               transition={{ duration: 0.3 }}
               className="space-y-6"
             >
-              <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-200/50 dark:border-slate-800/50">
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
-                  <span>🔔</span>
+              <div className="bg-white dark:bg-[#1C1C1E] rounded-lg p-4 md:p-6 border border-black/5 dark:border-white/5 shadow-sm">
+                <h2 className="text-lg md:text-xl font-semibold text-black dark:text-white mb-6">
                   Préférences de notifications
                 </h2>
 
                 <div className="space-y-4">
                   {[
-                    { icon: '👥', title: 'Demandes de congé', desc: 'Recevoir une notification quand un employé demande un congé' },
-                    { icon: '⚠️', title: 'Alertes de conformité', desc: 'Alertes sur les violations de règles légales' },
-                    { icon: '💬', title: 'Messages clients', desc: 'Nouveaux messages clients via PilotBot' },
-                    { icon: '📊', title: 'Rapports hebdomadaires', desc: 'Rapport récapitulatif du planning et coûts' },
-                    { icon: '⭐', title: 'Avis Google', desc: 'Notifications des nouveaux avis Google' },
-                    { icon: '🤖', title: 'Mise à jour IA', desc: 'Notifications de planning IA généré' }
+                    { title: 'Demandes de congé', desc: 'Recevoir une notification quand un employé demande un congé' },
+                    { title: 'Alertes de conformité', desc: 'Alertes sur les violations de règles légales' },
+                    { title: 'Messages clients', desc: 'Nouveaux messages clients via PilotBot' },
+                    { title: 'Rapports hebdomadaires', desc: 'Rapport récapitulatif du planning et coûts' },
+                    { title: 'Avis Google', desc: 'Notifications des nouveaux avis Google' },
+                    { title: 'Mise à jour IA', desc: 'Notifications de planning IA généré' }
                   ].map((notif, index) => (
                     <motion.div
                       key={index}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.05 }}
-                      className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-between"
+                      className="p-4 bg-black/5 dark:bg-white/5 rounded-lg border border-black/5 dark:border-white/5 flex items-center justify-between"
                     >
                       <div className="flex items-center gap-3">
-                        <span className="text-2xl">{notif.icon}</span>
                         <div>
-                          <p className="font-medium text-slate-900 dark:text-white">{notif.title}</p>
-                          <p className="text-sm text-slate-600 dark:text-slate-400">{notif.desc}</p>
+                          <p className="font-medium text-black dark:text-white">{notif.title}</p>
+                          <p className="text-sm text-black/60 dark:text-white/60">{notif.desc}</p>
                         </div>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
@@ -385,18 +377,17 @@ export default function SettingsPage() {
               transition={{ duration: 0.3 }}
               className="space-y-6"
             >
-              <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-200/50 dark:border-slate-800/50">
+              <div className="bg-white dark:bg-[#1C1C1E] rounded-lg p-4 md:p-6 border border-black/5 dark:border-white/5 shadow-sm">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                    <span>👥</span>
+                  <h2 className="text-lg md:text-xl font-semibold text-black dark:text-white">
                     Équipe & Permissions
                   </h2>
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="px-4 py-2 bg-gradient-to-r from-slate-500 to-gray-500 text-white rounded-lg font-medium text-sm"
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-medium text-sm shadow-lg shadow-blue-500/20 transition-all"
                   >
-                    ➕ Inviter un membre
+                    Inviter un membre
                   </motion.button>
                 </div>
 
@@ -425,12 +416,12 @@ export default function SettingsPage() {
                           <p className="text-xs text-slate-600 dark:text-slate-400">Permissions</p>
                           <p className="font-medium text-slate-900 dark:text-white text-sm">{member.permissions}</p>
                         </div>
-                        <button className="px-3 py-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-sm">
-                          ⚙️
+                        <button className="px-3 py-1.5 text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white text-sm">
+                          Paramètres
                         </button>
                         {member.id !== 1 && (
                           <button className="px-3 py-1.5 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 text-sm">
-                            🗑️
+                            Supprimer
                           </button>
                         )}
                       </div>

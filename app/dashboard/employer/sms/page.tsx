@@ -25,13 +25,13 @@ export default function SMSPage() {
   ]
 
   const messageTemplates = [
-    { id: 'planning', title: 'Planning publié', text: '📅 Planning semaine 15 publié ! Votre shift : Lun 9h-17h, Mer 14h-22h, Ven 10h-18h' },
-    { id: 'reminder', title: 'Rappel shift', text: '⏰ Rappel : Votre shift commence dans 1h (14h-22h)' },
-    { id: 'change', title: 'Modification planning', text: '⚠️ Modification : Votre shift de demain est annulé' },
+    { id: 'planning', title: 'Planning publié', text: 'Planning semaine 15 publié ! Votre shift : Lun 9h-17h, Mer 14h-22h, Ven 10h-18h' },
+    { id: 'reminder', title: 'Rappel shift', text: 'Rappel : Votre shift commence dans 1h (14h-22h)' },
+    { id: 'change', title: 'Modification planning', text: 'Modification : Votre shift de demain est annulé' },
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative z-10">
       <SectionTitle
         title="PilotSMS"
         subtitle="Gérer toute votre équipe par SMS"

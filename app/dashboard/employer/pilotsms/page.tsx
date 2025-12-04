@@ -7,48 +7,44 @@ export default function PilotSMSPage() {
   const [selectedMessage, setSelectedMessage] = useState<string | null>(null)
 
   const stats = [
-    { label: 'SMS envoyés ce mois', value: '342', icon: '📱', trend: '+24%' },
-    { label: 'Taux de lecture', value: '94%', icon: '👀', trend: '+5%' },
-    { label: 'Confirmations reçues', value: '89%', icon: '✅', trend: '+8%' },
-    { label: 'Coût total', value: '68€', icon: '💰', trend: 'Ce mois' }
+    { label: 'SMS envoyés ce mois', value: '342', trend: '+24%' },
+    { label: 'Taux de lecture', value: '94%', trend: '+5%' },
+    { label: 'Confirmations reçues', value: '89%', trend: '+8%' },
+    { label: 'Coût total', value: '68€', trend: 'Ce mois' }
   ]
 
   const messageTemplates = [
     {
       id: 'planning',
       title: 'Planning de la semaine',
-      icon: '📅',
       gradient: 'from-blue-500 to-cyan-500',
       description: 'Envoi automatique tous les lundis',
       active: true,
-      template: 'Bonjour {prenom} ! Ton planning de la semaine est dispo. Consulte-le sur ShiftPilot 📱'
+      template: 'Bonjour {prenom} ! Ton planning de la semaine est dispo. Consulte-le sur ShiftPilot'
     },
     {
       id: 'reminder',
       title: 'Rappel avant service',
-      icon: '⏰',
       gradient: 'from-purple-500 to-pink-500',
       description: 'Envoi 2h avant chaque shift',
       active: true,
-      template: 'Hey {prenom} ! N\'oublie pas ton shift de {heure_debut} à {heure_fin} aujourd\'hui 👋'
+      template: 'Hey {prenom} ! N\'oublie pas ton shift de {heure_debut} à {heure_fin} aujourd\'hui'
     },
     {
       id: 'modification',
       title: 'Modification de planning',
-      icon: '🔄',
       gradient: 'from-orange-500 to-red-500',
       description: 'Envoi instantané',
       active: true,
-      template: 'Attention {prenom}, ton planning a été modifié ! Vérifie sur l\'app 📲'
+      template: 'Attention {prenom}, ton planning a été modifié ! Vérifie sur l\'app'
     },
     {
       id: 'absence',
       title: 'Absence détectée',
-      icon: '⚠️',
       gradient: 'from-yellow-500 to-orange-500',
       description: 'Envoi automatique si absence',
       active: false,
-      template: '{prenom}, nous remarquons que tu n\'es pas là. Tout va bien ? 🤔'
+      template: '{prenom}, nous remarquons que tu n\'es pas là. Tout va bien ?'
     }
   ]
 
@@ -88,20 +84,18 @@ export default function PilotSMSPage() {
   ]
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 relative z-10">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-500 rounded-xl flex items-center justify-center text-2xl">
-            📱
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-pink-100 dark:bg-pink-900/30 rounded-lg flex items-center justify-center">
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white">PilotSMS</h1>
-            <p className="text-slate-600 dark:text-slate-400">Notifications SMS automatiques pour votre équipe</p>
+            <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-black dark:text-white">PilotSMS</h1>
+            <p className="text-black/60 dark:text-white/60">Notifications SMS automatiques pour votre équipe</p>
           </div>
         </div>
-        <button className="px-6 py-3 bg-gradient-to-r from-pink-600 to-rose-600 text-white rounded-xl font-medium hover:shadow-lg transition-all flex items-center gap-2">
-          <span>✉️</span>
+        <button className="px-4 md:px-6 py-2 md:py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-medium shadow-lg shadow-blue-500/20 transition-all text-sm md:text-base">
           Envoyer un SMS groupé
         </button>
       </div>
@@ -114,16 +108,15 @@ export default function PilotSMSPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-200/50 dark:border-slate-800/50"
+            className="bg-white dark:bg-[#1C1C1E] rounded-lg p-4 md:p-6 border border-black/5 dark:border-white/5 shadow-sm"
           >
             <div className="flex items-start justify-between mb-3">
-              <span className="text-3xl">{stat.icon}</span>
-              <span className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full text-xs font-bold">
+              <span className="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full text-[10px] md:text-xs font-semibold">
                 {stat.trend}
               </span>
             </div>
-            <p className="text-slate-600 dark:text-slate-400 text-sm mb-1">{stat.label}</p>
-            <p className="text-3xl font-bold text-slate-900 dark:text-white">{stat.value}</p>
+            <p className="text-black/60 dark:text-white/60 text-xs md:text-sm font-medium mb-1">{stat.label}</p>
+            <p className="text-2xl md:text-3xl font-semibold text-black dark:text-white">{stat.value}</p>
           </motion.div>
         ))}
       </div>
@@ -131,8 +124,7 @@ export default function PilotSMSPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Message Templates */}
         <div className="space-y-4">
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <span>✨</span>
+          <h2 className="text-lg md:text-xl font-semibold text-black dark:text-white">
             Modèles de messages
           </h2>
 

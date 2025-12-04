@@ -6,89 +6,83 @@ import Link from 'next/link'
 
 const plans = [
   {
-    name: "Starter",
-    description: "Petites équipes / Restaurants indépendants",
-    monthlyPrice: 29,
-    yearlyPrice: 24,
+    name: "Lite",
+    description: "Pour les restaurants indépendants qui veulent arrêter de galérer avec les plannings",
+    monthlyPrice: 59,
+    yearlyPrice: 49,
     perUnit: "établissement",
+    color: "blue",
     features: [
-      { text: "Jusqu'à 15 employés", included: true },
-      { text: "Planning illimité", included: true },
-      { text: "Notifications SMS", included: true },
-      { text: "Export PDF", included: true },
-      { text: "Support email", included: true },
-      { text: "Conformité légale basique", included: true },
-      { text: "Multi-établissements", included: false },
-      { text: "Analytics avancés", included: false },
-      { text: "API", included: false },
+      { text: "Planning en 2 minutes", included: true, highlight: false },
+      { text: "Planning illimité", included: true, highlight: false },
+      { text: "Application mobile employés", included: true, highlight: false },
+      { text: "Export PDF", included: true, highlight: false },
+      { text: "Notifications SMS équipe", included: true, highlight: false },
+      { text: "Gestion des remplacements", included: true, highlight: false },
+      { text: "Conformité légale basique", included: true, highlight: false },
+      { text: "Support email", included: true, highlight: false },
+      { text: "IA Planning", included: false, highlight: false },
+      { text: "Avis Google Auto", included: false, highlight: false },
+      { text: "Chatbot IA clients", included: false, highlight: false },
+      { text: "Multi-établissements", included: false, highlight: false },
     ],
     cta: "Essai gratuit",
     ctaLink: "/register",
     popular: false,
+    tagline: "Le choix parfait pour commencer sans friction",
   },
   {
-    name: "Professional",
-    description: "Établissements moyens / Multi-établissements",
-    monthlyPrice: 79,
-    yearlyPrice: 66,
+    name: "Pro",
+    description: "Pour les restaurants qui veulent automatiser + booster leurs avis + gagner du temps",
+    monthlyPrice: 99,
+    yearlyPrice: 83,
     perUnit: "établissement",
+    color: "purple",
     features: [
-      { text: "Jusqu'à 50 employés", included: true },
-      { text: "Tout Starter inclus", included: true },
-      { text: "Multi-sites (jusqu'à 3)", included: true },
-      { text: "Analytics avancés", included: true },
-      { text: "Support prioritaire", included: true },
-      { text: "Conformité légale complète", included: true },
-      { text: "Auto-planification IA", included: true },
-      { text: "API basique", included: true },
-      { text: "Formations", included: false },
+      { text: "Tout Lite inclus", included: true, highlight: false },
+      { text: "IA Planning avancée", included: true, highlight: true },
+      { text: "Génération automatique complète", included: true, highlight: false },
+      { text: "Optimisation légale & charge", included: true, highlight: false },
+      { text: "Suggestions intelligentes", included: true, highlight: false },
+      { text: "PilotReview – Avis Google Auto", included: true, highlight: true },
+      { text: "+10 à +20 avis Google / mois", included: true, highlight: false },
+      { text: "Messages personnalisés", included: true, highlight: false },
+      { text: "Dashboard de suivi en temps réel", included: true, highlight: false },
+      { text: "Analytics avancés", included: true, highlight: false },
+      { text: "PilotBot – Chatbot IA", included: false, highlight: false },
+      { text: "PilotSMS avancé", included: false, highlight: false },
+      { text: "Multi-établissements", included: false, highlight: false },
     ],
     cta: "Essai gratuit",
     ctaLink: "/register",
     popular: true,
+    tagline: "Idéal pour restaurants avec 8–30 employés",
   },
   {
-    name: "Business",
-    description: "Chaînes de taille moyenne",
-    monthlyPrice: 99,
-    yearlyPrice: 83,
+    name: "Full",
+    description: "Pour ceux qui veulent le pilote automatique complet",
+    monthlyPrice: 149,
+    yearlyPrice: 124,
     perUnit: "établissement",
+    color: "violet",
     features: [
-      { text: "Employés illimités", included: true },
-      { text: "Tout Professional inclus", included: true },
-      { text: "Multi-sites illimités", included: true },
-      { text: "API complète", included: true },
-      { text: "Formations incluses", included: true },
-      { text: "Support dédié", included: true },
-      { text: "Intégrations personnalisées", included: true },
-      { text: "Manager dédié", included: false },
-      { text: "SSO", included: false },
+      { text: "Tout Pro inclus", included: true, highlight: false },
+      { text: "PilotBot – Chatbot IA clients 24/7", included: true, highlight: true },
+      { text: "Répond Instagram, Facebook, Site web", included: true, highlight: false },
+      { text: "Donne horaires, menus, allergènes", included: true, highlight: false },
+      { text: "Peut prendre des réservations", included: true, highlight: false },
+      { text: "PilotSMS – Notifications avancées", included: true, highlight: true },
+      { text: "Envoi automatique planning", included: true, highlight: false },
+      { text: "Alertes modifications", included: true, highlight: false },
+      { text: "Messages absence & rappels", included: true, highlight: false },
+      { text: "Historique lecture", included: true, highlight: false },
+      { text: "Multi-établissements illimité", included: true, highlight: false },
+      { text: "Support prioritaire", included: true, highlight: false },
     ],
-    cta: "Nous contacter",
-    ctaLink: "/contact",
+    cta: "Essai gratuit",
+    ctaLink: "/register",
     popular: false,
-  },
-  {
-    name: "Enterprise",
-    description: "Chaînes / Groupes / Multi-sites / Gros volumes",
-    monthlyPrice: null,
-    yearlyPrice: null,
-    perUnit: "sur devis",
-    features: [
-      { text: "Tout Business inclus", included: true },
-      { text: "SSO (Single Sign-On)", included: true },
-      { text: "Intégrations personnalisées", included: true },
-      { text: "Manager dédié", included: true },
-      { text: "SLA garanti", included: true },
-      { text: "Conformité avancée", included: true },
-      { text: "Support 24/7", included: true },
-      { text: "Développements sur mesure", included: true },
-      { text: "Hébergement dédié", included: true },
-    ],
-    cta: "Demander un devis",
-    ctaLink: "/contact?plan=enterprise",
-    popular: false,
-    custom: true,
+    tagline: "Gère l'opérationnel pendant que vous bossez",
   },
 ]
 
@@ -116,8 +110,18 @@ export function PricingSection() {
             Des prix transparents. <span className="text-black/40 dark:text-white/40">Sans surprise.</span>
           </h2>
           
-          <p className="text-lg text-black/60 dark:text-white/60 mb-8">
-            14 jours gratuits. Sans carte bancaire. Résiliable en 1 clic.
+          <p className="text-lg text-black/60 dark:text-white/60 mb-6 max-w-2xl mx-auto">
+            Vous perdez du temps chaque semaine avec les plannings, les remplacements,
+            les employés qui lisent pas les horaires, les messages Insta,
+            et les avis Google à gérer.
+          </p>
+          
+          <p className="text-base text-black/70 dark:text-white/70 mb-8 font-medium">
+            ShiftPilot automatise tout ça pour vous : <span className="text-accent">Planning IA</span> • <span className="text-accent">SMS équipe</span> • <span className="text-accent">Chatbot client</span> • <span className="text-accent">Avis Google automatiques</span>
+          </p>
+          
+          <p className="text-sm text-black/50 dark:text-white/50 mb-8">
+            14 jours gratuits • Sans carte bancaire • Résiliable en 1 clic
           </p>
           
           {/* Toggle */}
@@ -149,7 +153,7 @@ export function PricingSection() {
         </motion.div>
         
         {/* Plans */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="grid md:grid-cols-3 gap-6 mb-12 max-w-5xl mx-auto">
           {plans.map((plan, index) => (
             <motion.div
               key={plan.name}
@@ -159,8 +163,6 @@ export function PricingSection() {
               className={`relative bg-white dark:bg-surface-dark rounded-xl p-6 border-2 transition-all ${
                 plan.popular 
                   ? 'border-accent scale-105 shadow-xl shadow-accent/20' 
-                  : plan.custom
-                  ? 'border-steel-dark/50 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-background-dark dark:to-surface-dark'
                   : 'border-steel-dark/30 hover:border-accent/50'
               }`}
             >
@@ -173,25 +175,20 @@ export function PricingSection() {
                   </span>
                 </div>
               )}
-
-              {/* Enterprise badge */}
-              {plan.custom && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-gradient-to-r from-accent to-primary text-white text-xs font-semibold rounded-full shadow-lg">
-                    <span className="material-symbols-outlined text-sm">workspace_premium</span>
-                    Enterprise
-                  </span>
-                </div>
-              )}
               
               {/* Plan header */}
               <div className="text-center mb-6 pt-2">
-                <h3 className="text-xl font-bold text-black dark:text-white mb-1">
+                <h3 className="text-xl font-bold text-black dark:text-white mb-2">
                   {plan.name}
                 </h3>
-                <p className="text-xs text-black/60 dark:text-white/60">
+                <p className="text-xs text-black/60 dark:text-white/60 leading-relaxed mb-3">
                   {plan.description}
                 </p>
+                {plan.tagline && (
+                  <p className="text-[10px] text-accent font-medium italic">
+                    {plan.tagline}
+                  </p>
+                )}
               </div>
               
               {/* Price */}
@@ -236,17 +233,25 @@ export function PricingSection() {
               </div>
               
               {/* Features */}
-              <ul className="space-y-2.5 mb-6 min-h-[280px]">
+              <ul className="space-y-2.5 mb-6 min-h-[320px]">
                 {plan.features.map((feature, i) => (
-                  <li key={i} className="flex items-start gap-2">
+                  <li key={i} className={`flex items-start gap-2 ${
+                    feature.highlight ? 'bg-gradient-to-r from-violet-500/15 to-purple-500/15 dark:from-violet-500/25 dark:to-purple-500/25 border border-violet-500/30 dark:border-violet-500/40 rounded-lg p-2.5 -mx-2' : ''
+                  }`}>
                     {feature.included ? (
-                      <span className="material-symbols-outlined text-success text-lg flex-shrink-0">check_circle</span>
+                      <span className={`text-lg flex-shrink-0 ${
+                        feature.highlight ? 'text-violet-600 dark:text-violet-400' : 'text-success'
+                      }`}>
+                        <span className="material-symbols-outlined">check_circle</span>
+                      </span>
                     ) : (
                       <span className="material-symbols-outlined text-slate-400 dark:text-slate-600 text-lg flex-shrink-0">cancel</span>
                     )}
                     <span className={`text-sm ${
                       feature.included 
-                        ? 'text-black dark:text-white' 
+                        ? feature.highlight
+                          ? 'text-violet-700 dark:text-violet-300 font-bold'
+                          : 'text-black dark:text-white'
                         : 'text-slate-400 dark:text-slate-600 line-through'
                     }`}>
                       {feature.text}
@@ -261,8 +266,6 @@ export function PricingSection() {
                 className={`w-full py-3 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 ${
                   plan.popular 
                     ? 'bg-accent text-white hover:bg-accent/90 shadow-lg shadow-accent/20' 
-                    : plan.custom
-                    ? 'bg-gradient-to-r from-accent to-primary text-white hover:opacity-90 shadow-lg'
                     : 'bg-slate-100 dark:bg-background-dark text-black dark:text-white hover:bg-slate-200 dark:hover:bg-white/10 border border-steel-dark/30'
                 }`}
               >
@@ -273,26 +276,6 @@ export function PricingSection() {
           ))}
         </div>
         
-        {/* Trust elements */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="flex flex-wrap justify-center gap-6 text-sm text-black/60 dark:text-white/60"
-        >
-          {[
-            "14 jours gratuits",
-            "Sans carte bancaire",
-            "Résiliable en 1 clic",
-            "Support inclus",
-            "Conformité garantie",
-          ].map((item) => (
-            <span key={item} className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-success text-base">check_circle</span>
-              {item}
-            </span>
-          ))}
-        </motion.div>
       </div>
     </section>
   )

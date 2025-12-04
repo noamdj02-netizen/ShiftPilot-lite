@@ -39,7 +39,8 @@ export function LoginForm() {
       // Small delay to ensure state is updated
       await new Promise(resolve => setTimeout(resolve, 100))
       
-      router.push('/dashboard')
+      // Redirect to portal for smart routing based on user role
+      router.push('/portal')
     } catch (err) {
       // Login error handling
       const errorMessage = err instanceof Error ? err.message : 'Une erreur est survenue'

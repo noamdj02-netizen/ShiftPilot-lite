@@ -32,14 +32,16 @@ export async function POST(request: Request) {
 
     if (orgError || !org) {
       console.error("Error creating org:", orgError);
-      throw new Error("Erreur lors de la création de l'organisation");
+      const errorMessage = orgError?.message || "Erreur inconnue";
+      throw new Error(`Erreur lors de la création de l'organisation: ${errorMessage}`);
     }
 
     const orgId = (org as { id: string }).id;
 
     // 3. Créer l'établissement principal (Site physique)
-    const { data: establishment, error: estError } = await supabase
-      .from('establishments')
+    // Note: Le schéma utilise 'locations' au lieu de 'establishments'
+    const { data: location, error: locationError } = await supabase
+      .from('locations')
       // @ts-ignore - Supabase type inference issue
       .insert({
         organization_id: orgId,
@@ -50,15 +52,14 @@ export async function POST(request: Request) {
           default: { open: body.openingTime, close: body.closingTime }
         },
         city: body.city,
-        country: body.country,
-        // Ajouter les colonnes latitude/longitude plus tard via géocodage si besoin
+        is_active: true
       })
       .select()
       .single();
 
-    if (estError) {
-      console.error("Error creating establishment:", estError);
-      // On pourrait rollback ici mais simplifions pour l'instant
+    if (locationError) {
+      console.error("Error creating location:", locationError);
+      // On continue quand même, l'établissement peut être créé plus tard
     }
 
     // 4. Mettre à jour le profil de l'utilisateur (Admin/Owner)
@@ -68,7 +69,8 @@ export async function POST(request: Request) {
       // @ts-ignore - Supabase type inference issue
       .update({
         organization_id: orgId,
-        role: 'owner', // S'assurer que c'est 'owner'
+        role: 'OWNER', // Utiliser 'OWNER' (majuscules) selon le schéma
+        default_location_id: location?.id || null,
         phone: body.managerPhone,
         // On stocke les préférences RH dans preferences JSONB pour l'instant
         preferences: {
@@ -84,7 +86,8 @@ export async function POST(request: Request) {
 
     if (profileError) {
       console.error("Error updating profile:", profileError);
-      throw new Error("Erreur lors de la mise à jour du profil");
+      const errorMessage = profileError?.message || "Erreur inconnue";
+      throw new Error(`Erreur lors de la mise à jour du profil: ${errorMessage}`);
     }
 
     // 5. Créer un abonnement 'trialing' par défaut
@@ -99,7 +102,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ 
       success: true, 
       organization: org,
-      establishment: establishment 
+      location: location || null
     });
 
   } catch (error) {

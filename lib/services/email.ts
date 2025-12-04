@@ -1,6 +1,12 @@
 import { Resend } from 'resend'
 
-const resend = process.env.EMAIL_API_KEY ? new Resend(process.env.EMAIL_API_KEY) : null
+// Validation de la clé API email (optionnelle)
+const emailApiKey = process.env.EMAIL_API_KEY;
+const resend = emailApiKey && emailApiKey !== 're_...' ? new Resend(emailApiKey) : null;
+
+if (!resend && process.env.NODE_ENV === 'production') {
+  console.warn('[Email Service] EMAIL_API_KEY is not configured. Email functionality will be disabled.');
+}
 
 export const emailService = {
   async sendPlanning(to: string, planningHtml: string) {

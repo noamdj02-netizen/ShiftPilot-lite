@@ -1,91 +1,59 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { toast } from 'sonner'
 
 export function ServiceWorkerRegistration() {
-  const [updateAvailable, setUpdateAvailable] = useState(false)
-  const [registration, setRegistration] = useState<ServiceWorkerRegistration | null>(null)
+  const [isInstalled, setIsInstalled] = useState(false)
 
   useEffect(() => {
-    if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
-      console.log('[PWA] Service Worker not supported')
-      return
-    }
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .register('/sw.js')
+        .then((registration) => {
+          console.log('[PWA] Service Worker registered:', registration.scope)
+          
+          // Check if app is already installed
+          if (window.matchMedia('(display-mode: standalone)').matches) {
+            setIsInstalled(true)
+          }
 
-    // Register service worker
-    navigator.serviceWorker
-      .register('/sw.js', { scope: '/' })
-      .then((reg) => {
-        console.log('[PWA] Service Worker registered:', reg.scope)
-        setRegistration(reg)
-
-        // Check for updates every hour
-        setInterval(() => {
-          reg.update()
-        }, 60 * 60 * 1000)
-
-        // Listen for updates
-        reg.addEventListener('updatefound', () => {
-          const newWorker = reg.installing
-          if (!newWorker) return
-
-          newWorker.addEventListener('statechange', () => {
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              // New service worker available
-              setUpdateAvailable(true)
-              toast.info('Une nouvelle version est disponible', {
-                action: {
-                  label: 'Mettre à jour',
-                  onClick: () => {
-                    newWorker.postMessage({ type: 'SKIP_WAITING' })
-                    window.location.reload()
-                  },
-                },
+          // Listen for updates
+          registration.addEventListener('updatefound', () => {
+            const newWorker = registration.installing
+            if (newWorker) {
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  // New service worker available
+                  console.log('[PWA] New service worker available')
+                }
               })
             }
           })
         })
-      })
-      .catch((error) => {
-        console.error('[PWA] Service Worker registration failed:', error)
-      })
+        .catch((error) => {
+          console.error('[PWA] Service Worker registration failed:', error)
+        })
 
-    // Listen for controller changes (when new SW takes control)
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      window.location.reload()
-    })
+      // Listen for controller changes
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        window.location.reload()
+      })
+    }
   }, [])
 
-  const handleUpdate = () => {
-    if (registration?.waiting) {
-      registration.waiting.postMessage({ type: 'SKIP_WAITING' })
-      window.location.reload()
-    }
-  }
-
-  // Handle install prompt (for browsers that support it)
+  // Handle install prompt
   useEffect(() => {
-    let deferredPrompt: BeforeInstallPromptEvent | null = null
+    let deferredPrompt: any
 
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault()
-      deferredPrompt = e as BeforeInstallPromptEvent
-
-      // Show custom install button/prompt
-      toast.info('Installez ShiftPilot pour une meilleure expérience', {
-        action: {
-          label: 'Installer',
-          onClick: async () => {
-            if (deferredPrompt) {
-              deferredPrompt.prompt()
-              const { outcome } = await deferredPrompt.userChoice
-              console.log('[PWA] User choice:', outcome)
-              deferredPrompt = null
-            }
-          },
-        },
-      })
+      deferredPrompt = e
+      
+      // Show install button if not already installed
+      if (!isInstalled && !window.matchMedia('(display-mode: standalone)').matches) {
+        // You can show a custom install button here
+        console.log('[PWA] Install prompt available')
+      }
     }
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
@@ -93,14 +61,7 @@ export function ServiceWorkerRegistration() {
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
     }
-  }, [])
+  }, [isInstalled])
 
-  return null // This component doesn't render anything
+  return null
 }
-
-// Type for beforeinstallprompt event
-interface BeforeInstallPromptEvent extends Event {
-  prompt: () => Promise<void>
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
-}
-

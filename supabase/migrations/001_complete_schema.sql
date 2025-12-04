@@ -244,6 +244,19 @@ CREATE INDEX IF NOT EXISTS idx_employees_profile ON employees(profile_id);
 CREATE INDEX IF NOT EXISTS idx_employees_active ON employees(organization_id, is_active);
 
 -- Schedules
+-- S'assurer que la colonne status existe avant de créer l'index
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_schema = 'public' 
+        AND table_name = 'schedules' 
+        AND column_name = 'status'
+    ) THEN
+        ALTER TABLE schedules ADD COLUMN status schedule_status DEFAULT 'DRAFT';
+    END IF;
+END $$;
+
 CREATE INDEX IF NOT EXISTS idx_schedules_org ON schedules(organization_id);
 CREATE INDEX IF NOT EXISTS idx_schedules_location ON schedules(location_id);
 CREATE INDEX IF NOT EXISTS idx_schedules_week ON schedules(week_start_date);
@@ -257,6 +270,19 @@ CREATE INDEX IF NOT EXISTS idx_shifts_start_time ON shifts(start_time);
 CREATE INDEX IF NOT EXISTS idx_shifts_published ON shifts(is_published);
 
 -- Time Off Requests
+-- S'assurer que la colonne status existe avant de créer l'index
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_schema = 'public' 
+        AND table_name = 'time_off_requests' 
+        AND column_name = 'status'
+    ) THEN
+        ALTER TABLE time_off_requests ADD COLUMN status time_off_status DEFAULT 'PENDING';
+    END IF;
+END $$;
+
 CREATE INDEX IF NOT EXISTS idx_timeoff_employee ON time_off_requests(employee_id);
 CREATE INDEX IF NOT EXISTS idx_timeoff_org ON time_off_requests(organization_id);
 CREATE INDEX IF NOT EXISTS idx_timeoff_status ON time_off_requests(status);

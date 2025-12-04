@@ -22,7 +22,7 @@ export async function generatePlanningPDF({ restaurantName, weekStart, weekEnd, 
   doc.text(`Planning du ${format(weekStart, 'dd MMMM', { locale: fr })} au ${format(weekEnd, 'dd MMMM yyyy', { locale: fr })}`, 14, 32)
 
   // Prepare table data
-  const days = []
+  const days: Date[] = []
   const current = new Date(weekStart)
   while (current <= weekEnd) {
     days.push(new Date(current))

@@ -1,16 +1,50 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-export async function updateSession(request: NextRequest) {
+// Validation stricte des variables d'environnement pour middleware
+function getMiddlewareEnvVars() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  // En middleware, on permet des valeurs par défaut pour éviter de casser le build,
+  // mais on log un warning
+  if (!supabaseUrl || supabaseUrl === "https://your-project.supabase.co" || supabaseUrl === "https://example.com") {
+    console.error(
+      "[Middleware Error] NEXT_PUBLIC_SUPABASE_URL is missing or not configured. " +
+      "Middleware will not function correctly. Please configure environment variables."
+    );
+  }
+
+  if (!supabaseAnonKey || supabaseAnonKey === "your-anon-key-here" || supabaseAnonKey === "placeholder") {
+    console.error(
+      "[Middleware Error] NEXT_PUBLIC_SUPABASE_ANON_KEY is missing or not configured. " +
+      "Middleware will not function correctly. Please configure environment variables."
+    );
+  }
+
+  // Utiliser des valeurs par défaut pour éviter de casser complètement le middleware
+  // mais cela empêchera l'authentification de fonctionner
+  return {
+    supabaseUrl: supabaseUrl || "https://placeholder.supabase.co",
+    supabaseAnonKey: supabaseAnonKey || "placeholder-key",
+  };
+}
+
+export async function updateSession(request: NextRequest): Promise<{
+  response: NextResponse;
+  user: any | null;
+}> {
   let supabaseResponse = NextResponse.next({
     request: {
       headers: request.headers,
     },
   });
 
+  const { supabaseUrl, supabaseAnonKey } = getMiddlewareEnvVars();
+
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || "https://example.com",
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "placeholder",
+    supabaseUrl,
+    supabaseAnonKey,
     {
       cookies: {
         getAll() {
@@ -31,53 +65,25 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
+  // Get user (with error handling to avoid breaking middleware)
   let user = null;
   try {
     const {
       data: { user: supabaseUser },
+      error,
     } = await supabase.auth.getUser();
-    user = supabaseUser;
+    
+    if (error) {
+      // Silently fail - user is not authenticated
+      user = null;
+    } else {
+      user = supabaseUser;
+    }
   } catch (error) {
-    console.error("Middleware Auth Error:", error);
-    // On continue sans user, ce qui forcera le login sur les routes protégées
+    // Silently fail - user is not authenticated
+    // This prevents middleware from crashing on auth errors
+    user = null;
   }
 
-  // Routes d'authentification (accessibles uniquement si NON connecté)
-  const isAuthRoute =
-    request.nextUrl.pathname.startsWith("/login") ||
-    request.nextUrl.pathname.startsWith("/register") ||
-    request.nextUrl.pathname.startsWith("/forgot-password") ||
-    request.nextUrl.pathname.startsWith("/reset-password");
-
-  // Routes protégées (accessibles uniquement si connecté)
-  const protectedRoutes = [
-    "/dashboard",
-    "/planning",
-    "/employees",
-    "/settings",
-    "/billing",
-    "/compliance",
-    "/availabilities",
-  ];
-
-  const isProtectedRoute = protectedRoutes.some((route) =>
-    request.nextUrl.pathname.startsWith(route)
-  );
-
-  // Rediriger vers login si non authentifié et accès à une route protégée
-  if (!user && isProtectedRoute) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    url.searchParams.set("redirect", request.nextUrl.pathname);
-    return NextResponse.redirect(url);
-  }
-
-  // Rediriger vers dashboard si authentifié et sur une page d'auth
-  if (user && isAuthRoute) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
-    return NextResponse.redirect(url);
-  }
-
-  return supabaseResponse;
+  return { response: supabaseResponse, user };
 }

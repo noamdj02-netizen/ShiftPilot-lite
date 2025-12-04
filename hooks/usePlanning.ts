@@ -28,8 +28,22 @@ export function usePlanning(initialDate: Date = new Date()) {
   }, [startOfWeek])
 
   // Use existing hooks
-  const { employees, isLoading: isEmployeesLoading } = useEmployees()
-  const { shifts: rawShifts, isLoading: isShiftsLoading, createShift, deleteShift } = useShifts(startOfWeek, endOfWeek)
+  const { employees, isLoading: isEmployeesLoading, error: employeesError } = useEmployees()
+  const { shifts: rawShifts, isLoading: isShiftsLoading, error: shiftsError, createShift, deleteShift } = useShifts(startOfWeek, endOfWeek)
+  
+  // Add timeout to prevent infinite loading
+  const [loadingTimeout, setLoadingTimeout] = useState(false)
+  
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (isEmployeesLoading || isShiftsLoading) {
+        console.warn('[usePlanning] Loading timeout after 10s, forcing stop')
+        setLoadingTimeout(true)
+      }
+    }, 10000) // 10 seconds timeout
+    
+    return () => clearTimeout(timeout)
+  }, [isEmployeesLoading, isShiftsLoading])
 
   // Process shifts into grid format
   useEffect(() => {
@@ -204,6 +218,19 @@ export function usePlanning(initialDate: Date = new Date()) {
     }
   }), [startOfWeek])
 
+  // Combine loading states but don't stay loading forever
+  const isLoading = (isEmployeesLoading || isShiftsLoading) && !loadingTimeout
+  
+  // Log errors for debugging
+  useEffect(() => {
+    if (employeesError) {
+      console.error('[usePlanning] Employees error:', employeesError)
+    }
+    if (shiftsError) {
+      console.error('[usePlanning] Shifts error:', shiftsError)
+    }
+  }, [employeesError, shiftsError])
+
   return {
     currentDate,
     setCurrentDate,
@@ -212,8 +239,9 @@ export function usePlanning(initialDate: Date = new Date()) {
     isGenerating,
     startOfWeek,
     shiftsMap,
-    employees,
-    isLoading: isEmployeesLoading || isShiftsLoading,
+    employees: employees || [],
+    isLoading,
+    error: employeesError || shiftsError || null,
     handleAutoPlan,
     handleRemoveShift,
     calculateHours,

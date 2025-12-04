@@ -221,7 +221,7 @@ export function Hero() {
                 className="hidden md:flex w-16 md:w-20 bg-slate-50 dark:bg-[#0F172A] border-r border-slate-200 dark:border-slate-800 flex-col items-center py-4 gap-6"
               >
                 {/* Logo */}
-                <div className="text-xs md:text-sm font-bold text-slate-900 dark:text-white writing-vertical-rl rotate-180">
+                <div className="text-[9px] md:text-[10px] font-bold text-slate-900 dark:text-white writing-vertical-rl flex items-center justify-center min-h-[120px]">
                   SHIFTPILOT
                 </div>
                 

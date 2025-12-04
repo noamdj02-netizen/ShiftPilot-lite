@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import React, { useState, useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 
 export function BeforeAfterSection() {
@@ -20,15 +20,58 @@ export function BeforeAfterSection() {
         "Risque d'erreurs et de non-conformité",
       ],
       mockup: (
-        <div className="bg-slate-200 dark:bg-slate-800 rounded-lg p-4 border-2 border-dashed border-slate-400 dark:border-slate-600">
-          <div className="bg-white dark:bg-slate-900 rounded p-3 space-y-2">
-            <div className="h-4 bg-slate-300 dark:bg-slate-700 rounded w-3/4"></div>
-            <div className="grid grid-cols-7 gap-1">
-              {Array.from({ length: 21 }).map((_, i) => (
-                <div key={i} className="h-12 bg-slate-200 dark:bg-slate-800 rounded border border-slate-300 dark:border-slate-700"></div>
-              ))}
+        <div className="bg-slate-100 dark:bg-slate-900 rounded-lg p-3 border-2 border-dashed border-red-300 dark:border-red-800/50 shadow-inner">
+          <div className="bg-white dark:bg-slate-950 rounded border border-slate-300 dark:border-slate-800 overflow-hidden">
+            {/* Excel Header */}
+            <div className="bg-slate-200 dark:bg-slate-800 border-b border-slate-300 dark:border-slate-700 px-2 py-1.5 flex items-center gap-2">
+              <div className="flex gap-1">
+                <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+              </div>
+              <div className="text-[10px] font-mono text-slate-600 dark:text-slate-400">Planning_Semaine_15.xlsx</div>
             </div>
-            <div className="h-3 bg-red-200 dark:bg-red-900/30 rounded w-1/2"></div>
+            
+            {/* Excel Grid */}
+            <div className="p-2">
+              <div className="grid grid-cols-8 gap-px bg-slate-300 dark:bg-slate-700 text-[9px]">
+                {/* Header Row */}
+                <div className="bg-slate-300 dark:bg-slate-700 p-1 font-semibold text-slate-700 dark:text-slate-300 border-r border-slate-400 dark:border-slate-600"></div>
+                {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((day, i) => (
+                  <div key={i} className="bg-slate-300 dark:bg-slate-700 p-1 font-semibold text-slate-700 dark:text-slate-300 border-r border-slate-400 dark:border-slate-600 text-center">
+                    {day}
+                  </div>
+                ))}
+                
+                {/* Data Rows */}
+                {['Marie', 'Jean', 'Sophie', 'Pierre'].map((name, row) => (
+                  <>
+                    <div key={`name-${row}`} className="bg-slate-200 dark:bg-slate-800 p-1 text-slate-600 dark:text-slate-400 border-r border-slate-400 dark:border-slate-600 font-medium">
+                      {name}
+                    </div>
+                    {Array.from({ length: 7 }).map((_, col) => (
+                      <div key={`cell-${row}-${col}`} className={`p-1 border-r border-slate-400 dark:border-slate-600 ${
+                        Math.random() > 0.6 
+                          ? 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400' 
+                          : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-500'
+                      }`}>
+                        {Math.random() > 0.6 ? (Math.random() > 0.5 ? '9h-17h' : '') : ''}
+                      </div>
+                    ))}
+                  </>
+                ))}
+              </div>
+              
+              {/* Error Messages */}
+              <div className="mt-2 p-2 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/30 rounded">
+                <div className="text-[9px] text-red-600 dark:text-red-400 font-medium mb-1">⚠️ Erreurs détectées:</div>
+                <div className="text-[8px] text-red-500 dark:text-red-500 space-y-0.5">
+                  <div>• Conflit d'horaires: Marie/Pierre (Mer 14h)</div>
+                  <div>• Heures max dépassées: Jean (45h/sem)</div>
+                  <div>• Repos non respecté: Sophie</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       ),
@@ -44,12 +87,68 @@ export function BeforeAfterSection() {
         "Pas d'historique des plannings",
       ],
       mockup: (
-        <div className="bg-slate-200 dark:bg-slate-800 rounded-lg p-4 border-2 border-dashed border-slate-400 dark:border-slate-600">
-          <div className="bg-white dark:bg-slate-900 rounded p-3 space-y-2">
-            <div className="h-3 bg-slate-300 dark:bg-slate-700 rounded w-full"></div>
-            <div className="h-3 bg-slate-300 dark:bg-slate-700 rounded w-5/6"></div>
-            <div className="h-3 bg-slate-300 dark:bg-slate-700 rounded w-4/6"></div>
-            <div className="h-8 bg-red-200 dark:bg-red-900/30 rounded mt-2"></div>
+        <div className="bg-slate-100 dark:bg-slate-900 rounded-lg p-3 border-2 border-dashed border-red-300 dark:border-red-800/50 shadow-inner">
+          <div className="bg-white dark:bg-slate-950 rounded-lg border border-slate-300 dark:border-slate-800 overflow-hidden">
+            {/* Phone Header */}
+            <div className="bg-slate-200 dark:bg-slate-800 px-3 py-2 flex items-center justify-between border-b border-slate-300 dark:border-slate-700">
+              <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">📱 Messages</div>
+              <div className="text-[10px] text-slate-500 dark:text-slate-400">12:34</div>
+            </div>
+            
+            {/* SMS Messages */}
+            <div className="p-3 space-y-3 bg-slate-50 dark:bg-slate-900">
+              {/* Incoming SMS */}
+              <div className="flex gap-2">
+                <div className="w-8 h-8 rounded-full bg-slate-300 dark:bg-slate-700 flex items-center justify-center">
+                  <span className="text-xs">👤</span>
+                </div>
+                <div className="flex-1">
+                  <div className="bg-white dark:bg-slate-800 rounded-lg p-2 border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <div className="text-[10px] text-slate-600 dark:text-slate-400 mb-1">Patron • Dim 20:15</div>
+                    <div className="text-xs text-slate-900 dark:text-white leading-relaxed">
+                      Planning semaine prochaine:<br/>
+                      Lun 9h-17h, Mer 14h-22h,<br/>
+                      Ven 10h-18h. OK?
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Outgoing SMS */}
+              <div className="flex gap-2 justify-end">
+                <div className="flex-1 flex justify-end">
+                  <div className="bg-blue-500 rounded-lg p-2 max-w-[80%] shadow-sm">
+                    <div className="text-xs text-white leading-relaxed">
+                      OK merci! Je peux échanger le mercredi avec Sophie?
+                    </div>
+                  </div>
+                </div>
+                <div className="w-8 h-8 rounded-full bg-blue-200 dark:bg-blue-900/30 flex items-center justify-center">
+                  <span className="text-xs">✓</span>
+                </div>
+              </div>
+              
+              {/* Another Incoming */}
+              <div className="flex gap-2">
+                <div className="w-8 h-8 rounded-full bg-slate-300 dark:bg-slate-700 flex items-center justify-center">
+                  <span className="text-xs">👤</span>
+                </div>
+                <div className="flex-1">
+                  <div className="bg-white dark:bg-slate-800 rounded-lg p-2 border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <div className="text-[10px] text-slate-600 dark:text-slate-400 mb-1">Patron • Dim 20:18</div>
+                    <div className="text-xs text-slate-900 dark:text-white leading-relaxed">
+                      Je vérifie et je te dis...
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Error/Confusion */}
+              <div className="bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/30 rounded p-2">
+                <div className="text-[9px] text-red-600 dark:text-red-400 font-medium">⚠️ Pas de réponse depuis 2 jours</div>
+                <div className="text-[8px] text-red-500 dark:text-red-500 mt-1">Planning toujours incertain</div>
+              </div>
+            </div>
           </div>
         </div>
       ),
@@ -68,43 +167,155 @@ export function BeforeAfterSection() {
         "Export automatique vers la paie",
       ],
       mockup: (
-        <div className="bg-white dark:bg-surface-dark rounded-lg p-4 border border-steel-dark/30 shadow-lg">
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="h-4 bg-accent/20 rounded w-1/3"></div>
-              <div className="h-6 w-6 rounded-full bg-accent"></div>
-            </div>
-            <div className="grid grid-cols-4 gap-2">
-              {[
-                { label: 'CA', val: '4,200€', delta: '+8.5%' },
-                { label: 'Couverts', val: '156', delta: '+12%' },
-                { label: 'Factures', val: '98', delta: '+5' },
-                { label: 'Product.', val: '84€', delta: '+5%' },
-              ].map((stat, i) => (
-                <div key={i} className="h-16 bg-slate-50 dark:bg-background-dark rounded border border-steel-dark/30 p-2">
-                  <div className="h-2 bg-slate-300 dark:bg-slate-700 rounded w-2/3 mb-1 text-[8px] text-slate-500">{stat.label}</div>
-                  <div className="text-xs font-bold text-slate-900 dark:text-white mb-0.5">{stat.val}</div>
-                  <div className="text-[9px] text-success">{stat.delta}</div>
-                </div>
-              ))}
-            </div>
-            <div className="h-32 bg-slate-50 dark:bg-background-dark rounded border border-steel-dark/30 p-3">
-              <div className="h-2 bg-slate-300 dark:bg-slate-700 rounded w-1/4 mb-2 text-[9px] text-slate-500">Couverts par heure</div>
-              <div className="flex gap-1 h-20 items-end">
-                {[40, 60, 45, 70, 50, 80, 65].map((h, i) => (
-                  <div key={i} className="flex-1 bg-accent rounded-t" style={{ height: `${h}%` }}></div>
-                ))}
+        <div className="bg-white dark:bg-[#0D1B2A] rounded-xl p-4 border border-slate-200 dark:border-slate-800 shadow-2xl">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-200 dark:border-slate-800">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                <span className="material-symbols-outlined text-white text-sm">grid_view</span>
+              </div>
+              <div>
+                <div className="text-sm font-bold text-slate-900 dark:text-white">ShiftPilot Dashboard</div>
+                <div className="text-[10px] text-slate-500 dark:text-slate-400">Semaine 15 - 3 sites actifs</div>
               </div>
             </div>
-            <div className="bg-slate-50 dark:bg-background-dark rounded border border-steel-dark/30 p-2">
-              <div className="text-[9px] text-slate-500 mb-1">Employés actifs: 8/12</div>
-              <div className="flex -space-x-1">
-                {['LD', 'JP', 'CM', 'ML', 'SM'].map((init, i) => (
-                  <div key={i} className="size-5 rounded-full bg-accent/20 border border-accent/30 flex items-center justify-center text-[8px] font-bold text-accent">
-                    {init}
+            <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
+              <span className="material-symbols-outlined text-white text-xs">check</span>
+            </div>
+          </div>
+
+          {/* KPI Cards */}
+          <div className="grid grid-cols-4 gap-2 mb-4">
+            {[
+              { label: 'Employés', val: '24', delta: '+3', icon: 'group', color: 'blue' },
+              { label: 'Heures', val: '420h', delta: '+5%', icon: 'schedule', color: 'green' },
+              { label: 'Conformité', val: '100%', delta: '✓', icon: 'verified', color: 'emerald' },
+              { label: 'Coûts', val: '8.2k€', delta: '-12%', icon: 'euro', color: 'purple' },
+            ].map((stat, i) => (
+              <div key={i} className="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-2 border border-slate-200 dark:border-slate-800">
+                <div className="flex items-center gap-1.5 mb-1.5">
+                  <span className={`material-symbols-outlined text-${stat.color}-500 text-xs`}>{stat.icon}</span>
+                  <div className="text-[9px] text-slate-500 dark:text-slate-400 font-medium">{stat.label}</div>
+                </div>
+                <div className="text-base font-bold text-slate-900 dark:text-white mb-0.5">{stat.val}</div>
+                <div className="text-[9px] text-green-600 dark:text-green-400 font-medium">{stat.delta}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Planning Grid */}
+          <div className="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-2 mb-4 border border-slate-200 dark:border-slate-800 overflow-x-auto">
+            <div className="text-xs font-semibold text-slate-900 dark:text-white mb-2">Planning de la semaine</div>
+            <div className="min-w-[500px]">
+              <div className="grid grid-cols-[90px_repeat(7,1fr)] gap-1 text-[9px]">
+                {/* Header */}
+                <div className="p-1 bg-slate-100 dark:bg-slate-800 rounded font-semibold text-slate-600 dark:text-slate-400 text-left text-[9px]">Employé</div>
+                {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((day, idx) => (
+                  <div key={day} className="p-1 bg-slate-100 dark:bg-slate-800 rounded text-center font-semibold text-slate-600 dark:text-slate-400">
+                    <div className="text-[9px]">{day}</div>
+                    <div className="text-[8px] text-slate-500 dark:text-slate-500">
+                      {[52, 64, 58, 68, 62, 72, 66][idx]}h
+                    </div>
+                  </div>
+                ))}
+
+                {/* Employee Rows */}
+                {[
+                  { name: 'Marie D.', role: 'Serveuse', shifts: [
+                    { day: 0, time: '9h-17h', type: 'service' },
+                    { day: 2, time: '14h-22h', type: 'service' },
+                    { day: 4, time: '10h-18h', type: 'service' },
+                  ]},
+                  { name: 'Jean P.', role: 'Cuisinier', shifts: [
+                    { day: 0, time: '10h-18h', type: 'kitchen' },
+                    { day: 1, time: '10h-18h', type: 'kitchen' },
+                    { day: 3, time: '10h-18h', type: 'kitchen' },
+                    { day: 5, time: '12h-20h', type: 'kitchen' },
+                  ]},
+                  { name: 'Sophie M.', role: 'Manager', shifts: [
+                    { day: 1, time: '11h-19h', type: 'admin' },
+                    { day: 3, time: '11h-19h', type: 'admin' },
+                    { day: 5, time: '12h-22h', type: 'admin' },
+                  ]},
+                ].map((emp, i) => (
+                  <React.Fragment key={i}>
+                    <div className="p-1 flex items-center gap-1">
+                      <div className="w-4 h-4 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
+                        <span className="text-[7px] font-bold text-blue-600 dark:text-blue-400">
+                          {emp.name.split(' ').map(n => n[0]).join('')}
+                        </span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-semibold text-slate-900 dark:text-white text-[9px] truncate">{emp.name.split(' ')[0]}</div>
+                        <div className="text-[8px] text-slate-500 dark:text-slate-400 truncate">{emp.role}</div>
+                      </div>
+                    </div>
+                    {Array.from({ length: 7 }).map((_, dayIdx) => {
+                      const shift = emp.shifts.find(s => s.day === dayIdx)
+                      const getShiftColor = (type: string) => {
+                        switch (type) {
+                          case 'admin': return 'bg-purple-500/20 border-purple-500/50 text-purple-700 dark:text-purple-300'
+                          case 'kitchen': return 'bg-orange-500/20 border-orange-500/50 text-orange-700 dark:text-orange-300'
+                          default: return 'bg-blue-500/20 border-blue-500/50 text-blue-700 dark:text-blue-300'
+                        }
+                      }
+                      return (
+                        <div key={dayIdx} className="p-0.5 min-h-[32px]">
+                          {shift ? (
+                            <div className={`h-full rounded border p-1 flex items-center justify-center ${getShiftColor(shift.type)}`}>
+                              <div className="text-[8px] font-bold leading-tight">{shift.time}</div>
+                            </div>
+                          ) : (
+                            <div className="h-full w-full"></div>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </React.Fragment>
+                ))}
+
+                {/* Totals Row */}
+                <div className="p-1 bg-slate-100 dark:bg-slate-800 rounded font-mono text-[9px] font-semibold text-slate-600 dark:text-slate-400 text-right">
+                  TOTAL
+                </div>
+                {[52, 64, 58, 68, 62, 72, 66].map((hours, idx) => (
+                  <div key={idx} className="p-1 bg-slate-100 dark:bg-slate-800 rounded font-mono text-[9px] text-center text-slate-600 dark:text-slate-400">
+                    <div className="font-semibold">{hours}h</div>
                   </div>
                 ))}
               </div>
+            </div>
+            <div className="mt-1.5 pt-1.5 border-t border-slate-200 dark:border-slate-800">
+              <div className="flex items-center justify-between text-[9px]">
+                <span className="text-slate-500 dark:text-slate-400">Total semaine:</span>
+                <span className="font-semibold text-slate-900 dark:text-white">442h planifiées</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Planning Preview */}
+          <div className="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3 border border-slate-200 dark:border-slate-800">
+            <div className="flex items-center justify-between mb-2">
+              <div className="text-xs font-semibold text-slate-900 dark:text-white">Planning d'aujourd'hui</div>
+              <div className="text-[9px] text-green-600 dark:text-green-400 font-medium">✓ Conforme</div>
+            </div>
+            <div className="space-y-1.5">
+              {[
+                { name: 'Marie D.', time: '09:00 - 17:00', role: 'Serveuse', status: 'confirmed' },
+                { name: 'Jean P.', time: '10:00 - 18:00', role: 'Cuisinier', status: 'confirmed' },
+                { name: 'Sophie M.', time: '11:00 - 19:00', role: 'Manager', status: 'confirmed' },
+              ].map((shift, i) => (
+                <div key={i} className="flex items-center gap-2 p-1.5 bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700">
+                  <div className="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                    <span className="text-[8px] font-bold text-blue-600 dark:text-blue-400">{shift.name.split(' ').map(n => n[0]).join('')}</span>
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-[10px] font-medium text-slate-900 dark:text-white">{shift.name}</div>
+                    <div className="text-[9px] text-slate-500 dark:text-slate-400">{shift.time} • {shift.role}</div>
+                  </div>
+                  <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -121,23 +332,78 @@ export function BeforeAfterSection() {
         "Demande de congés intégrée",
       ],
       mockup: (
-        <div className="bg-white dark:bg-surface-dark rounded-lg p-4 border border-steel-dark/30 shadow-lg">
-          <div className="space-y-3">
-            <div className="h-6 bg-accent/20 rounded w-2/3"></div>
+        <div className="bg-white dark:bg-[#0D1B2A] rounded-xl p-3 border border-slate-200 dark:border-slate-800 shadow-2xl max-w-sm mx-auto">
+          {/* Mobile Header */}
+          <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-200 dark:border-slate-800">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                <span className="material-symbols-outlined text-white text-sm">grid_view</span>
+              </div>
+              <div className="text-sm font-bold text-slate-900 dark:text-white">ShiftPilot</div>
+            </div>
+            <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
+              <span className="material-symbols-outlined text-white text-xs">notifications</span>
+            </div>
+          </div>
+
+          {/* Week Selector */}
+          <div className="flex items-center justify-between mb-4 p-2 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-800">
+            <button className="p-1">
+              <span className="material-symbols-outlined text-slate-500 dark:text-slate-400 text-sm">chevron_left</span>
+            </button>
+            <div className="text-xs font-semibold text-slate-900 dark:text-white">Semaine 15</div>
+            <button className="p-1">
+              <span className="material-symbols-outlined text-slate-500 dark:text-slate-400 text-sm">chevron_right</span>
+            </button>
+          </div>
+
+          {/* Today's Shifts */}
+          <div className="mb-4">
+            <div className="text-xs font-semibold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+              <span className="material-symbols-outlined text-blue-500 text-sm">today</span>
+              Aujourd'hui
+            </div>
             <div className="space-y-2">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-12 bg-slate-50 dark:bg-background-dark rounded border border-steel-dark/30 p-2 flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-full bg-accent/30"></div>
-                  <div className="flex-1 space-y-1">
-                    <div className="h-2 bg-slate-300 dark:bg-slate-700 rounded w-3/4"></div>
-                    <div className="h-2 bg-slate-300 dark:bg-slate-700 rounded w-1/2"></div>
+              {[
+                { time: '09:00 - 17:00', role: 'Serveuse', location: 'Restaurant Centre', status: 'confirmed' },
+                { time: '18:00 - 22:00', role: 'Manager', location: 'Restaurant Centre', status: 'confirmed' },
+              ].map((shift, i) => (
+                <div key={i} className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg p-3 border border-blue-200 dark:border-blue-800">
+                  <div className="flex items-start justify-between mb-1">
+                    <div>
+                      <div className="text-sm font-bold text-slate-900 dark:text-white">{shift.time}</div>
+                      <div className="text-xs text-slate-600 dark:text-slate-400">{shift.role}</div>
+                    </div>
+                    <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
+                      <span className="material-symbols-outlined text-white text-xs">check</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 mt-2">
+                    <span className="material-symbols-outlined text-slate-500 dark:text-slate-400 text-xs">location_on</span>
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400">{shift.location}</span>
                   </div>
                 </div>
               ))}
             </div>
-            <div className="h-8 bg-accent text-white rounded flex items-center justify-center">
-              <div className="h-2 bg-white/30 rounded w-1/3"></div>
-            </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="grid grid-cols-2 gap-2 mb-4">
+            <button className="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-2 border border-slate-200 dark:border-slate-800 flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+              <span className="material-symbols-outlined text-blue-500 text-sm">swap_horiz</span>
+              <span className="text-xs font-medium text-slate-900 dark:text-white">Échanger</span>
+            </button>
+            <button className="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-2 border border-slate-200 dark:border-slate-800 flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+              <span className="material-symbols-outlined text-purple-500 text-sm">event_busy</span>
+              <span className="text-xs font-medium text-slate-900 dark:text-white">Congés</span>
+            </button>
+          </div>
+
+          {/* Stats Card */}
+          <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg p-3 text-white">
+            <div className="text-[10px] text-blue-100 mb-1">Cette semaine</div>
+            <div className="text-lg font-bold mb-1">24h planifiées</div>
+            <div className="text-[10px] text-blue-100">3 shifts • 2 sites</div>
           </div>
         </div>
       ),

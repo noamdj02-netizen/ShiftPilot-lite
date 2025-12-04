@@ -4,15 +4,18 @@
 
 ## ✨ Fonctionnalités
 
-- 📅 **Gestion de plannings** avec génération IA
-- 👥 **Multi-établissements** (franchises, groupes)
-- 🔐 **Sécurité multi-tenant** avec RLS Supabase
-- 📱 **PWA installable** (desktop + mobile)
-- 💬 **Messagerie interne** en temps réel
-- 📊 **Analytics** et exports (PDF/Excel)
-- ⚖️ **Conformité HCR** automatique
+- 📅 **Gestion de plannings** avec génération IA et workflow (Draft → Review → Validated → Published)
+- 👥 **Multi-établissements** (franchises, groupes) avec gestion complète
+- 🔐 **Sécurité multi-tenant** avec RLS Supabase (isolation par organization_id)
+- 📱 **PWA installable** (desktop + mobile) avec support offline
+- 💬 **Messagerie interne** en temps réel (Supabase Realtime, canaux de discussion)
+- 📊 **Dashboard complet** avec KPIs réels, graphiques, alertes RH
+- ⚖️ **Conformité HCR** automatique (règles de travail, repos minimum)
 - 🔔 **Notifications** push et email
 - 👤 **2 interfaces** : Employeur (desktop) + Employé (mobile-first)
+- ✅ **Gestion des congés** avec approbation/refus par les managers
+- 👥 **Gestion des employés** complète (CRUD, statistiques heures)
+- ⚙️ **Paramètres entreprise** (nom, logo, adresse, fuseau horaire, règles RH)
 
 ## 🛠️ Stack Technique
 
@@ -88,14 +91,36 @@ npm run dev
 
 ### Routes API
 
-- `POST /api/auth/onboarding-employer` - Création organisation
-- `GET /api/dashboard/overview` - KPIs dashboard
-- `POST /api/schedules` - Créer planning
-- `GET /api/schedules` - Liste plannings
-- `PATCH /api/schedules/:id/status` - Publier planning
-- `POST /api/shifts` - Créer shifts
-- `POST /api/time-off` - Demande congé
-- `GET /api/employee/me/schedule` - Planning employé
+**Authentification & Onboarding:**
+- `POST /api/auth/onboarding-employer` - Création organisation + premier établissement
+- `POST /api/auth/onboarding-employee` - Invitation d'un employé
+
+**Dashboard:**
+- `GET /api/dashboard/overview` - KPIs, graphiques, mini planning, alertes RH
+
+**Planning:**
+- `GET/POST /api/schedules` - Liste/Créer plannings
+- `PATCH /api/schedules/:id/status` - Changer statut (Draft/Review/Validated/Published)
+- `GET/POST /api/shifts` - Liste/Créer shifts
+- `PATCH/DELETE /api/shifts/:id` - Modifier/Supprimer shift
+
+**Employés:**
+- `GET /api/employees` - Liste des employés
+- `GET/POST /api/employees/:id` - Détails/Ajouter employé
+
+**Congés:**
+- `GET /api/timeoff` - Liste demandes (filtrée par rôle)
+- `POST /api/timeoff` - Créer demande de congé
+- `PATCH /api/timeoff/:id` - Approuver/Refuser demande
+
+**Messagerie:**
+- `GET /api/messages/channels` - Liste des canaux
+- `GET/POST /api/messages` - Messages d'un canal
+- `POST /api/messages/channels` - Créer canal (managers)
+
+**Paramètres:**
+- `GET/PATCH /api/settings/organization` - Infos/Mise à jour organisation
+- `GET/PATCH/POST /api/settings/location` - Gestion établissements
 
 ## 🎨 Design System
 

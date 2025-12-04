@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   BarChart3, Calendar, Bot, Users, Umbrella,
@@ -11,22 +11,44 @@ import {
 } from 'lucide-react'
 import { ColorThemeProvider, useColorThemeContext } from '@/components/providers/ColorThemeProvider'
 import { Logo } from '@/components/ui/Logo'
+import { useAuth } from '@/hooks/useAuth'
 
 function EmployerDashboardContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const router = useRouter()
+  const { signOut, profile } = useAuth()
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isDesktop, setIsDesktop] = useState(false)
+  const [isDesktop, setIsDesktop] = useState(true) // Default to true to avoid layout shift
   const { colors } = useColorThemeContext()
+
+  const handleLogout = async () => {
+    try {
+      await signOut()
+      router.push('/login')
+    } catch (error) {
+      console.error('Logout error:', error)
+    }
+  }
 
   useEffect(() => {
     const checkDesktop = () => {
       setIsDesktop(window.innerWidth >= 1024)
     }
-    checkDesktop()
-    window.addEventListener('resize', checkDesktop)
-    return () => window.removeEventListener('resize', checkDesktop)
+    // Check immediately
+    if (typeof window !== 'undefined') {
+      checkDesktop()
+      window.addEventListener('resize', checkDesktop)
+      return () => window.removeEventListener('resize', checkDesktop)
+    }
   }, [])
+
+  // Redirect to onboarding if no organization
+  useEffect(() => {
+    if (profile && !profile.organization_id && pathname !== '/onboarding/employer') {
+      router.push('/onboarding/employer')
+    }
+  }, [profile, pathname, router])
 
   const navigation = [
     {
@@ -120,27 +142,30 @@ function EmployerDashboardContent({ children }: { children: React.ReactNode }) {
           width: isSidebarOpen ? '280px' : '80px'
         }}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
-        className="hidden lg:flex fixed left-0 top-0 h-screen bg-white dark:bg-[#1C1C1E] border-r border-black/5 dark:border-white/5 z-50 shadow-lg"
+        className="hidden lg:flex lg:flex-col fixed left-0 top-0 h-screen bg-white dark:bg-[#1C1C1E] border-r border-black/5 dark:border-white/5 z-50 shadow-lg overflow-hidden"
       >
         {/* Logo */}
-        <div className="flex items-center justify-between p-6 border-b border-black/5 dark:border-white/10">
-          <div className="flex items-center gap-3">
+        <div className="relative flex items-center justify-between p-4 lg:p-6 border-b border-black/5 dark:border-white/10 flex-shrink-0">
+          <div className={`flex items-center min-w-0 ${
+            isSidebarOpen ? 'gap-3' : 'justify-center w-full'
+          }`}>
             {/* Logo toujours visible */}
             <Logo size={32} />
             
             {/* Texte qui s'affiche/masque selon l'état */}
-            <AnimatePresence>
+            <AnimatePresence mode="wait">
               {isSidebarOpen && (
                 <motion.div
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -10 }}
                   transition={{ duration: 0.2 }}
+                  className="min-w-0"
                 >
-                  <h1 className="text-xl font-semibold tracking-tight text-black dark:text-white">
+                  <h1 className="text-xl font-semibold tracking-tight text-black dark:text-white truncate">
                     ShiftPilot
                   </h1>
-                  <p className="text-xs text-black/60 dark:text-white/60">Dashboard Pro</p>
+                  <p className="text-xs text-black/60 dark:text-white/60 truncate">Dashboard Pro</p>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -150,18 +175,20 @@ function EmployerDashboardContent({ children }: { children: React.ReactNode }) {
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
-            className="p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg transition-colors"
+            className={`p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg transition-colors flex-shrink-0 ${
+              !isSidebarOpen ? 'absolute right-2' : ''
+            }`}
           >
             {isSidebarOpen ? (
               <ChevronLeft className="w-5 h-5 text-black/60 dark:text-white/60" />
             ) : (
-              <ChevronRight className="w-5 h-5 text-black/60 dark:text-white/60" />
+              <ChevronRight className="w-4 h-4 text-black/60 dark:text-white/60" />
             )}
           </motion.button>
         </div>
 
         {/* Navigation */}
-        <nav className="p-4 space-y-2 overflow-y-auto h-[calc(100vh-200px)]">
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto min-h-0">
           {navigation.map((item, index) => {
             const active = isActive(item)
             const Icon = item.icon
@@ -179,7 +206,8 @@ function EmployerDashboardContent({ children }: { children: React.ReactNode }) {
                   <motion.div
                     whileHover={{ x: 4 }}
                     className={`
-                      relative flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300
+                      relative flex items-center gap-3 py-3 rounded-lg transition-all duration-300
+                      ${isSidebarOpen ? 'px-4' : 'px-2 justify-center'}
                       ${active
                         ? 'text-white shadow-md'
                         : 'hover:bg-black/5 dark:hover:bg-white/5 text-black/60 dark:text-white/60'
@@ -254,7 +282,7 @@ function EmployerDashboardContent({ children }: { children: React.ReactNode }) {
         </nav>
 
         {/* User Profile */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-black/5 dark:border-white/5 bg-white dark:bg-[#1C1C1E]">
+        <div className="flex-shrink-0 p-4 border-t border-black/5 dark:border-white/5 bg-white dark:bg-[#1C1C1E]">
           <motion.div
             whileHover={{ scale: 1.02 }}
             className={`flex items-center gap-3 ${!isSidebarOpen && 'justify-center'}`}
@@ -277,9 +305,11 @@ function EmployerDashboardContent({ children }: { children: React.ReactNode }) {
             )}
             {isSidebarOpen && (
               <motion.button
+                onClick={handleLogout}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
                 className="p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg transition-colors group"
+                title="Déconnexion"
               >
                 <LogOut className="w-4 h-4 text-black/40 dark:text-white/40 group-hover:text-red-600 dark:group-hover:text-red-400" />
               </motion.button>

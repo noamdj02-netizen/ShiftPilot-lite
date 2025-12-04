@@ -1,21 +1,88 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Star } from 'lucide-react'
+import { useAuth } from '@/hooks/useAuth'
+import { toast } from 'sonner'
 
 export default function PilotReviewPage() {
-  const stats = [
+  const { profile } = useAuth()
+  const [stats, setStats] = useState([
     { label: 'Avis ce mois-ci', value: '+18', trend: '+5 vs mois dernier' },
     { label: 'Note moyenne', value: '4.7/5', trend: '+0.3 depuis 3 mois' },
     { label: 'Taux de réponse', value: '72%', trend: '+12% ce mois' },
     { label: 'Demandes envoyées', value: '124', trend: 'Ce mois' }
-  ]
+  ])
+  const [recentReviews, setRecentReviews] = useState<any[]>([])
+  const [showRequestModal, setShowRequestModal] = useState(false)
+  const [requestData, setRequestData] = useState({ email: '', name: '', phone: '' })
+  useEffect(() => {
+    if (profile?.organization_id) {
+      loadStats()
+      loadReviews()
+    }
+  }, [profile])
 
-  const recentReviews = [
-    { name: 'Marie L.', rating: 5, comment: 'Excellent service et cuisine délicieuse !', date: 'Il y a 2h', platform: 'Google' },
-    { name: 'Jean D.', rating: 4, comment: 'Très bon restaurant, ambiance sympa', date: 'Il y a 5h', platform: 'Google' },
-    { name: 'Sophie M.', rating: 5, comment: 'Je recommande vivement !', date: 'Hier', platform: 'Google' }
-  ]
+  const loadStats = async () => {
+    try {
+      const response = await fetch('/api/reviews/stats')
+      if (response.ok) {
+        const data = await response.json()
+        setStats([
+          { label: 'Avis ce mois-ci', value: `+${data.thisMonth}`, trend: `+${data.thisMonth} ce mois` },
+          { label: 'Note moyenne', value: `${data.average}/5`, trend: `Moyenne` },
+          { label: 'Taux de réponse', value: `${data.responseRate}%`, trend: 'Taux' },
+          { label: 'Demandes envoyées', value: `${data.requestsThisMonth}`, trend: 'Ce mois' }
+        ])
+      }
+    } catch (error) {
+      console.error('Error loading stats:', error)
+    }
+  }
+
+  const loadReviews = async () => {
+    try {
+      const response = await fetch('/api/reviews/list?limit=10')
+      if (response.ok) {
+        const data = await response.json()
+        setRecentReviews(data.map((review: any) => ({
+          name: review.reviewer_name || 'Anonyme',
+          rating: review.rating,
+          comment: review.comment,
+          date: new Date(review.created_at).toLocaleString('fr-FR'),
+          platform: 'Google'
+        })))
+      }
+    } catch (error) {
+      console.error('Error loading reviews:', error)
+    }
+  }
+
+  const handleSendRequest = async () => {
+    if (!requestData.email) {
+      toast.error('Email requis')
+      return
+    }
+
+    try {
+      const response = await fetch('/api/reviews/send-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestData)
+      })
+
+      if (!response.ok) throw new Error('Erreur lors de l\'envoi')
+
+      toast.success('Demande d\'avis envoyée avec succès !')
+      setShowRequestModal(false)
+      setRequestData({ email: '', name: '', phone: '' })
+      loadStats()
+    } catch (error) {
+      console.error('Error sending request:', error)
+      toast.error('Erreur lors de l\'envoi de la demande')
+    }
+  }
 
   return (
     <div className="space-y-8 relative z-10">
@@ -34,6 +101,7 @@ export default function PilotReviewPage() {
           </div>
         </div>
         <button 
+          onClick={() => setShowRequestModal(true)}
           className="px-4 md:px-6 py-2 md:py-3 theme-primary hover:theme-primary text-white rounded-full font-medium shadow-lg transition-all text-sm md:text-base"
           style={{ boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px var(--theme-primary)40' }}
         >
@@ -114,6 +182,68 @@ export default function PilotReviewPage() {
           </div>
         </div>
       </div>
+
+      {/* Modal Envoyer Demande */}
+      {showRequestModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white dark:bg-[#1C1C1E] rounded-lg p-6 max-w-md w-full"
+          >
+            <h3 className="text-xl font-semibold text-black dark:text-white mb-4">Envoyer une demande d'avis</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-black dark:text-white mb-2">Email du client *</label>
+                <input
+                  type="email"
+                  value={requestData.email}
+                  onChange={(e) => setRequestData({ ...requestData, email: e.target.value })}
+                  className="w-full px-4 py-2 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg text-black dark:text-white"
+                  placeholder="client@example.com"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-black dark:text-white mb-2">Nom (optionnel)</label>
+                <input
+                  type="text"
+                  value={requestData.name}
+                  onChange={(e) => setRequestData({ ...requestData, name: e.target.value })}
+                  className="w-full px-4 py-2 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg text-black dark:text-white"
+                  placeholder="Jean Dupont"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-black dark:text-white mb-2">Téléphone (optionnel)</label>
+                <input
+                  type="tel"
+                  value={requestData.phone}
+                  onChange={(e) => setRequestData({ ...requestData, phone: e.target.value })}
+                  className="w-full px-4 py-2 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg text-black dark:text-white"
+                  placeholder="+33 6 12 34 56 78"
+                />
+              </div>
+            </div>
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={handleSendRequest}
+                className="flex-1 px-4 py-2 theme-primary text-white rounded-lg font-medium"
+              >
+                Envoyer
+              </button>
+              <button
+                onClick={() => {
+                  setShowRequestModal(false)
+                  setRequestData({ email: '', name: '', phone: '' })
+                }}
+                className="flex-1 px-4 py-2 bg-slate-100 dark:bg-white/5 text-black dark:text-white rounded-lg font-medium"
+              >
+                Annuler
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   )
 }

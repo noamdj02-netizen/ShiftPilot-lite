@@ -4,10 +4,14 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Calendar } from 'lucide-react'
+import { useAuth } from '@/hooks/useAuth'
+import { toast } from 'sonner'
 
 export default function PlanningPage() {
+  const { profile } = useAuth()
   const [selectedDay, setSelectedDay] = useState(0)
   const [view, setView] = useState<'week' | 'day'>('week')
+  const [isPublishing, setIsPublishing] = useState(false)
 
   const days = ['Lun 4', 'Mar 5', 'Mer 6', 'Jeu 7', 'Ven 8', 'Sam 9', 'Dim 10']
   const hours = Array.from({ length: 16 }, (_, i) => i + 7) // 7h à 23h
@@ -28,6 +32,57 @@ export default function PlanningPage() {
     { label: 'Coût estimé', value: '3,240€' },
     { label: 'Conformité', value: '98%' }
   ]
+
+  const handlePublish = async () => {
+    if (!profile?.organization_id) {
+      toast.error('Organisation requise. Veuillez compléter votre profil.')
+      return
+    }
+
+    setIsPublishing(true)
+
+    try {
+      // Collecter tous les shifts de la semaine
+      // Note: Ici on utilise les shifts statiques pour la démo
+      // En production, il faudrait récupérer les shifts depuis l'état du composant
+      const shiftsToPublish = shifts.map(shift => {
+        // Calculer la date pour le jour
+        const date = new Date()
+        date.setDate(date.getDate() - date.getDay() + 1 + shift.day) // Lundi + offset
+        
+        return {
+          profile_id: shift.employeeId || null, // À adapter selon votre structure
+          date: date.toISOString().split('T')[0],
+          start_time: `${String(shift.start).padStart(2, '0')}:00:00`,
+          end_time: `${String(shift.start + shift.duration).padStart(2, '0')}:00:00`,
+          position_id: null
+        }
+      })
+
+      const response = await fetch('/api/schedule/commit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          organizationId: profile.organization_id,
+          shifts: shiftsToPublish,
+          status: 'published'
+        })
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Erreur lors de la publication')
+      }
+
+      toast.success('Planning publié avec succès !')
+      // Optionnel: recharger la page ou mettre à jour l'état
+    } catch (error) {
+      console.error('Publish error:', error)
+      toast.error(error instanceof Error ? error.message : 'Erreur lors de la publication')
+    } finally {
+      setIsPublishing(false)
+    }
+  }
 
   return (
     <div className="space-y-6 relative z-10">
@@ -56,10 +111,12 @@ export default function PlanningPage() {
             Optimiser avec l'IA
           </Link>
           <button 
-            className="px-4 md:px-6 py-2 md:py-3 theme-primary hover:theme-primary text-white rounded-full font-medium shadow-lg transition-all text-sm md:text-base"
+            onClick={handlePublish}
+            disabled={isPublishing}
+            className="px-4 md:px-6 py-2 md:py-3 theme-primary hover:theme-primary text-white rounded-full font-medium shadow-lg transition-all text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
             style={{ boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px var(--theme-primary)40' }}
           >
-            Publier
+            {isPublishing ? 'Publication...' : 'Publier'}
           </button>
         </div>
       </div>

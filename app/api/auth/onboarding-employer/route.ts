@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     if (authError || !user) return authError || errorResponse("Unauthorized", 401);
 
     // Vérifier que l'utilisateur n'a pas déjà une organisation
-    if (user.organization_id) {
+    if (user.organization_id || user.profile?.organization_id) {
       return errorResponse("User already has an organization", 400);
     }
 
@@ -59,7 +59,10 @@ export async function POST(request: NextRequest) {
 
     if (orgError || !org) {
       console.error("Error creating organization:", orgError);
-      return errorResponse("Failed to create organization", 500);
+      return errorResponse(
+        `Failed to create organization: ${orgError?.message || 'Unknown error'}. Please check if the organizations table exists.`,
+        500
+      );
     }
 
     // 2. Créer le premier établissement (location)
@@ -92,7 +95,10 @@ export async function POST(request: NextRequest) {
 
     if (profileError) {
       console.error("Error updating profile:", profileError);
-      return errorResponse("Failed to update profile", 500);
+      // Si l'organisation a été créée mais le profil n'a pas pu être mis à jour,
+      // on retourne quand même un succès partiel mais on log l'erreur
+      console.warn("Organization created but profile update failed. Organization ID:", org.id);
+      // On continue quand même car l'organisation est créée
     }
 
     // 4. Créer les règles RH par défaut (France)

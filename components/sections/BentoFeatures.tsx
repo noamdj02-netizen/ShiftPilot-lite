@@ -9,19 +9,19 @@ export function BentoFeatures() {
   const isInView = useInView(ref, { once: true, margin: '-100px' })
 
   return (
-    <section ref={ref} id="fonctionnalites" className="py-32 bg-[#F5F5F7] dark:bg-[#1C1C1E]">
-      <div className="container mx-auto px-6">
-        <div className="max-w-3xl mb-20">
-          <h2 className="text-4xl md:text-5xl font-semibold text-black dark:text-white tracking-tight mb-6">
+    <section ref={ref} id="fonctionnalites" className="py-24 lg:py-32 bg-[#F5F5F7] dark:bg-[#1C1C1E]">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-3xl mx-auto mb-16 lg:mb-20 text-center">
+          <h2 className="text-4xl md:text-5xl font-semibold text-black dark:text-white tracking-tight mb-4">
             Tout est là. <br />
             <span className="text-black/40 dark:text-white/40">Pour que vous n'ayez rien à faire.</span>
           </h2>
-          <p className="text-lg text-black/60 dark:text-white/60">
+          <p className="text-lg text-black/60 dark:text-white/60 max-w-2xl mx-auto">
             Une suite d'outils interconnectés qui transforment la complexité administrative en avantage compétitif.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
           {/* Card 1 - Large */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}

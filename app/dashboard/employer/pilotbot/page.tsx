@@ -1,11 +1,19 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { MessageSquare } from 'lucide-react'
+import { useAuth } from '@/hooks/useAuth'
+import { toast } from 'sonner'
 
 export default function PilotBotPage() {
+  const { profile } = useAuth()
   const [selectedPlatform, setSelectedPlatform] = useState<'instagram' | 'facebook' | 'website'>('instagram')
+  const [faqs, setFaqs] = useState<any[]>([])
+  const [recentMessages, setRecentMessages] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [newFaq, setNewFaq] = useState({ question: '', answer: '', keywords: '' })
 
   const platforms = [
     { id: 'instagram' as const, name: 'Instagram', color: 'from-pink-500 to-purple-500', connected: true },
@@ -20,40 +28,70 @@ export default function PilotBotPage() {
     { label: 'Satisfaction client', value: '4.8/5', change: '+0.2' }
   ]
 
-  const recentMessages = [
-    {
-      platform: 'instagram',
-      customer: 'Marie D.',
-      message: 'Vous êtes ouverts ce soir ?',
-      response: 'Oui, nous sommes ouverts de 19h à 23h !',
-      time: 'Il y a 5 min',
-      auto: true
-    },
-    {
-      platform: 'facebook',
-      customer: 'Jean M.',
-      message: 'Le menu est dispo où ?',
-      response: 'Voici notre menu : [lien]. Bon appétit !',
-      time: 'Il y a 12 min',
-      auto: true
-    },
-    {
-      platform: 'instagram',
-      customer: 'Sophie B.',
-      message: 'Je voudrais réserver pour 6 personnes samedi',
-      response: 'Demande transférée au gérant',
-      time: 'Il y a 23 min',
-      auto: false
+  useEffect(() => {
+    if (profile?.organization_id) {
+      loadFaqs()
+      loadMessages()
     }
-  ]
+  }, [profile])
 
-  const faqs = [
-    { question: 'Horaires d\'ouverture', answer: 'Lun-Ven: 12h-14h, 19h-23h' },
-    { question: 'Menu du jour', answer: 'Lien vers le menu PDF' },
-    { question: 'Réservation', answer: 'Lien vers le système de réservation' },
-    { question: 'Adresse', answer: '123 Rue de la Paix, 75001 Paris' },
-    { question: 'Livraison', answer: 'Oui, via Uber Eats et Deliveroo' }
-  ]
+  const loadFaqs = async () => {
+    try {
+      const response = await fetch('/api/chatbot/faq')
+      if (response.ok) {
+        const data = await response.json()
+        setFaqs(data)
+      }
+    } catch (error) {
+      console.error('Error loading FAQs:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const loadMessages = async () => {
+    try {
+      const response = await fetch('/api/chatbot/message?limit=10')
+      if (response.ok) {
+        const data = await response.json()
+        setRecentMessages(data.map((msg: any) => ({
+          platform: msg.platform || 'website',
+          customer: 'Client',
+          message: msg.customer_message,
+          response: msg.bot_response,
+          time: new Date(msg.created_at).toLocaleString('fr-FR'),
+          auto: msg.is_auto
+        })))
+      }
+    } catch (error) {
+      console.error('Error loading messages:', error)
+    }
+  }
+
+  const handleAddFaq = async () => {
+    if (!newFaq.question || !newFaq.answer) {
+      toast.error('Veuillez remplir tous les champs')
+      return
+    }
+
+    try {
+      const response = await fetch('/api/chatbot/faq', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newFaq)
+      })
+
+      if (!response.ok) throw new Error('Erreur lors de l\'ajout')
+
+      toast.success('FAQ ajoutée avec succès !')
+      setShowAddModal(false)
+      setNewFaq({ question: '', answer: '', keywords: '' })
+      loadFaqs()
+    } catch (error) {
+      console.error('Error adding FAQ:', error)
+      toast.error('Erreur lors de l\'ajout de la FAQ')
+    }
+  }
 
   return (
     <div className="space-y-8 relative z-10">
@@ -200,6 +238,7 @@ export default function PilotBotPage() {
             FAQ Personnalisée
           </h2>
           <button 
+            onClick={() => setShowAddModal(true)}
             className="px-4 py-2 theme-primary hover:theme-primary text-white rounded-full font-medium shadow-lg transition-all"
             style={{ boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px var(--theme-primary)40' }}
           >
@@ -208,27 +247,94 @@ export default function PilotBotPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {faqs.map((faq, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5 + index * 0.05 }}
-              className="p-4 rounded-lg bg-blue-100 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 hover:shadow-md transition-all cursor-pointer group"
-            >
-              <div className="flex items-start gap-3">
-                <div className="flex-1">
-                  <p className="font-medium text-black dark:text-white mb-1">{faq.question}</p>
-                  <p className="text-sm text-black/60 dark:text-white/60 line-clamp-2">{faq.answer}</p>
+          {isLoading ? (
+            <p className="text-black/60 dark:text-white/60">Chargement...</p>
+          ) : faqs.length === 0 ? (
+            <p className="text-black/60 dark:text-white/60">Aucune FAQ configurée. Ajoutez-en une pour commencer.</p>
+          ) : (
+            faqs.map((faq) => (
+              <motion.div
+                key={faq.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="p-4 rounded-lg bg-blue-100 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 hover:shadow-md transition-all cursor-pointer group"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="flex-1">
+                    <p className="font-medium text-black dark:text-white mb-1">{faq.question}</p>
+                    <p className="text-sm text-black/60 dark:text-white/60 line-clamp-2">{faq.answer}</p>
+                  </div>
+                  <button className="opacity-0 group-hover:opacity-100 text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-opacity text-sm">
+                    Modifier
+                  </button>
                 </div>
-                <button className="opacity-0 group-hover:opacity-100 text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-opacity text-sm">
-                  Modifier
-                </button>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))
+          )}
         </div>
       </div>
+
+      {/* Modal Ajouter FAQ */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white dark:bg-[#1C1C1E] rounded-lg p-6 max-w-md w-full"
+          >
+            <h3 className="text-xl font-semibold text-black dark:text-white mb-4">Ajouter une FAQ</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-black dark:text-white mb-2">Question</label>
+                <input
+                  type="text"
+                  value={newFaq.question}
+                  onChange={(e) => setNewFaq({ ...newFaq, question: e.target.value })}
+                  className="w-full px-4 py-2 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg text-black dark:text-white"
+                  placeholder="Ex: Horaires d'ouverture"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-black dark:text-white mb-2">Réponse</label>
+                <textarea
+                  value={newFaq.answer}
+                  onChange={(e) => setNewFaq({ ...newFaq, answer: e.target.value })}
+                  className="w-full px-4 py-2 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg text-black dark:text-white"
+                  rows={3}
+                  placeholder="Ex: Lun-Ven: 12h-14h, 19h-23h"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-black dark:text-white mb-2">Mots-clés (optionnel)</label>
+                <input
+                  type="text"
+                  value={newFaq.keywords}
+                  onChange={(e) => setNewFaq({ ...newFaq, keywords: e.target.value })}
+                  className="w-full px-4 py-2 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg text-black dark:text-white"
+                  placeholder="Ex: horaires, heures, ouvert"
+                />
+              </div>
+            </div>
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={handleAddFaq}
+                className="flex-1 px-4 py-2 theme-primary text-white rounded-lg font-medium"
+              >
+                Ajouter
+              </button>
+              <button
+                onClick={() => {
+                  setShowAddModal(false)
+                  setNewFaq({ question: '', answer: '', keywords: '' })
+                }}
+                className="flex-1 px-4 py-2 bg-slate-100 dark:bg-white/5 text-black dark:text-white rounded-lg font-medium"
+              >
+                Annuler
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
 
       {/* Analytics */}
       <div className="theme-primary rounded-lg p-6 md:p-8 text-white">

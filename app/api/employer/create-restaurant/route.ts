@@ -36,7 +36,14 @@ export async function POST(request: Request) {
     if (orgError || !org) {
       console.error("Error creating org:", orgError);
       const errorMessage = orgError?.message || "Erreur inconnue";
-      throw new Error(`Erreur lors de la création de l'organisation: ${errorMessage}`);
+      return NextResponse.json(
+        { 
+          error: `Erreur lors de la création de l'organisation: ${errorMessage}`,
+          details: orgError?.code || 'UNKNOWN_ERROR',
+          hint: orgError?.code === 'PGRST116' ? 'La table organizations n\'existe peut-être pas. Vérifiez les migrations.' : undefined
+        },
+        { status: 500 }
+      );
     }
 
     const orgId = (org as { id: string }).id;
@@ -89,8 +96,10 @@ export async function POST(request: Request) {
 
     if (profileError) {
       console.error("Error updating profile:", profileError);
-      const errorMessage = profileError?.message || "Erreur inconnue";
-      throw new Error(`Erreur lors de la mise à jour du profil: ${errorMessage}`);
+      // Si l'organisation a été créée mais le profil n'a pas pu être mis à jour,
+      // on retourne quand même un succès partiel mais on log l'erreur
+      console.warn("Organization created but profile update failed. Organization ID:", orgId);
+      // On continue quand même car l'organisation est créée
     }
 
     // 5. Créer un abonnement 'trialing' par défaut

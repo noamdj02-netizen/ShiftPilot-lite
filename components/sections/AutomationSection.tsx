@@ -559,13 +559,13 @@ export function AutomationSection() {
 
   return (
     <section ref={ref} className="py-24 lg:py-32 bg-white dark:bg-[#000000] relative overflow-hidden">
-      <div className="container mx-auto px-6 max-w-7xl">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="text-center mb-16"
+          className="text-center mb-12 lg:mb-16"
         >
           <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/40 dark:bg-white/5 rounded-full text-xs font-semibold tracking-wider uppercase text-black/60 dark:text-white/60 mb-6 border border-black/5 dark:border-white/10">
             <Sparkles className="w-4 h-4" />
@@ -589,7 +589,7 @@ export function AutomationSection() {
         </motion.div>
 
         {/* Features Grid */}
-        <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
+        <div className="grid md:grid-cols-2 gap-4 lg:gap-6">
           {features.map((feature, index) => (
             <FeatureCard
               key={feature.title}

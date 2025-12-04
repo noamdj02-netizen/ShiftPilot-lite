@@ -6,6 +6,8 @@ import Link from 'next/link'
 import React from 'react'
 import { AreaChart, Area, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts'
 import { demoEmployees, demoShifts, demoDailyTotals, demoKPIs } from '@/lib/demo-data'
+import { Navbar } from '@/components/layout/Navbar'
+import { Logo } from '@/components/ui/Logo'
 
 type DemoView = 'dashboard' | 'planning' | 'employees'
 
@@ -64,12 +66,17 @@ export function Hero() {
   return (
     <section
       ref={containerRef}
-      className="relative min-h-[120vh] w-full pt-32 flex flex-col items-center overflow-x-hidden font-sans text-slate-900 dark:text-slate-100 bg-[#F5F5F7] dark:bg-[#000000]"
+      className="relative min-h-[100vh] w-full pt-20 lg:pt-24 flex flex-col items-center overflow-x-hidden font-sans text-slate-900 dark:text-slate-100 bg-[#F5F5F7] dark:bg-[#000000]"
     >
       {/* Ambient Light */}
       <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[100vw] h-[100vh] bg-gradient-to-b from-blue-400/10 to-transparent pointer-events-none blur-[120px] dark:opacity-20"></div>
 
-      <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-5xl mx-auto">
+      {/* Navbar in Hero */}
+      <div className="relative z-10 w-full flex justify-center mb-12 lg:mb-16">
+        <Navbar />
+      </div>
+
+      <div className="relative z-10 flex flex-col items-center text-center px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
         {/* Badge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -138,7 +145,7 @@ export function Hero() {
         initial={{ opacity: 0, y: 100 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.2, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="relative mt-24 w-full max-w-6xl px-4 md:px-0"
+        className="relative mt-16 lg:mt-24 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8"
       >
         {/* Badge DÉMO INTERACTIVE */}
         <motion.div
@@ -221,8 +228,10 @@ export function Hero() {
                 className="hidden md:flex w-16 md:w-20 bg-slate-50 dark:bg-[#0F172A] border-r border-slate-200 dark:border-slate-800 flex-col items-center py-4 gap-6"
               >
                 {/* Logo */}
-                <div className="text-[9px] md:text-[10px] font-bold text-slate-900 dark:text-white writing-vertical-rl flex items-center justify-center min-h-[120px]">
-                  SHIFTPILOT
+                <div className="flex items-center justify-center min-h-[120px] py-4">
+                  <div className="flex flex-col items-center justify-center gap-2">
+                    <Logo size={24} />
+                  </div>
                 </div>
                 
                 {/* Navigation */}

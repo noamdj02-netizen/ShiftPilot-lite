@@ -44,10 +44,10 @@ export function Sidebar() {
 
   const getLinkClass = (path: string) => {
     const isActive = pathname === path || pathname?.startsWith(path + '/')
-    return `flex items-center gap-3 px-4 py-3 text-sm font-medium transition-all duration-200 rounded-xl mx-2 ${
+    return `flex items-center gap-0 px-0 py-0 text-sm font-medium transition-all duration-200 rounded-xl mx-2 ${
       isActive
         ? "bg-accent text-white shadow-lg shadow-accent/20"
-        : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
+        : "text-slate-500 hover:text-slate-900 dark:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
     }`
   }
 

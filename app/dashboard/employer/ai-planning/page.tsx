@@ -1,15 +1,23 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Bot } from 'lucide-react'
 import { Logo } from '@/components/ui/Logo'
+import { useAuth } from '@/hooks/useAuth'
+import { toast } from 'sonner'
 
 type PlanningVariant = 'balanced' | 'economical' | 'staff-friendly'
 
 export default function AIPlanningPage() {
+  const router = useRouter()
+  const { profile } = useAuth()
   const [step, setStep] = useState<'config' | 'generating' | 'results'>('config')
   const [selectedVariant, setSelectedVariant] = useState<PlanningVariant>('balanced')
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [isPublishing, setIsPublishing] = useState(false)
+  const [generatedSchedule, setGeneratedSchedule] = useState<any>(null)
 
   const variants = [
     {
@@ -43,11 +51,84 @@ export default function AIPlanningPage() {
     { label: 'Heures contractuelles', value: '145h/semaine', status: 'good' }
   ]
 
-  const generatePlanning = () => {
+  const generatePlanning = async () => {
+    if (!profile?.organization_id) {
+      toast.error('Organisation requise. Veuillez compléter votre profil.')
+      return
+    }
+
+    setIsGenerating(true)
     setStep('generating')
-    setTimeout(() => {
+
+    try {
+      const startDate = new Date()
+      startDate.setDate(startDate.getDate() - startDate.getDay() + 1) // Lundi de cette semaine
+      
+      const response = await fetch('/api/planning/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          organizationId: profile.organization_id,
+          startDate: startDate.toISOString().split('T')[0],
+          variant: selectedVariant
+        })
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Erreur lors de la génération')
+      }
+
+      const data = await response.json()
+      setGeneratedSchedule(data)
       setStep('results')
-    }, 3000)
+      toast.success('Planning généré avec succès !')
+    } catch (error) {
+      console.error('Generation error:', error)
+      toast.error(error instanceof Error ? error.message : 'Erreur lors de la génération du planning')
+      setStep('config')
+    } finally {
+      setIsGenerating(false)
+    }
+  }
+
+  const handlePublish = async () => {
+    if (!generatedSchedule?.shifts || !profile?.organization_id) {
+      toast.error('Aucun planning à publier')
+      return
+    }
+
+    setIsPublishing(true)
+
+    try {
+      const response = await fetch('/api/schedule/commit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          organizationId: profile.organization_id,
+          shifts: generatedSchedule.shifts,
+          status: 'published'
+        })
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Erreur lors de la publication')
+      }
+
+      toast.success('Planning publié avec succès !')
+      router.push('/dashboard/employer/planning')
+    } catch (error) {
+      console.error('Publish error:', error)
+      toast.error(error instanceof Error ? error.message : 'Erreur lors de la publication')
+    } finally {
+      setIsPublishing(false)
+    }
+  }
+
+  const handleRegenerate = () => {
+    setStep('config')
+    setGeneratedSchedule(null)
   }
 
   return (
@@ -182,12 +263,13 @@ export default function AIPlanningPage() {
             <div className="flex justify-center">
               <motion.button
                 onClick={generatePlanning}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 md:px-12 py-3 md:py-4 theme-primary hover:theme-primary text-white rounded-full font-semibold text-base md:text-lg shadow-lg transition-all"
+                disabled={isGenerating}
+                whileHover={isGenerating ? {} : { scale: 1.05 }}
+                whileTap={isGenerating ? {} : { scale: 0.95 }}
+                className="px-8 md:px-12 py-3 md:py-4 theme-primary hover:theme-primary text-white rounded-full font-semibold text-base md:text-lg shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px var(--theme-primary)40' }}
               >
-                Générer le planning IA
+                {isGenerating ? 'Génération en cours...' : 'Générer le planning IA'}
               </motion.button>
             </div>
           </motion.div>
@@ -300,17 +382,25 @@ export default function AIPlanningPage() {
             </div>
 
             {/* Actions */}
-            <div className="flex gap-4 justify-center">
+            <div className="flex gap-4 justify-center flex-wrap">
               <button 
-                className="px-6 md:px-8 py-2 md:py-3 theme-primary hover:theme-primary text-white rounded-full font-medium shadow-lg transition-all"
+                onClick={handlePublish}
+                disabled={isPublishing}
+                className="px-6 md:px-8 py-2 md:py-3 theme-primary hover:theme-primary text-white rounded-full font-medium shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px var(--theme-primary)40' }}
               >
-                Valider et publier
+                {isPublishing ? 'Publication...' : 'Valider et publier'}
               </button>
-              <button className="px-6 md:px-8 py-2 md:py-3 bg-white dark:bg-[#1C1C1E] text-black dark:text-white rounded-lg font-medium border border-black/5 dark:border-white/5 hover:bg-black/5 dark:hover:bg-white/5 transition-all">
+              <button 
+                onClick={() => router.push('/dashboard/employer/planning')}
+                className="px-6 md:px-8 py-2 md:py-3 bg-white dark:bg-[#1C1C1E] text-black dark:text-white rounded-lg font-medium border border-black/5 dark:border-white/5 hover:bg-black/5 dark:hover:bg-white/5 transition-all"
+              >
                 Modifier manuellement
               </button>
-              <button className="px-6 md:px-8 py-2 md:py-3 bg-white dark:bg-[#1C1C1E] text-black dark:text-white rounded-lg font-medium border border-black/5 dark:border-white/5 hover:bg-black/5 dark:hover:bg-white/5 transition-all">
+              <button 
+                onClick={handleRegenerate}
+                className="px-6 md:px-8 py-2 md:py-3 bg-white dark:bg-[#1C1C1E] text-black dark:text-white rounded-lg font-medium border border-black/5 dark:border-white/5 hover:bg-black/5 dark:hover:bg-white/5 transition-all"
+              >
                 Générer à nouveau
               </button>
             </div>

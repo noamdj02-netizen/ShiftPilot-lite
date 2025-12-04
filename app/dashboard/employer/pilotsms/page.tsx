@@ -3,9 +3,14 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Smartphone } from 'lucide-react'
+import { useAuth } from '@/hooks/useAuth'
+import { toast } from 'sonner'
 
 export default function PilotSMSPage() {
+  const { profile } = useAuth()
   const [selectedMessage, setSelectedMessage] = useState<string | null>(null)
+  const [isSending, setIsSending] = useState(false)
+  const [showBulkModal, setShowBulkModal] = useState(false)
 
   const stats = [
     { label: 'SMS envoyés ce mois', value: '342', trend: '+24%' },
@@ -102,6 +107,7 @@ export default function PilotSMSPage() {
           </div>
         </div>
         <button 
+          onClick={() => setShowBulkModal(true)}
           className="px-4 md:px-6 py-2 md:py-3 theme-primary hover:theme-primary text-white rounded-full font-medium shadow-lg transition-all text-sm md:text-base"
           style={{ boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px var(--theme-primary)40' }}
         >
@@ -318,6 +324,90 @@ export default function PilotSMSPage() {
           </div>
         </div>
       </div>
+
+      {/* Modal Envoi SMS Groupé */}
+      {showBulkModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white dark:bg-[#1C1C1E] rounded-lg p-6 max-w-md w-full"
+          >
+            <h3 className="text-xl font-semibold text-black dark:text-white mb-4">Envoyer un SMS groupé</h3>
+            <p className="text-sm text-black/60 dark:text-white/60 mb-4">
+              Sélectionnez un template ou saisissez un message personnalisé. Le message sera envoyé à tous les employés actifs.
+            </p>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-black dark:text-white mb-2">Message</label>
+                <textarea
+                  id="bulk-message"
+                  className="w-full px-4 py-2 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg text-black dark:text-white"
+                  rows={4}
+                  placeholder="Ex: Bonjour {prenom}, votre planning de la semaine est disponible..."
+                />
+              </div>
+            </div>
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={async () => {
+                  const message = (document.getElementById('bulk-message') as HTMLTextAreaElement)?.value
+                  if (!message) {
+                    toast.error('Veuillez saisir un message')
+                    return
+                  }
+                  
+                  setIsSending(true)
+                  try {
+                    const response = await fetch('/api/sms/send-bulk', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ custom_message: message })
+                    })
+
+                    const data = await response.json()
+
+                    if (!response.ok) {
+                      // Afficher le message d'erreur détaillé
+                      const errorMessage = data.error || 'Erreur lors de l\'envoi'
+                      const errorDetails = data.details ? ` (${data.details})` : ''
+                      toast.error(`${errorMessage}${errorDetails}`)
+                      return
+                    }
+
+                    // Gérer les succès partiels
+                    if (data.failedCount && data.failedCount > 0) {
+                      toast.warning(
+                        `${data.successCount} SMS envoyés, ${data.failedCount} échecs${data.errors ? ': ' + data.errors.join(', ') : ''}`
+                      )
+                    } else {
+                      toast.success(`${data.count || data.successCount} SMS envoyés avec succès !`)
+                    }
+                    
+                    setShowBulkModal(false)
+                  } catch (error) {
+                    console.error('Error sending SMS:', error)
+                    const errorMessage = error instanceof Error ? error.message : 'Erreur lors de l\'envoi des SMS'
+                    toast.error(errorMessage)
+                  } finally {
+                    setIsSending(false)
+                  }
+                }}
+                disabled={isSending}
+                className="flex-1 px-4 py-2 theme-primary text-white rounded-lg font-medium disabled:opacity-50"
+              >
+                {isSending ? 'Envoi...' : 'Envoyer'}
+              </button>
+              <button
+                onClick={() => setShowBulkModal(false)}
+                className="flex-1 px-4 py-2 bg-slate-100 dark:bg-white/5 text-black dark:text-white rounded-lg font-medium"
+              >
+                Annuler
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   )
 }

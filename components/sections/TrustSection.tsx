@@ -6,8 +6,8 @@ export function TrustSection() {
   const logos = ['ACCOR', 'Sodexo', 'COMPASS', 'KORIAN', 'ELIOR']
 
   return (
-    <section className="py-20 bg-white dark:bg-[#000000] border-t border-black/5 dark:border-white/5">
-      <div className="container mx-auto px-6 text-center">
+    <section className="py-24 lg:py-32 bg-white dark:bg-[#000000] border-t border-black/5 dark:border-white/5">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <p className="text-xs font-semibold uppercase tracking-widest text-black/40 dark:text-white/40 mb-10">
           La référence pour les leaders du secteur
         </p>

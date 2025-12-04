@@ -18,7 +18,7 @@ export function HeroSection() {
           <div className="text-center lg:text-left">
             {/* Badge "Nouveau : Plannings générés par IA" */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
               className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full border border-purple-200/50 mb-8"

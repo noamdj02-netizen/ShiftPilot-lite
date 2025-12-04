@@ -38,30 +38,48 @@ export function BeforeAfterSection() {
                 {/* Header Row */}
                 <div className="bg-slate-300 dark:bg-slate-700 p-1 font-semibold text-slate-700 dark:text-slate-300 border-r border-slate-400 dark:border-slate-600"></div>
                 {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((day, i) => (
-                  <div key={i} className="bg-slate-300 dark:bg-slate-700 p-1 font-semibold text-slate-700 dark:text-slate-300 border-r border-slate-400 dark:border-slate-600 text-center">
+                  <div
+                    key={i}
+                    className="bg-slate-300 dark:bg-slate-700 p-1 font-semibold text-slate-700 dark:text-slate-300 border-r border-slate-400 dark:border-slate-600 text-center"
+                  >
                     {day}
                   </div>
                 ))}
-                
-                {/* Data Rows */}
-                {['Marie', 'Jean', 'Sophie', 'Pierre'].map((name, row) => (
-                  <>
-                    <div key={`name-${row}`} className="bg-slate-200 dark:bg-slate-800 p-1 text-slate-600 dark:text-slate-400 border-r border-slate-400 dark:border-slate-600 font-medium">
-                      {name}
-                    </div>
-                    {Array.from({ length: 7 }).map((_, col) => (
-                      <div key={`cell-${row}-${col}`} className={`p-1 border-r border-slate-400 dark:border-slate-600 ${
-                        Math.random() > 0.6 
-                          ? 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400' 
-                          : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-500'
-                      }`}>
-                        {Math.random() > 0.6 ? (Math.random() > 0.5 ? '9h-17h' : '') : ''}
+
+                {/* Data Rows - deterministic (pas de Math.random pour éviter les erreurs d'hydratation) */}
+                {['Marie', 'Jean', 'Sophie', 'Pierre'].map((name, row) => {
+                  const rowShifts = [
+                    ['9h-17h', '', '', '14h-22h', '', '', ''],         // Marie
+                    ['', '9h-17h', '', '', '14h-22h', '', ''],         // Jean
+                    ['', '', '9h-17h', '', '', '14h-22h', ''],         // Sophie
+                    ['', '', '', '9h-17h', '', '', '10h-18h'],         // Pierre
+                  ][row] || Array(7).fill('')
+
+                  return (
+                    <React.Fragment key={`row-${row}`}>
+                      <div className="bg-slate-200 dark:bg-slate-800 p-1 text-slate-600 dark:text-slate-400 border-r border-slate-400 dark:border-slate-600 font-medium">
+                        {name}
                       </div>
-                    ))}
-                  </>
-                ))}
+                      {rowShifts.map((time, col) => {
+                        const isFilled = time !== ''
+                        return (
+                          <div
+                            key={`cell-${row}-${col}`}
+                            className={`p-1 border-r border-slate-400 dark:border-slate-600 ${
+                              isFilled
+                                ? 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400'
+                                : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-500'
+                            }`}
+                          >
+                            {time}
+                          </div>
+                        )
+                      })}
+                    </React.Fragment>
+                  )
+                })}
               </div>
-              
+
               {/* Error Messages */}
               <div className="mt-2 p-2 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/30 rounded">
                 <div className="text-[9px] text-red-600 dark:text-red-400 font-medium mb-1">⚠️ Erreurs détectées:</div>
@@ -412,13 +430,13 @@ export function BeforeAfterSection() {
 
   return (
     <section ref={ref} className="py-24 lg:py-32 bg-white dark:bg-[#000000] relative overflow-hidden">
-      <div className="container mx-auto px-6 max-w-7xl">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="text-center mb-16"
+          className="text-center mb-12 lg:mb-16"
         >
           <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/40 dark:bg-white/5 rounded-full text-xs font-semibold tracking-wider uppercase text-black/60 dark:text-white/60 mb-6 border border-black/5 dark:border-white/10">
             <span className="material-symbols-outlined text-base">compare_arrows</span>
@@ -462,7 +480,7 @@ export function BeforeAfterSection() {
         </div>
 
         {/* Before/After Grid */}
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
           {/* Before */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}

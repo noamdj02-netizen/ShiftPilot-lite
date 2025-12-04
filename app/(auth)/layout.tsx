@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Logo } from '@/components/ui/Logo'
 
 export default function AuthLayout({
   children,
@@ -12,7 +13,7 @@ export default function AuthLayout({
         <div className="w-full max-w-sm mx-auto">
           <Link href="/" className="inline-block mb-12 hover:opacity-80 transition-opacity">
             <div className="flex items-center gap-2 text-slate-900 dark:text-white">
-              <span className="material-symbols-outlined text-3xl text-accent">grid_view</span>
+              <Logo size={32} />
               <span className="text-xl font-bold tracking-tight">ShiftPilot</span>
             </div>
           </Link>

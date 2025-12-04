@@ -5,8 +5,13 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { useAuth } from '@/hooks/useAuth'
+import { GoogleLoginButton } from '@/components/auth/GoogleLoginButton'
 
-export function LoginForm() {
+interface LoginFormProps {
+  userType?: 'employer' | 'employee'
+}
+
+export function LoginForm({ userType = 'employer' }: LoginFormProps) {
   const router = useRouter()
   const { signIn } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
@@ -67,13 +72,30 @@ export function LoginForm() {
       transition={{ duration: 0.5 }}
       className="space-y-6"
     >
-      <div className="space-y-2 text-center sm:text-left">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-          Bon retour parmi nous
-        </h1>
-        <p className="text-slate-500 dark:text-slate-400">
-          Entrez vos identifiants pour accéder à votre espace
-        </p>
+      {userType === 'employer' && (
+        <div className="space-y-2 text-center sm:text-left">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+            Bon retour parmi nous
+          </h1>
+          <p className="text-slate-500 dark:text-slate-400">
+            Entrez vos identifiants pour accéder à votre dashboard
+          </p>
+        </div>
+      )}
+
+      {/* Google Login Button */}
+      <div className="space-y-3">
+        <GoogleLoginButton userType={userType} />
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-slate-200 dark:border-white/10"></div>
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-white dark:bg-[#1C1C1E] px-2 text-slate-500 dark:text-slate-400">
+              Ou
+            </span>
+          </div>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -92,7 +114,7 @@ export function LoginForm() {
         {/* Email */}
         <div className="space-y-1.5">
           <label htmlFor="email" className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            Email professionnel
+            Email {userType === 'employer' ? 'professionnel' : ''}
           </label>
           <div className="relative">
             <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">mail</span>
@@ -101,7 +123,7 @@ export function LoginForm() {
               type="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              placeholder="nom@entreprise.com"
+              placeholder={userType === 'employer' ? 'nom@entreprise.com' : 'votre@email.com'}
               className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
               required
             />
@@ -175,24 +197,17 @@ export function LoginForm() {
             )}
           </button>
 
-          <button
-            type="button"
-            onClick={handleDemoLogin}
-            disabled={isLoading}
-            className="w-full py-3 px-4 bg-accent/10 text-accent font-semibold rounded-xl border border-accent/20 hover:bg-accent/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-2"
-          >
-            <span className="material-symbols-outlined text-xl">play_circle</span>
-            Accès Démo Manager
-          </button>
         </div>
 
         {/* Register Link */}
-        <p className="text-center text-sm text-slate-500 dark:text-slate-400">
-          Pas encore de compte ?{' '}
-          <Link href="/register" className="text-accent hover:text-accent/80 font-medium transition-colors">
-            Créer un compte
-          </Link>
-        </p>
+        {userType === 'employer' && (
+          <p className="text-center text-sm text-slate-500 dark:text-slate-400">
+            Pas encore de compte ?{' '}
+            <Link href="/register" className="text-accent hover:text-accent/80 font-medium transition-colors">
+              Créer un compte employeur
+            </Link>
+          </p>
+        )}
       </form>
     </motion.div>
   )

@@ -69,15 +69,49 @@ export function OnboardingForm() {
       })
 
       if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.message || "Erreur lors de la création")
+        let errorMessage = "Erreur lors de la création"
+        
+        try {
+          const error = await response.json()
+          errorMessage = error.error || error.message || errorMessage
+          
+          // Messages d'erreur plus explicites
+          if (response.status === 400) {
+            if (errorMessage.includes('Données incomplètes')) {
+              errorMessage = 'Veuillez remplir tous les champs obligatoires'
+            }
+          } else if (response.status === 401) {
+            errorMessage = 'Vous devez être connecté pour créer une organisation'
+            router.push('/login')
+            return
+          } else if (response.status === 500) {
+            errorMessage = `Erreur serveur: ${errorMessage}. Vérifiez la console pour plus de détails.`
+          }
+        } catch (parseError) {
+          errorMessage = `Erreur ${response.status}: ${response.statusText}`
+        }
+        
+        throw new Error(errorMessage)
       }
 
+      const data = await response.json()
       toast.success("Votre espace restaurant a été créé !")
-      router.refresh()
+      
+      // Rediriger vers le dashboard
+      setTimeout(() => {
+        router.push('/dashboard/employer')
+        router.refresh()
+      }, 1000)
     } catch (error) {
-      console.error(error)
-      toast.error(error instanceof Error ? error.message : "Une erreur est survenue")
+      console.error('Onboarding error:', error)
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : 'Erreur lors de la création. Vérifiez votre connexion et réessayez.'
+      
+      toast.error(errorMessage, {
+        duration: 5000,
+        description: 'Si le problème persiste, vérifiez la console pour plus de détails.'
+      })
     } finally {
       setIsLoading(false)
     }

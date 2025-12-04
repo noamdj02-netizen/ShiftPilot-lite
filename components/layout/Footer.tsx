@@ -5,7 +5,7 @@ import Link from 'next/link'
 export function Footer() {
   return (
     <footer className="bg-white dark:bg-[#000000] py-12 border-t border-black/5 dark:border-white/5">
-      <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
         <p className="text-sm text-black/40 dark:text-white/40">
           © 2025 ShiftPilot Enterprise. Tous droits réservés.
         </p>

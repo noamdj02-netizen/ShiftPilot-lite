@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { PayrollCalculator } from "@/lib/services/payroll-calculator";
 
+// Force dynamic rendering (required for cookies)
+export const dynamic = 'force-dynamic';
+
 // GET /api/v1/costs/weekly
 export async function GET(request: NextRequest) {
   try {

@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedUser, requireOrganization, requireRole, successResponse, errorResponse } from "@/lib/api/auth-helper";
 import { createClient } from "@/lib/supabase/server";
 
+// Force dynamic rendering (required for cookies)
+export const dynamic = 'force-dynamic';
+
 /**
  * PATCH /api/schedules/:id/status
  * Change le statut d'un planning (DRAFT → VALIDATED → PUBLISHED)

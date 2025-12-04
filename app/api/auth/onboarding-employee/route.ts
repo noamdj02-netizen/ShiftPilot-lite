@@ -3,6 +3,9 @@ import { getAuthenticatedUser, errorResponse, successResponse } from "@/lib/api/
 import { createClient } from "@/lib/supabase/server";
 import { createErrorResponse } from "@/lib/api/error-handler";
 
+// Force dynamic rendering (required for cookies)
+export const dynamic = 'force-dynamic';
+
 /**
  * POST /api/auth/onboarding-employee
  * Invite un employé à rejoindre l'organisation

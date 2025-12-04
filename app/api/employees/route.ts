@@ -3,6 +3,9 @@ import { NextResponse } from "next/server";
 import { createErrorResponse } from "@/lib/api/error-handler";
 import { getAuthenticatedUser, requireOrganization } from "@/lib/api/auth-helper";
 
+// Force dynamic rendering (required for cookies)
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     // Vérifier l'authentification

@@ -3,6 +3,9 @@ import { NextResponse } from "next/server";
 import { createErrorResponse } from "@/lib/api/error-handler";
 import { getAuthenticatedUser, requireOrganization, requireRole } from "@/lib/api/auth-helper";
 
+// Force dynamic rendering (required for cookies)
+export const dynamic = 'force-dynamic';
+
 /**
  * PATCH /api/timeoff/[id]
  * Met à jour une demande de congé (approbation/refus par manager)

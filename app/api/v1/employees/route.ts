@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { RBACService } from "@/lib/services/rbac-service";
 
+// Force dynamic rendering (required for cookies)
+export const dynamic = 'force-dynamic';
+
 // GET /api/v1/employees
 export async function GET(request: NextRequest) {
   try {

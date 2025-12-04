@@ -1,6 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
+// Force dynamic rendering (required for cookies)
+export const dynamic = 'force-dynamic';
+
 // GET /api/shifts/list?start=...&end=...
 export async function GET(request: Request) {
   try {

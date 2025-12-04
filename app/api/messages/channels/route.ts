@@ -3,6 +3,9 @@ import { createErrorResponse } from "@/lib/api/error-handler";
 import { getAuthenticatedUser, requireOrganization, requireRole } from "@/lib/api/auth-helper";
 import { createClient } from "@/lib/supabase/server";
 
+// Force dynamic rendering (required for cookies)
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/messages/channels
  * Liste tous les canaux de l'organisation

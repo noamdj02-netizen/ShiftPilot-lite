@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedUser, requireOrganization, successResponse, errorResponse } from "@/lib/api/auth-helper";
 import { createClient } from "@/lib/supabase/server";
 
+// Force dynamic rendering (required for cookies)
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/dashboard/overview
  * Retourne les KPIs pour l'employeur

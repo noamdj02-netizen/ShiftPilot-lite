@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedUser, requireOrganization, requireRole, successResponse, errorResponse } from "@/lib/api/auth-helper";
 import { createClient } from "@/lib/supabase/server";
 
+// Force dynamic rendering (required for cookies)
+export const dynamic = 'force-dynamic';
+
 /**
  * POST /api/auth/onboarding-employer
  * Crée l'organisation, le premier établissement, et lie l'utilisateur comme OWNER

@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { ComplianceService } from "@/lib/services/compliance-service";
 
+// Force dynamic rendering (required for cookies)
+export const dynamic = 'force-dynamic';
+
 // GET /api/v1/compliance/check
 export async function GET(request: NextRequest) {
   try {

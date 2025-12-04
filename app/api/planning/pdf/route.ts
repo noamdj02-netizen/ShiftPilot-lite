@@ -2,6 +2,9 @@ import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { generatePlanningPDF } from "@/lib/pdf/planning";
 
+// Force dynamic rendering (required for cookies)
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
     const supabase = await createClient();

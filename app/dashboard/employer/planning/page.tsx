@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { Calendar } from 'lucide-react'
 
 export default function PlanningPage() {
   const [selectedDay, setSelectedDay] = useState(0)
@@ -12,46 +13,53 @@ export default function PlanningPage() {
   const hours = Array.from({ length: 16 }, (_, i) => i + 7) // 7h à 23h
 
   const shifts = [
-    { employee: 'Marie Dupont', day: 0, start: 8, duration: 4, color: 'bg-blue-500', role: 'Serveur' },
-    { employee: 'Jean Martin', day: 0, start: 8, duration: 6, color: 'bg-purple-500', role: 'Cuisine' },
-    { employee: 'Sophie Bernard', day: 0, start: 12, duration: 6, color: 'bg-pink-500', role: 'Serveur' },
-    { employee: 'Lucas Petit', day: 0, start: 14, duration: 8, color: 'bg-orange-500', role: 'Cuisine' },
-    { employee: 'Emma Dubois', day: 0, start: 18, duration: 5, color: 'bg-green-500', role: 'Serveur' },
-    { employee: 'Marie Dupont', day: 1, start: 12, duration: 6, color: 'bg-blue-500', role: 'Serveur' },
-    { employee: 'Jean Martin', day: 1, start: 8, duration: 8, color: 'bg-purple-500', role: 'Cuisine' }
+    { employee: 'Marie Dupont', day: 0, start: 8, duration: 4, color: 'var(--theme-primary)', role: 'Serveur' },
+    { employee: 'Jean Martin', day: 0, start: 8, duration: 6, color: 'var(--theme-primary-light)', role: 'Cuisine' },
+    { employee: 'Sophie Bernard', day: 0, start: 12, duration: 6, color: 'var(--theme-primary)', role: 'Serveur' },
+    { employee: 'Lucas Petit', day: 0, start: 14, duration: 8, color: 'var(--theme-primary-light)', role: 'Cuisine' },
+    { employee: 'Emma Dubois', day: 0, start: 18, duration: 5, color: 'var(--theme-primary)', role: 'Serveur' },
+    { employee: 'Marie Dupont', day: 1, start: 12, duration: 6, color: 'var(--theme-primary)', role: 'Serveur' },
+    { employee: 'Jean Martin', day: 1, start: 8, duration: 8, color: 'var(--theme-primary-light)', role: 'Cuisine' }
   ]
 
   const stats = [
-    { label: 'Employés planifiés', value: '15/15', icon: '👥' },
-    { label: 'Total heures', value: '145h', icon: '⏰' },
-    { label: 'Coût estimé', value: '3,240€', icon: '💰' },
-    { label: 'Conformité', value: '98%', icon: '✅' }
+    { label: 'Employés planifiés', value: '15/15' },
+    { label: 'Total heures', value: '145h' },
+    { label: 'Coût estimé', value: '3,240€' },
+    { label: 'Conformité', value: '98%' }
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative z-10">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center text-2xl">
-            📅
-          </div>
+          <motion.div
+            className="w-10 h-10 md:w-12 md:h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center text-purple-600 dark:text-purple-400"
+            whileHover={{ rotate: 10 }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+          >
+            <Calendar size={20} />
+          </motion.div>
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Planning Manuel</h1>
-            <p className="text-slate-600 dark:text-slate-400">Semaine du 4 au 10 Décembre 2025</p>
+            <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-black dark:text-white">Planning Manuel</h1>
+            <p className="text-black/60 dark:text-white/60">Semaine du 4 au 10 Décembre 2025</p>
           </div>
         </div>
 
         <div className="flex gap-3">
           <Link
             href="/dashboard/employer/ai-planning"
-            className="px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-medium hover:shadow-lg transition-all flex items-center gap-2"
+            className="px-4 md:px-6 py-2 md:py-3 theme-primary hover:theme-primary text-white rounded-full font-medium shadow-lg transition-all flex items-center gap-2 text-sm md:text-base"
+            style={{ boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px var(--theme-primary)40' }}
           >
-            <span>🤖</span>
             Optimiser avec l'IA
           </Link>
-          <button className="px-6 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors">
-            📤 Publier
+          <button 
+            className="px-4 md:px-6 py-2 md:py-3 theme-primary hover:theme-primary text-white rounded-full font-medium shadow-lg transition-all text-sm md:text-base"
+            style={{ boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px var(--theme-primary)40' }}
+          >
+            Publier
           </button>
         </div>
       </div>
@@ -59,13 +67,10 @@ export default function PlanningPage() {
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {stats.map((stat, i) => (
-          <div key={i} className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-xl p-4 border border-slate-200/50 dark:border-slate-800/50">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">{stat.icon}</span>
-              <div>
-                <p className="text-xs text-slate-500 dark:text-slate-400">{stat.label}</p>
-                <p className="text-xl font-bold text-slate-900 dark:text-white">{stat.value}</p>
-              </div>
+          <div key={i} className="bg-white dark:bg-[#1C1C1E] rounded-lg p-4 border border-black/5 dark:border-white/5 shadow-sm">
+            <div>
+              <p className="text-xs text-black/60 dark:text-white/60 mb-1">{stat.label}</p>
+              <p className="text-lg md:text-xl font-semibold text-black dark:text-white">{stat.value}</p>
             </div>
           </div>
         ))}
@@ -73,23 +78,23 @@ export default function PlanningPage() {
 
       {/* Toolbar */}
       <div className="flex items-center justify-between">
-        <div className="flex gap-2 bg-white/80 dark:bg-slate-900/80 rounded-xl p-1 border border-slate-200/50 dark:border-slate-800/50">
+        <div className="flex gap-2 bg-white dark:bg-[#1C1C1E] rounded-full p-1 border border-black/5 dark:border-white/5">
           <button
             onClick={() => setView('week')}
-            className={`px-4 py-2 rounded-lg font-medium transition-all ${
+            className={`px-4 py-2 rounded-full font-medium transition-all text-sm ${
               view === 'week'
-                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
-                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                ? 'theme-primary text-white'
+                : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
             }`}
           >
             Semaine
           </button>
           <button
             onClick={() => setView('day')}
-            className={`px-4 py-2 rounded-lg font-medium transition-all ${
+            className={`px-4 py-2 rounded-full font-medium transition-all text-sm ${
               view === 'day'
-                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
-                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                ? 'theme-primary text-white'
+                : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
             }`}
           >
             Jour
@@ -97,29 +102,29 @@ export default function PlanningPage() {
         </div>
 
         <div className="flex gap-2">
-          <button className="px-4 py-2 bg-white/80 dark:bg-slate-900/80 rounded-lg border border-slate-200/50 dark:border-slate-800/50 hover:border-slate-300 dark:hover:border-slate-700 transition-colors">
+          <button className="px-4 py-2 bg-white dark:bg-[#1C1C1E] rounded-lg border border-black/5 dark:border-white/5 hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-sm">
             ← Semaine préc.
           </button>
-          <button className="px-4 py-2 bg-white/80 dark:bg-slate-900/80 rounded-lg border border-slate-200/50 dark:border-slate-800/50 hover:border-slate-300 dark:hover:border-slate-700 transition-colors">
+          <button className="px-4 py-2 bg-white dark:bg-[#1C1C1E] rounded-lg border border-black/5 dark:border-white/5 hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-sm">
             Semaine suiv. →
           </button>
         </div>
       </div>
 
       {/* Planning Grid */}
-      <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-200/50 dark:border-slate-800/50">
+      <div className="bg-white dark:bg-[#1C1C1E] rounded-lg p-4 md:p-6 border border-black/5 dark:border-white/5 shadow-sm">
         {view === 'week' ? (
           <div className="overflow-x-auto">
             <div className="min-w-[1200px]">
               {/* Header */}
               <div className="grid grid-cols-8 gap-2 mb-4">
-                <div className="font-medium text-slate-600 dark:text-slate-400 text-sm">Heures</div>
+                <div className="font-medium text-black/60 dark:text-white/60 text-sm">Heures</div>
                 {days.map((day, i) => (
                   <div key={i} className="text-center">
-                    <div className={`px-4 py-2 rounded-lg font-medium ${
+                    <div className={`px-3 py-2 rounded-lg font-medium text-sm ${
                       i === selectedDay
-                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
-                        : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                        ? 'theme-primary text-white'
+                        : 'bg-black/5 dark:bg-white/5 text-black dark:text-white'
                     }`}>
                       {day}
                     </div>
@@ -132,7 +137,7 @@ export default function PlanningPage() {
                 {/* Time labels */}
                 <div className="absolute left-0 top-0 bottom-0 w-16 space-y-2">
                   {hours.map(hour => (
-                    <div key={hour} className="h-16 flex items-center justify-center text-xs text-slate-500 dark:text-slate-400">
+                    <div key={hour} className="h-16 flex items-center justify-center text-xs text-black/60 dark:text-white/60">
                       {hour}h
                     </div>
                   ))}
@@ -147,7 +152,7 @@ export default function PlanningPage() {
                         {hours.map(hour => (
                           <div
                             key={hour}
-                            className="h-16 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer"
+                            className="h-16 border border-black/5 dark:border-white/5 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
                           />
                         ))}
                       </div>
@@ -160,10 +165,11 @@ export default function PlanningPage() {
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: i * 0.05 }}
-                            className={`absolute left-0 right-0 ${shift.color} rounded-lg p-2 text-white text-xs font-medium pointer-events-auto cursor-move shadow-lg hover:shadow-xl transition-shadow`}
+                            className="absolute left-0 right-0 rounded-lg p-2 text-white text-xs font-medium pointer-events-auto cursor-move shadow-lg hover:shadow-xl transition-shadow"
                             style={{
                               top: `${(shift.start - 7) * 72}px`,
-                              height: `${shift.duration * 72 - 8}px`
+                              height: `${shift.duration * 72 - 8}px`,
+                              backgroundColor: shift.color
                             }}
                           >
                             <div className="font-bold truncate">{shift.employee.split(' ')[0]}</div>
@@ -181,7 +187,7 @@ export default function PlanningPage() {
             </div>
           </div>
         ) : (
-          <div className="text-center py-12 text-slate-500 dark:text-slate-400">
+          <div className="text-center py-12 text-black/60 dark:text-white/60">
             Vue jour - En développement
           </div>
         )}
@@ -189,16 +195,16 @@ export default function PlanningPage() {
 
       {/* Quick Actions */}
       <div className="flex gap-4">
-        <button className="flex-1 p-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2">
-          <span>➕</span>
+        <button 
+          className="flex-1 p-4 theme-primary hover:theme-primary text-white rounded-full font-medium shadow-lg transition-all"
+          style={{ boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px var(--theme-primary)40' }}
+        >
           Ajouter un shift
         </button>
-        <button className="flex-1 p-4 bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-white rounded-xl font-medium border border-slate-200/50 dark:border-slate-800/50 hover:border-slate-300 dark:hover:border-slate-700 transition-all flex items-center justify-center gap-2">
-          <span>📋</span>
+        <button className="flex-1 p-4 bg-white dark:bg-[#1C1C1E] text-black dark:text-white rounded-lg font-medium border border-black/5 dark:border-white/5 hover:bg-black/5 dark:hover:bg-white/5 transition-all">
           Dupliquer semaine
         </button>
-        <button className="flex-1 p-4 bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-white rounded-xl font-medium border border-slate-200/50 dark:border-slate-800/50 hover:border-slate-300 dark:hover:border-slate-700 transition-all flex items-center justify-center gap-2">
-          <span>📄</span>
+        <button className="flex-1 p-4 bg-white dark:bg-[#1C1C1E] text-black dark:text-white rounded-lg font-medium border border-black/5 dark:border-white/5 hover:bg-black/5 dark:hover:bg-white/5 transition-all">
           Exporter PDF
         </button>
       </div>

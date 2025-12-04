@@ -22,8 +22,8 @@ export function DashboardOverview({ organizationId }: DashboardOverviewProps) {
     >
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Vue d'ensemble</h1>
-        <p className="text-slate-500 dark:text-slate-400">Tableau de bord de votre restaurant</p>
+        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-black dark:text-white mb-2">Vue d'ensemble</h1>
+        <p className="text-black/60 dark:text-white/60">Tableau de bord de votre restaurant</p>
       </div>
 
       {/* KPIs Journée */}

@@ -1,0 +1,46 @@
+═══════════════════════════════════════════════════════════════
+  VARIABLES D'ENVIRONNEMENT VERCEL - SHIFTPILOT
+  Copier-coller directement dans Vercel Dashboard
+═══════════════════════════════════════════════════════════════
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  VARIABLE 1 : NEXT_PUBLIC_SUPABASE_URL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+https://otuybbxfzjeuxppfihvv.supabase.co
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  VARIABLE 2 : NEXT_PUBLIC_SUPABASE_ANON_KEY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90dXliYnhmempldXhwcGZpaHZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM5NzAxMDgsImV4cCI6MjA3OTU0NjEwOH0.bUkmSjrZocyRkTK3bK9d3PJN2-kTSIJeWyqbaHbBaJY
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  VARIABLE 3 : SUPABASE_SERVICE_ROLE_KEY
+  ⚠️ À récupérer depuis Supabase Dashboard
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[À récupérer manuellement depuis Supabase Dashboard → Settings → API → service_role key]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  VARIABLE 4 : NEXT_PUBLIC_APP_URL
+  (Temporaire - mettre à jour après déploiement)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+https://shiftpilot.vercel.app
+
+═══════════════════════════════════════════════════════════════
+  INSTRUCTIONS
+═══════════════════════════════════════════════════════════════
+
+1. Aller sur vercel.com/dashboard
+2. Sélectionner le projet (ID: prj_SnAUtLXzpI26t8gD0bGNlOMjm3N6)
+3. Settings → Environment Variables
+4. Pour chaque variable :
+   - Cliquer sur "Add New"
+   - Copier le NOM et la VALEUR ci-dessus
+   - Cocher: Production, Preview, Development
+   - Save
+
+═══════════════════════════════════════════════════════════════
+

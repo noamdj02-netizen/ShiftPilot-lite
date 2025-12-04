@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
 import { DarkModeToggle } from '@/components/ui/DarkModeToggle'
+import { Logo } from '@/components/ui/Logo'
 
 const navLinks = [
   { href: '#overview', label: "Vue d'ensemble" },
@@ -46,7 +47,7 @@ export function Navbar() {
       >
         <div className="container mx-auto px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-black dark:text-white text-[22px]">grid_view</span>
+            <Logo size={22} />
             <span className="text-lg font-semibold tracking-tight text-black dark:text-white">ShiftPilot</span>
           </div>
 

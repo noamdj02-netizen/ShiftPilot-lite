@@ -196,6 +196,125 @@
   }
 }
 
+/* Dynamic Color Theme Classes */
+.theme-blue {
+  --theme-primary: #3B82F6;
+  --theme-primary-dark: #2563EB;
+  --theme-primary-light: #60A5FA;
+  --theme-bg-light: rgb(219 234 254);
+  --theme-bg-dark: rgba(30, 58, 138, 0.3);
+  --theme-text-light: rgb(37, 99, 235);
+  --theme-text-dark: rgb(96, 165, 250);
+}
+
+.theme-purple {
+  --theme-primary: #8B5CF6;
+  --theme-primary-dark: #7C3AED;
+  --theme-primary-light: #A78BFA;
+  --theme-bg-light: rgb(237 233 254);
+  --theme-bg-dark: rgba(76, 29, 149, 0.3);
+  --theme-text-light: rgb(124, 58, 237);
+  --theme-text-dark: rgb(167, 139, 250);
+}
+
+.theme-green {
+  --theme-primary: #10B981;
+  --theme-primary-dark: #059669;
+  --theme-primary-light: #34D399;
+  --theme-bg-light: rgb(209 250 229);
+  --theme-bg-dark: rgba(5, 150, 105, 0.3);
+  --theme-text-light: rgb(5, 150, 105);
+  --theme-text-dark: rgb(52, 211, 153);
+}
+
+.theme-orange {
+  --theme-primary: #F97316;
+  --theme-primary-dark: #EA580C;
+  --theme-primary-light: #FB923C;
+  --theme-bg-light: rgb(255 237 213);
+  --theme-bg-dark: rgba(234, 88, 12, 0.3);
+  --theme-text-light: rgb(234, 88, 12);
+  --theme-text-dark: rgb(251, 146, 60);
+}
+
+.theme-pink {
+  --theme-primary: #EC4899;
+  --theme-primary-dark: #DB2777;
+  --theme-primary-light: #F472B6;
+  --theme-bg-light: rgb(252 231 243);
+  --theme-bg-dark: rgba(219, 39, 119, 0.3);
+  --theme-text-light: rgb(219, 39, 119);
+  --theme-text-dark: rgb(244, 114, 182);
+}
+
+.theme-cyan {
+  --theme-primary: #06B6D4;
+  --theme-primary-dark: #0891B2;
+  --theme-primary-light: #22D3EE;
+  --theme-bg-light: rgb(165 243 252);
+  --theme-bg-dark: rgba(8, 145, 178, 0.3);
+  --theme-text-light: rgb(8, 145, 178);
+  --theme-text-dark: rgb(34, 211, 238);
+}
+
+/* Dynamic Theme Utility Classes */
+.theme-primary {
+  background-color: var(--theme-primary) !important;
+}
+
+.theme-primary-dark {
+  background-color: var(--theme-primary-dark) !important;
+}
+
+.theme-primary-light {
+  background-color: var(--theme-primary-light) !important;
+}
+
+.theme-text-primary {
+  color: var(--theme-primary) !important;
+}
+
+.theme-text-primary-dark {
+  color: var(--theme-primary-dark) !important;
+}
+
+.theme-text-primary-light {
+  color: var(--theme-primary-light) !important;
+}
+
+.theme-border-primary {
+  border-color: var(--theme-primary) !important;
+}
+
+.theme-bg-light {
+  background-color: var(--theme-bg-light) !important;
+}
+
+.theme-bg-dark {
+  background-color: var(--theme-bg-dark) !important;
+}
+
+.theme-text-light {
+  color: var(--theme-text-light) !important;
+}
+
+.theme-text-dark {
+  color: var(--theme-text-dark) !important;
+}
+
+/* Hover states */
+.hover\:theme-primary:hover {
+  background-color: var(--theme-primary-dark) !important;
+}
+
+.hover\:theme-text-primary:hover {
+  color: var(--theme-primary) !important;
+}
+
+.hover\:theme-border-primary:hover {
+  border-color: var(--theme-primary) !important;
+}
+
 /* Custom Animations */
 @keyframes float {
   0%, 100% { transform: translateY(0); }

@@ -317,7 +317,7 @@ export function Hero() {
                 </motion.div>
 
                 {/* Dashboard Content */}
-                <div className="flex-1 overflow-y-auto p-4 md:p-6">
+                <div className="flex-1 overflow-y-auto p-3 md:p-4">
                   <AnimatePresence mode="wait">
                     {activeView === 'dashboard' && (
                       <motion.div
@@ -326,32 +326,30 @@ export function Hero() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.3 }}
-                        className="space-y-6 h-full"
+                        className="space-y-3 md:space-y-4 h-full"
                       >
-                        {/* KPI Cards - Matching image design */}
-                        <div className="grid grid-cols-2 gap-2 md:gap-4">
+                        {/* Header */}
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h2 className="text-base md:text-lg font-semibold text-black dark:text-white">Bonjour, John</h2>
+                            <p className="text-[10px] md:text-xs text-black/60 dark:text-white/60 mt-0.5">Voici ce qui se passe dans votre restaurant aujourd'hui</p>
+                          </div>
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="px-2 md:px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-full text-[9px] md:text-xs font-medium flex items-center gap-1 shadow-lg"
+                          >
+                            <span className="material-symbols-outlined text-xs md:text-sm">auto_awesome</span>
+                            <span className="hidden sm:inline">IA</span>
+                          </motion.button>
+                        </div>
+
+                        {/* Stats Grid */}
+                        <div className="grid grid-cols-2 gap-2 md:gap-3">
                           {[
                             { 
-                              label: 'Heures planifiées', 
-                              val: '168h', 
-                              delta: '+12%', 
-                              trend: 'up',
-                              icon: 'schedule',
-                              iconBg: 'bg-purple-100 dark:bg-purple-900/30',
-                              iconColor: 'text-purple-600 dark:text-purple-400'
-                            },
-                            { 
-                              label: 'Coût salarial', 
-                              val: '3 240€', 
-                              delta: '-8%', 
-                              trend: 'down',
-                              icon: 'euro',
-                              iconBg: 'bg-blue-100 dark:bg-blue-900/30',
-                              iconColor: 'text-blue-600 dark:text-blue-400'
-                            },
-                            { 
-                              label: 'Employés actifs', 
-                              val: '12', 
+                              label: 'Employés présents', 
+                              val: '12/15', 
                               delta: '+2', 
                               trend: 'up',
                               icon: 'group',
@@ -359,11 +357,29 @@ export function Hero() {
                               iconColor: 'text-orange-600 dark:text-orange-400'
                             },
                             { 
-                              label: 'Shifts créés', 
-                              val: '42', 
-                              delta: '+24%', 
+                              label: 'Heures planifiées', 
+                              val: '145h', 
+                              delta: '-5h', 
+                              trend: 'down',
+                              icon: 'schedule',
+                              iconBg: 'bg-purple-100 dark:bg-purple-900/30',
+                              iconColor: 'text-purple-600 dark:text-purple-400'
+                            },
+                            { 
+                              label: 'Conformité planning', 
+                              val: '98%', 
+                              delta: '+3%', 
                               trend: 'up',
-                              icon: 'calendar_month',
+                              icon: 'verified',
+                              iconBg: 'bg-green-100 dark:bg-green-900/30',
+                              iconColor: 'text-green-600 dark:text-green-400'
+                            },
+                            { 
+                              label: 'Coût semaine', 
+                              val: '3,240€', 
+                              delta: '-120€', 
+                              trend: 'down',
+                              icon: 'euro',
                               iconBg: 'bg-blue-100 dark:bg-blue-900/30',
                               iconColor: 'text-blue-600 dark:text-blue-400'
                             },
@@ -374,28 +390,28 @@ export function Hero() {
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ duration: 0.5, delay: 0.8 + idx * 0.1 }}
                               whileHover={{ scale: 1.02, y: -2 }}
-                              className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-3 md:p-4 shadow-sm"
+                              className="bg-white dark:bg-[#1C1C1E] rounded-lg border border-black/5 dark:border-white/5 p-2 md:p-3 shadow-sm h-full flex flex-col"
                             >
-                              <div className="flex items-start justify-between mb-2 md:mb-3">
-                                <div className={`size-8 md:size-10 rounded-lg ${stat.iconBg} flex items-center justify-center`}>
-                                  <span className={`material-symbols-outlined ${stat.iconColor} text-lg md:text-xl`}>
+                              <div className="flex items-start justify-between mb-2">
+                                <div className={`size-7 md:size-9 rounded-lg ${stat.iconBg} flex items-center justify-center`}>
+                                  <span className={`material-symbols-outlined ${stat.iconColor} text-sm md:text-base`}>
                                     {stat.icon}
                                   </span>
                                 </div>
-                                <div className={`flex items-center gap-0.5 md:gap-1 text-[10px] md:text-xs font-semibold ${
-                                  stat.trend === 'up' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
-                                }`}>
+                                <div className={`flex items-center gap-0.5 text-[9px] md:text-[10px] font-semibold ${
+                                  stat.trend === 'up' ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' : 'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400'
+                                } px-1.5 py-0.5 rounded-full`}>
                                   {stat.trend === 'up' ? (
-                                    <span className="material-symbols-outlined text-xs md:text-sm">trending_up</span>
+                                    <span className="material-symbols-outlined text-[10px]">trending_up</span>
                                   ) : (
-                                    <span className="material-symbols-outlined text-xs md:text-sm">trending_down</span>
+                                    <span className="material-symbols-outlined text-[10px]">trending_down</span>
                                   )}
                                   {stat.delta}
                                 </div>
                               </div>
-                              <div>
-                                <p className="text-[10px] md:text-xs text-slate-500 dark:text-slate-400 mb-0.5 md:mb-1 truncate">{stat.label}</p>
-                                <p className="text-lg md:text-2xl font-bold text-slate-900 dark:text-white">
+                              <div className="flex-1 flex flex-col justify-end">
+                                <p className="text-[9px] md:text-[10px] text-black/60 dark:text-white/60 mb-0.5 truncate">{stat.label}</p>
+                                <p className="text-base md:text-xl font-semibold text-black dark:text-white">
                                   {stat.val}
                                 </p>
                               </div>
@@ -403,73 +419,218 @@ export function Hero() {
                           ))}
                         </div>
 
-                        {/* Weekly Planning Section */}
+                        {/* Planning de la semaine avec graphiques */}
                         <motion.div
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.5, delay: 1.2 }}
-                          className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-4 md:p-6 shadow-sm"
+                          className="bg-white dark:bg-[#1C1C1E] rounded-lg border border-black/5 dark:border-white/5 p-3 md:p-4 shadow-sm"
                         >
                           <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-base md:text-lg font-bold text-slate-900 dark:text-white">Planning de la semaine</h3>
-                            <motion.button
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                              className="px-3 py-1.5 bg-accent hover:bg-accent/90 text-white rounded-lg text-xs md:text-sm font-medium flex items-center gap-1.5 transition-colors shadow-md hover:shadow-lg"
-                              onClick={(e) => {
-                                e.preventDefault()
-                                // Animation de feedback
-                                const btn = e.currentTarget
-                                btn.style.transform = 'scale(0.95)'
-                                setTimeout(() => {
-                                  btn.style.transform = 'scale(1)'
-                                }, 150)
-                              }}
+                            <div className="flex items-center gap-2 md:gap-3">
+                              <div className="size-8 md:size-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                                <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-base md:text-lg">calendar_month</span>
+                              </div>
+                              <div>
+                                <h3 className="text-sm md:text-base font-semibold text-black dark:text-white">Planning de la semaine</h3>
+                                <p className="text-[9px] md:text-xs text-black/60 dark:text-white/60">4-10 Décembre 2025</p>
+                              </div>
+                            </div>
+                            <motion.div
+                              whileHover={{ x: 5 }}
+                              transition={{ type: "spring", stiffness: 400, damping: 10 }}
                             >
-                              <motion.span
-                                animate={{ rotate: [0, 360] }}
-                                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                                className="material-symbols-outlined text-sm"
-                              >
-                                bolt
-                              </motion.span>
-                              <span className="hidden sm:inline">Générer avec IA</span>
-                              <span className="sm:hidden">IA</span>
-                            </motion.button>
+                              <span className="text-[9px] md:text-xs text-blue-600 dark:text-blue-400 font-medium cursor-pointer">Voir tout →</span>
+                            </motion.div>
                           </div>
-                          <div>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">Aperçu des shifts à venir</p>
-                            <div className="space-y-2">
-                              {[
-                                { name: 'Alice Martin', service: 'Service midi', time: '11h-15h', date: 'Lundi 16/10', hours: '4h' },
-                                { name: 'Thomas Bernard', service: 'Service soir', time: '18h-23h', date: 'Mardi 17/10', hours: '5h' },
-                                { name: 'Sophie Dubois', service: 'Service complet', time: '10h-22h', date: 'Mercredi 18/10', hours: '12h' },
-                              ].map((shift, idx) => (
-                                <motion.div
-                                  key={idx}
-                                  initial={{ opacity: 0, x: -10 }}
-                                  animate={{ opacity: 1, x: 0 }}
-                                  transition={{ duration: 0.3, delay: 1.3 + idx * 0.1 }}
-                                  className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700"
+
+                          {/* Graphiques avec recharts */}
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-6">
+                            {/* Graphique des heures par jour */}
+                            <div>
+                              <h4 className="text-[10px] md:text-sm font-semibold text-black dark:text-white mb-3 md:mb-4">Heures planifiées par jour</h4>
+                              <ResponsiveContainer width="100%" height={150}>
+                                <BarChart
+                                  data={[
+                                    { day: 'Lun', hours: 145, cost: 3200 },
+                                    { day: 'Mar', hours: 152, cost: 3350 },
+                                    { day: 'Mer', hours: 138, cost: 3050 },
+                                    { day: 'Jeu', hours: 165, cost: 3650 },
+                                    { day: 'Ven', hours: 178, cost: 3900 },
+                                    { day: 'Sam', hours: 190, cost: 4200 },
+                                    { day: 'Dim', hours: 160, cost: 3550 }
+                                  ]}
                                 >
-                                  <div className="size-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-xs font-semibold text-slate-600 dark:text-slate-300">
-                                    {shift.name.split(' ').map(n => n[0]).join('')}
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">{shift.name}</p>
-                                    <p className="text-xs text-slate-600 dark:text-slate-400">
-                                      {shift.service} · {shift.time}
-                                    </p>
-                                  </div>
-                                  <div className="text-right">
-                                    <p className="text-xs font-medium text-slate-900 dark:text-white">{shift.date}</p>
-                                    <p className="text-xs text-slate-500 dark:text-slate-400">{shift.hours}</p>
-                                  </div>
-                                </motion.div>
-                              ))}
+                                  <CartesianGrid strokeDasharray="3 3" stroke="currentColor" className="opacity-10" />
+                                  <XAxis dataKey="day" stroke="currentColor" className="text-[9px]" />
+                                  <YAxis stroke="currentColor" className="text-[9px]" />
+                                  <Tooltip
+                                    contentStyle={{
+                                      backgroundColor: '#3B82F6',
+                                      border: 'none',
+                                      borderRadius: '8px',
+                                      color: 'white',
+                                      fontSize: '11px'
+                                    }}
+                                  />
+                                  <Bar dataKey="hours" fill="#3B82F6" radius={[8, 8, 0, 0]} />
+                                </BarChart>
+                              </ResponsiveContainer>
+                            </div>
+
+                            {/* Graphique des coûts */}
+                            <div>
+                              <h4 className="text-[10px] md:text-sm font-semibold text-black dark:text-white mb-3 md:mb-4">Coût journalier (€)</h4>
+                              <ResponsiveContainer width="100%" height={150}>
+                                <AreaChart
+                                  data={[
+                                    { day: 'Lun', cost: 3200 },
+                                    { day: 'Mar', cost: 3350 },
+                                    { day: 'Mer', cost: 3050 },
+                                    { day: 'Jeu', cost: 3650 },
+                                    { day: 'Ven', cost: 3900 },
+                                    { day: 'Sam', cost: 4200 },
+                                    { day: 'Dim', cost: 3550 }
+                                  ]}
+                                >
+                                  <defs>
+                                    <linearGradient id="colorCostDemo" x1="0" y1="0" x2="0" y2="1">
+                                      <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8}/>
+                                      <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
+                                    </linearGradient>
+                                  </defs>
+                                  <CartesianGrid strokeDasharray="3 3" stroke="currentColor" className="opacity-10" />
+                                  <XAxis dataKey="day" stroke="currentColor" className="text-[9px]" />
+                                  <YAxis stroke="currentColor" className="text-[9px]" />
+                                  <Tooltip
+                                    contentStyle={{
+                                      backgroundColor: '#3B82F6',
+                                      border: 'none',
+                                      borderRadius: '8px',
+                                      color: 'white',
+                                      fontSize: '11px'
+                                    }}
+                                  />
+                                  <Area type="monotone" dataKey="cost" stroke="#3B82F6" fillOpacity={1} fill="url(#colorCostDemo)" />
+                                </AreaChart>
+                              </ResponsiveContainer>
                             </div>
                           </div>
+
+                          {/* Boutons de navigation des jours */}
+                          <div className="grid grid-cols-7 gap-2">
+                            {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((day, index) => (
+                              <div key={day} className="text-center">
+                                <p className="text-[9px] md:text-xs font-medium text-black/60 dark:text-white/60 mb-2">{day}</p>
+                                {index < 5 && (
+                                  <motion.button
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className="w-full h-8 md:h-10 rounded-lg flex items-center justify-center text-xs md:text-sm font-medium text-white"
+                                    style={{ backgroundColor: '#3B82F6' }}
+                                  >
+                                    {index + 1}
+                                  </motion.button>
+                                )}
+                              </div>
+                            ))}
+                          </div>
                         </motion.div>
+
+                        {/* Alerts */}
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.5, delay: 1.4 }}
+                          className="space-y-1.5"
+                        >
+                          <div className="bg-white dark:bg-[#1C1C1E] rounded-lg p-2 border-l-4 border-yellow-500 flex items-center gap-2 shadow-sm border border-black/5 dark:border-white/5">
+                            <span className="material-symbols-outlined text-yellow-600 dark:text-yellow-400 text-sm">warning</span>
+                            <p className="text-[10px] md:text-xs font-medium text-black dark:text-white flex-1">2 demandes de congé en attente</p>
+                            <button className="text-[9px] md:text-[10px] text-blue-600 dark:text-blue-400 font-medium">Voir</button>
+                          </div>
+                        </motion.div>
+
+                        {/* Main Content Grid */}
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 md:gap-3">
+                          {/* Planning du jour */}
+                          <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: 1.5 }}
+                            className="lg:col-span-2 bg-white dark:bg-[#1C1C1E] rounded-lg border border-black/5 dark:border-white/5 p-2 md:p-3 shadow-sm"
+                          >
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center gap-2">
+                                <div className="size-7 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                                  <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-sm">calendar_month</span>
+                                </div>
+                                <div>
+                                  <h3 className="text-xs md:text-sm font-semibold text-black dark:text-white">Planning du jour</h3>
+                                  <p className="text-[8px] md:text-[9px] text-black/60 dark:text-white/60">Jeudi 4 Décembre 2025</p>
+                                </div>
+                              </div>
+                              <span className="text-[8px] text-blue-600 dark:text-blue-400 font-medium">Voir tout →</span>
+                            </div>
+                            <div className="space-y-1">
+                              {[
+                                { name: 'Marie Dupont', role: 'Serveur', time: '08:00-12:00' },
+                                { name: 'Jean Martin', role: 'Cuisine', time: '08:00-14:00' },
+                                { name: 'Sophie Bernard', role: 'Serveur', time: '12:00-18:00' },
+                              ].map((shift, idx) => (
+                                <div
+                                  key={idx}
+                                  className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-all border border-black/5 dark:border-white/5"
+                                >
+                                  <div className="w-1 h-8 rounded-full bg-blue-600" />
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-[10px] font-medium text-black dark:text-white truncate">{shift.name}</p>
+                                    <p className="text-[8px] text-black/60 dark:text-white/60">{shift.role}</p>
+                                  </div>
+                                  <div className="text-right">
+                                    <p className="text-[9px] font-mono font-medium text-black dark:text-white">{shift.time}</p>
+                                    <p className="text-[8px] text-black/60 dark:text-white/60">4h</p>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </motion.div>
+
+                          {/* Quick Actions */}
+                          <motion.div
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.5, delay: 1.5 }}
+                            className="space-y-2"
+                          >
+                            <h3 className="text-xs md:text-sm font-semibold text-black dark:text-white flex items-center gap-1">
+                              <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-sm">auto_awesome</span>
+                              Actions rapides
+                            </h3>
+                            {[
+                              { title: 'Générer Planning IA', icon: 'auto_awesome', badge: 'IA' },
+                              { title: 'Voir les messages', icon: 'message', badge: '12' },
+                            ].map((action, idx) => (
+                              <div
+                                key={idx}
+                                className="bg-white dark:bg-[#1C1C1E] rounded-lg p-2 border border-black/5 dark:border-white/5 shadow-sm"
+                              >
+                                <div className="flex items-start justify-between mb-1">
+                                  <div className="size-7 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                                    <span className="material-symbols-outlined text-purple-600 dark:text-purple-400 text-sm">{action.icon}</span>
+                                  </div>
+                                  {action.badge && (
+                                    <span className="px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-[8px] font-semibold rounded-full">
+                                      {action.badge}
+                                    </span>
+                                  )}
+                                </div>
+                                <h4 className="text-[10px] font-semibold text-black dark:text-white mb-0.5">{action.title}</h4>
+                                <p className="text-[8px] text-black/60 dark:text-white/60">Créer un planning optimal</p>
+                              </div>
+                            ))}
+                          </motion.div>
+                        </div>
                       </motion.div>
                     )}
 

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { AppRoute } from '@/lib/types'
 import { useState, useEffect } from 'react'
+import { Logo } from '@/components/ui/Logo'
 
 export function Sidebar() {
   const pathname = usePathname()
@@ -62,9 +63,7 @@ export function Sidebar() {
     <div className="hidden lg:flex flex-col w-64 h-screen sticky top-0 bg-white dark:bg-[#0D1B2A] border-r border-slate-200 dark:border-white/5 flex-shrink-0 z-50 transition-colors duration-300">
       <div className="p-6 mb-4">
         <Link href={AppRoute.DASHBOARD} onClick={handleLinkClick} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-          <div className="p-2 bg-gradient-to-br from-accent to-blue-600 rounded-lg">
-            <span className="material-symbols-outlined text-xl text-white">grid_view</span>
-          </div>
+          <Logo size={32} />
           <div>
             <span className="text-lg font-bold tracking-tight block text-slate-900 dark:text-white">ShiftPilot</span>
             <span className="text-[10px] font-medium text-accent uppercase tracking-wider bg-accent/10 px-1.5 py-0.5 rounded border border-accent/20">Enterprise</span>

@@ -37,11 +37,20 @@ export default function BotPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <SectionTitle
-        title="PilotBot"
-        subtitle="Chatbot IA pour répondre à vos clients 24/7"
-      />
+    <div className="space-y-6 relative z-10">
+      <div className="flex items-center gap-3 mb-6">
+        <motion.div
+          className="w-10 h-10 md:w-12 md:h-12 bg-cyan-100 dark:bg-cyan-900/30 rounded-lg flex items-center justify-center text-cyan-600 dark:text-cyan-400"
+          whileHover={{ rotate: 10 }}
+          transition={{ type: "spring", stiffness: 400, damping: 10 }}
+        >
+          <Bot size={20} />
+        </motion.div>
+        <div>
+          <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-black dark:text-white">PilotBot</h1>
+          <p className="text-black/60 dark:text-white/60">Chatbot IA pour répondre à vos clients</p>
+        </div>
+      </div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -79,7 +88,7 @@ export default function BotPage() {
               <div className={`max-w-[70%] rounded-lg p-4 ${
                 msg.role === 'user'
                   ? 'bg-black/5 dark:bg-white/5 rounded-br-none'
-                  : 'bg-blue-600 text-white rounded-bl-none'
+                  : 'theme-primary text-white rounded-bl-none'
               }`}>
                 {msg.role === 'assistant' && (
                   <div className="text-xs text-blue-100 mb-1 font-medium">PilotBot</div>

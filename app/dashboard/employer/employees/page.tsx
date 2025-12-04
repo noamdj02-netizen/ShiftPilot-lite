@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { Users } from 'lucide-react'
 
 type FilterType = 'all' | 'active' | 'inactive'
 
@@ -122,19 +123,29 @@ export default function EmployeesPage() {
     <div className="space-y-8 relative z-10">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-black dark:text-white">
-            Employés
-          </h1>
-          <p className="text-black/60 dark:text-white/60 mt-2">
-            Gérez votre équipe et leurs contrats
-          </p>
+        <div className="flex items-center gap-3">
+          <motion.div
+            className="w-10 h-10 md:w-12 md:h-12 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center text-orange-600 dark:text-orange-400"
+            whileHover={{ rotate: 10 }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+          >
+            <Users size={20} />
+          </motion.div>
+          <div>
+            <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-black dark:text-white">
+              Employés
+            </h1>
+            <p className="text-black/60 dark:text-white/60 mt-2">
+              Gérez votre équipe et leurs contrats
+            </p>
+          </div>
         </div>
 
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="px-4 md:px-6 py-2 md:py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-medium shadow-lg shadow-blue-500/20 transition-all text-sm md:text-base"
+          className="px-4 md:px-6 py-2 md:py-3 theme-primary hover:theme-primary text-white rounded-full font-medium shadow-lg transition-all text-sm md:text-base"
+          style={{ boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px var(--theme-primary)40' }}
         >
           Ajouter employé
         </motion.button>
@@ -187,7 +198,7 @@ export default function EmployeesPage() {
             placeholder="Rechercher par nom, rôle ou email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-6 py-3 bg-white dark:bg-[#1C1C1E] rounded-lg border border-black/5 dark:border-white/5 text-black dark:text-white placeholder-black/40 dark:placeholder-white/40 focus:outline-none focus:border-blue-600 dark:focus:border-blue-400 transition-colors"
+            className="w-full px-6 py-3 bg-white dark:bg-[#1C1C1E] rounded-lg border border-black/5 dark:border-white/5 text-black dark:text-white placeholder-black/40 dark:placeholder-white/40 focus:outline-none focus:theme-border-primary dark:focus:theme-border-primary transition-colors"
           />
         </div>
 
@@ -201,7 +212,7 @@ export default function EmployeesPage() {
               whileTap={{ scale: 0.98 }}
               className={`px-4 py-2 rounded-full font-medium transition-all text-sm ${
                 filter === option.key
-                  ? 'bg-blue-600 text-white'
+                  ? 'theme-primary text-white'
                   : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
               }`}
             >
@@ -221,12 +232,12 @@ export default function EmployeesPage() {
             transition={{ delay: index * 0.05 }}
             className="group relative"
           >
-            <div className="absolute inset-0 bg-blue-600/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity blur-xl -z-10" />
-            <div className="bg-white dark:bg-[#1C1C1E] rounded-lg p-4 md:p-6 border border-black/5 dark:border-white/5 hover:border-blue-600/30 dark:hover:border-blue-400/30 transition-all h-full flex flex-col shadow-sm hover:shadow-md">
+            <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity blur-xl -z-10" style={{ backgroundColor: 'var(--theme-primary)10' }} />
+            <div className="bg-white dark:bg-[#1C1C1E] rounded-lg p-4 md:p-6 border border-black/5 dark:border-white/5 hover:theme-border-primary transition-all h-full flex flex-col shadow-sm hover:shadow-md">
               {/* Employee Header */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-4 flex-1">
-                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold text-sm md:text-base">
+                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-full theme-primary flex items-center justify-center text-white font-semibold text-sm md:text-base">
                     {employee.name.split(' ').map(n => n[0]).join('')}
                   </div>
                   <div className="flex-1">
@@ -265,7 +276,7 @@ export default function EmployeesPage() {
 
               {/* Actions */}
               <div className="flex gap-2 pt-4 border-t border-black/5 dark:border-white/5">
-                <button className="flex-1 px-3 py-2 bg-blue-100 dark:bg-blue-900/30 hover:bg-blue-200 dark:hover:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-lg font-medium text-xs md:text-sm transition-colors">
+                <button className="flex-1 px-3 py-2 theme-bg-light dark:theme-bg-dark hover:opacity-80 theme-text-primary dark:theme-text-primary-light rounded-lg font-medium text-xs md:text-sm transition-colors">
                   Modifier
                 </button>
                 <button className="flex-1 px-3 py-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-black dark:text-white rounded-lg font-medium text-xs md:text-sm transition-colors">

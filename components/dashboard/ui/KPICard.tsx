@@ -50,17 +50,17 @@ export function KPICard({
       className="bg-white dark:bg-[#1C1C1E] rounded-xl border border-black/5 dark:border-white/5 p-4 md:p-6"
     >
       <div className="flex items-center justify-between mb-4">
-        <div className={`w-12 h-12 rounded-xl ${bgColorClasses[color]} flex items-center justify-center`}>
-          <Icon className={`w-6 h-6 ${colorClasses[color]}`} />
+        <div className={`w-10 h-10 md:w-12 md:h-12 rounded-lg ${bgColorClasses[color]} flex items-center justify-center`}>
+          <Icon className={`w-5 h-5 md:w-6 md:h-6 ${colorClasses[color]}`} />
         </div>
         {delta && (
-          <div className={`text-xs font-semibold px-2 py-1 rounded-full bg-white/5 dark:bg-white/5 ${deltaColors[deltaType]}`}>
+          <div className={`text-[10px] md:text-xs font-semibold px-2 py-1 rounded-full ${deltaType === 'positive' ? 'bg-green-100 dark:bg-green-900/30' : deltaType === 'negative' ? 'bg-orange-100 dark:bg-orange-900/30' : 'bg-black/5 dark:bg-white/5'} ${deltaColors[deltaType]}`}>
             {delta}
           </div>
         )}
       </div>
-      <div className="text-sm text-slate-500 dark:text-slate-400 mb-1">{label}</div>
-      <div className="text-3xl font-bold text-slate-900 dark:text-white">{value}</div>
+      <div className="text-xs md:text-sm text-black/60 dark:text-white/60 mb-1 font-medium">{label}</div>
+      <div className="text-2xl md:text-3xl font-semibold text-black dark:text-white">{value}</div>
     </motion.div>
   )
 }

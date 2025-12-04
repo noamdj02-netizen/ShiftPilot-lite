@@ -2,8 +2,10 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { Settings, Palette } from 'lucide-react'
+import { useColorTheme } from '@/hooks/useColorTheme'
 
-type SettingsSection = 'restaurant' | 'hours' | 'legal' | 'billing' | 'notifications' | 'team'
+type SettingsSection = 'restaurant' | 'hours' | 'legal' | 'billing' | 'notifications' | 'team' | 'colors'
 
 export default function SettingsPage() {
   const [activeSection, setActiveSection] = useState<SettingsSection>('restaurant')
@@ -14,8 +16,62 @@ export default function SettingsPage() {
     { key: 'legal', label: 'Paramètres légaux' },
     { key: 'billing', label: 'Facturation & Abonnement' },
     { key: 'notifications', label: 'Notifications' },
-    { key: 'team', label: 'Équipe & Permissions' }
+    { key: 'team', label: 'Équipe & Permissions' },
+    { key: 'colors', label: 'Personnalisation des couleurs' }
   ]
+
+  const colorPalettes = [
+    {
+      id: 'blue',
+      name: 'Bleu Professionnel',
+      primary: '#3B82F6',
+      primaryDark: '#2563EB',
+      primaryLight: '#60A5FA',
+      description: 'Couleur par défaut, professionnelle et moderne'
+    },
+    {
+      id: 'purple',
+      name: 'Violet Élégant',
+      primary: '#8B5CF6',
+      primaryDark: '#7C3AED',
+      description: 'Élégant et créatif',
+      preview: ['bg-purple-600', 'bg-purple-500', 'bg-purple-400', 'bg-purple-300']
+    },
+    {
+      id: 'green',
+      name: 'Vert Nature',
+      primary: '#10B981',
+      primaryDark: '#059669',
+      description: 'Fraîcheur et croissance',
+      preview: ['bg-green-600', 'bg-green-500', 'bg-green-400', 'bg-green-300']
+    },
+    {
+      id: 'orange',
+      name: 'Orange Énergique',
+      primary: '#F97316',
+      primaryDark: '#EA580C',
+      description: 'Énergique et dynamique',
+      preview: ['bg-orange-600', 'bg-orange-500', 'bg-orange-400', 'bg-orange-300']
+    },
+    {
+      id: 'pink',
+      name: 'Rose Moderne',
+      primary: '#EC4899',
+      primaryDark: '#DB2777',
+      description: 'Moderne et accueillant',
+      preview: ['bg-pink-600', 'bg-pink-500', 'bg-pink-400', 'bg-pink-300']
+    },
+    {
+      id: 'cyan',
+      name: 'Cyan Frais',
+      primary: '#06B6D4',
+      primaryDark: '#0891B2',
+      description: 'Frais et technologique',
+      preview: ['bg-cyan-600', 'bg-cyan-500', 'bg-cyan-400', 'bg-cyan-300']
+    }
+  ]
+
+  const { theme, setTheme } = useColorTheme()
 
   const openingHours = [
     { day: 'Lundi', open: '11:00', close: '23:00', closed: false },
@@ -36,13 +92,22 @@ export default function SettingsPage() {
   return (
     <div className="space-y-8 relative z-10">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-black dark:text-white">
-          Paramètres
-        </h1>
-        <p className="text-black/60 dark:text-white/60 mt-2">
-          Gérez votre restaurant et vos préférences
-        </p>
+      <div className="flex items-center gap-3">
+        <motion.div
+          className="w-10 h-10 md:w-12 md:h-12 bg-slate-100 dark:bg-slate-900/30 rounded-lg flex items-center justify-center text-slate-600 dark:text-slate-400"
+          whileHover={{ rotate: 10 }}
+          transition={{ type: "spring", stiffness: 400, damping: 10 }}
+        >
+          <Settings size={20} />
+        </motion.div>
+        <div>
+          <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-black dark:text-white">
+            Paramètres
+          </h1>
+          <p className="text-black/60 dark:text-white/60 mt-2">
+            Gérez votre restaurant et vos préférences
+          </p>
+        </div>
       </div>
 
       {/* Settings Layout */}
@@ -58,7 +123,7 @@ export default function SettingsPage() {
                 whileTap={{ scale: 0.98 }}
                 className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-all text-sm ${
                   activeSection === section.key
-                    ? 'bg-blue-600 text-white'
+                    ? 'theme-primary text-white'
                     : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
                 }`}
               >
@@ -115,7 +180,8 @@ export default function SettingsPage() {
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-medium shadow-lg shadow-blue-500/20 transition-all"
+                      className="px-6 py-2 theme-primary hover:theme-primary text-white rounded-full font-medium shadow-lg transition-all"
+                    style={{ boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px var(--theme-primary)40' }}
                     >
                       Enregistrer les modifications
                     </motion.button>
@@ -165,9 +231,10 @@ export default function SettingsPage() {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="px-6 py-2 bg-gradient-to-r from-slate-500 to-gray-500 text-white rounded-lg font-medium hover:shadow-lg transition-all"
+                    className="px-6 py-2 theme-primary hover:theme-primary text-white rounded-full font-medium shadow-lg transition-all"
+                    style={{ boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px var(--theme-primary)40' }}
                   >
-                    💾 Enregistrer
+                    Enregistrer
                   </motion.button>
                 </div>
               </div>
@@ -232,9 +299,10 @@ export default function SettingsPage() {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="px-6 py-2 bg-gradient-to-r from-slate-500 to-gray-500 text-white rounded-lg font-medium hover:shadow-lg transition-all"
+                    className="px-6 py-2 theme-primary hover:theme-primary text-white rounded-full font-medium shadow-lg transition-all"
+                    style={{ boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px var(--theme-primary)40' }}
                   >
-                    💾 Enregistrer
+                    Enregistrer
                   </motion.button>
                 </div>
               </div>
@@ -427,6 +495,93 @@ export default function SettingsPage() {
                       </div>
                     </motion.div>
                   ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Colors Section */}
+          {activeSection === 'colors' && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-6"
+            >
+              <div className="bg-white dark:bg-[#1C1C1E] rounded-lg p-4 md:p-6 border border-black/5 dark:border-white/5 shadow-sm">
+                <div className="flex items-center gap-3 mb-6">
+                  <motion.div
+                    className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center text-purple-600 dark:text-purple-400"
+                    whileHover={{ rotate: 10 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  >
+                    <Palette size={20} />
+                  </motion.div>
+                  <div>
+                    <h2 className="text-lg md:text-xl font-semibold text-black dark:text-white">
+                      Personnalisation des couleurs
+                    </h2>
+                    <p className="text-sm text-black/60 dark:text-white/60">
+                      Choisissez une palette de couleurs pour personnaliser votre dashboard
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {colorPalettes.map((palette) => (
+                    <motion.button
+                      key={palette.id}
+                      onClick={() => setTheme(palette.id as any)}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className={`
+                        relative p-4 rounded-lg border-2 transition-all text-left
+                        ${theme === palette.id
+                          ? 'theme-border-primary theme-bg-light dark:theme-bg-dark'
+                          : 'border-black/5 dark:border-white/5 bg-white dark:bg-[#1C1C1E] hover:theme-border-primary'
+                        }
+                      `}
+                    >
+                      {theme === palette.id && (
+                        <div className="absolute top-2 right-2 w-5 h-5 theme-primary rounded-full flex items-center justify-center">
+                          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                      )}
+
+                      <div className="mb-3">
+                        <h3 className="font-semibold text-black dark:text-white mb-1">{palette.name}</h3>
+                        <p className="text-xs text-black/60 dark:text-white/60">{palette.description}</p>
+                      </div>
+
+                      <div className="flex gap-1.5">
+                        <div className="flex-1 h-8 rounded" style={{ backgroundColor: palette.primary }} />
+                        <div className="flex-1 h-8 rounded" style={{ backgroundColor: palette.primaryDark }} />
+                        <div className="flex-1 h-8 rounded" style={{ backgroundColor: palette.primaryLight }} />
+                        <div className="flex-1 h-8 bg-gray-300 dark:bg-gray-700 rounded" />
+                      </div>
+
+                      <div className="mt-3 flex items-center gap-2">
+                        <div
+                          className="w-4 h-4 rounded-full"
+                          style={{ backgroundColor: palette.primary }}
+                        />
+                        <span className="text-xs text-black/60 dark:text-white/60 font-mono">
+                          {palette.primary}
+                        </span>
+                      </div>
+                    </motion.button>
+                  ))}
+                </div>
+
+                <div className="mt-6 pt-6 border-t border-black/5 dark:border-white/5">
+                  <div className="p-4 rounded-lg bg-black/5 dark:bg-white/5">
+                    <p className="text-sm font-medium text-black dark:text-white mb-2">Aperçu en temps réel</p>
+                    <p className="text-xs text-black/60 dark:text-white/60">
+                      La palette sélectionnée est appliquée automatiquement. Les changements sont visibles immédiatement dans tout le dashboard.
+                    </p>
+                  </div>
                 </div>
               </div>
             </motion.div>

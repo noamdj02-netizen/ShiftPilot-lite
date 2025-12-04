@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { MobileNav } from './MobileNav'
+import { Logo } from '@/components/ui/Logo'
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -21,7 +22,7 @@ export function Header() {
               <span className="material-symbols-outlined">menu</span>
             </button>
             <div className="flex items-center gap-2 text-slate-900 dark:text-white">
-              <span className="material-symbols-outlined text-accent">grid_view</span>
+              <Logo size={22} />
               <span className="text-lg font-bold tracking-tight">ShiftPilot</span>
             </div>
           </div>

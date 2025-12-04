@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { Smartphone } from 'lucide-react'
 
 export default function PilotSMSPage() {
   const [selectedMessage, setSelectedMessage] = useState<string | null>(null)
@@ -88,14 +89,22 @@ export default function PilotSMSPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 md:w-12 md:h-12 bg-pink-100 dark:bg-pink-900/30 rounded-lg flex items-center justify-center">
-          </div>
+          <motion.div
+            className="w-10 h-10 md:w-12 md:h-12 bg-pink-100 dark:bg-pink-900/30 rounded-lg flex items-center justify-center text-pink-600 dark:text-pink-400"
+            whileHover={{ rotate: 10 }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+          >
+            <Smartphone size={20} />
+          </motion.div>
           <div>
             <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-black dark:text-white">PilotSMS</h1>
             <p className="text-black/60 dark:text-white/60">Notifications SMS automatiques pour votre équipe</p>
           </div>
         </div>
-        <button className="px-4 md:px-6 py-2 md:py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-medium shadow-lg shadow-blue-500/20 transition-all text-sm md:text-base">
+        <button 
+          className="px-4 md:px-6 py-2 md:py-3 theme-primary hover:theme-primary text-white rounded-full font-medium shadow-lg transition-all text-sm md:text-base"
+          style={{ boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px var(--theme-primary)40' }}
+        >
           Envoyer un SMS groupé
         </button>
       </div>
@@ -136,35 +145,22 @@ export default function PilotSMSPage() {
               transition={{ delay: 0.3 + index * 0.1 }}
               onClick={() => setSelectedMessage(template.id)}
               className={`
-                cursor-pointer group relative overflow-hidden rounded-2xl p-6 transition-all
+                cursor-pointer group relative overflow-hidden rounded-lg p-4 md:p-6 transition-all
                 ${selectedMessage === template.id
-                  ? `bg-gradient-to-br ${template.gradient} text-white shadow-2xl scale-105`
-                  : 'bg-white/80 dark:bg-slate-900/80 border border-slate-200/50 dark:border-slate-800/50 hover:border-slate-300 dark:hover:border-slate-700'
+                  ? 'theme-primary text-white shadow-lg scale-105'
+                  : 'bg-white dark:bg-[#1C1C1E] border border-black/5 dark:border-white/5 hover:theme-border-primary'
                 }
               `}
             >
-              {selectedMessage === template.id && (
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16" />
-              )}
-
               <div className="relative flex items-start gap-4">
-                <div className={`
-                  w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0
-                  ${selectedMessage === template.id
-                    ? 'bg-white/20'
-                    : `bg-gradient-to-br ${template.gradient}`
-                  }
-                `}>
-                  {template.icon}
-                </div>
 
                 <div className="flex-1">
                   <div className="flex items-start justify-between mb-2">
                     <div>
-                      <h3 className={`font-bold ${selectedMessage === template.id ? 'text-white' : 'text-slate-900 dark:text-white'}`}>
+                      <h3 className={`font-semibold ${selectedMessage === template.id ? 'text-white' : 'text-black dark:text-white'}`}>
                         {template.title}
                       </h3>
-                      <p className={`text-sm ${selectedMessage === template.id ? 'text-white/80' : 'text-slate-500 dark:text-slate-400'}`}>
+                      <p className={`text-xs md:text-sm ${selectedMessage === template.id ? 'text-white/80' : 'text-black/60 dark:text-white/60'}`}>
                         {template.description}
                       </p>
                     </div>
@@ -180,10 +176,10 @@ export default function PilotSMSPage() {
                   </div>
 
                   <div className={`
-                    mt-3 p-3 rounded-lg text-sm
+                    mt-3 p-3 rounded-lg text-xs md:text-sm
                     ${selectedMessage === template.id
                       ? 'bg-white/10 text-white/90'
-                      : 'bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300'
+                      : 'bg-black/5 dark:bg-white/5 text-black dark:text-white'
                     }
                   `}>
                     {template.template}
@@ -197,16 +193,15 @@ export default function PilotSMSPage() {
         {/* Recent SMS */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <span>📨</span>
+            <h2 className="text-lg md:text-xl font-semibold text-black dark:text-white">
               SMS récents
             </h2>
-            <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full text-sm font-medium">
+            <span className="px-3 py-1 theme-bg-light dark:theme-bg-dark theme-text-primary dark:theme-text-primary-light rounded-full text-sm font-medium">
               342 ce mois
             </span>
           </div>
 
-          <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-200/50 dark:border-slate-800/50">
+          <div className="bg-white dark:bg-[#1C1C1E] rounded-lg p-4 md:p-6 border border-black/5 dark:border-white/5 shadow-sm">
             <div className="space-y-4">
               {recentSMS.map((sms, index) => (
                 <motion.div
@@ -214,40 +209,38 @@ export default function PilotSMSPage() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 + index * 0.05 }}
-                  className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/50 dark:border-slate-700/50"
+                  className="p-4 rounded-lg bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5"
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div>
-                      <p className="font-medium text-slate-900 dark:text-white">{sms.recipient}</p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">{sms.time}</p>
+                      <p className="font-medium text-black dark:text-white">{sms.recipient}</p>
+                      <p className="text-xs text-black/60 dark:text-white/60">{sms.time}</p>
                     </div>
                     <div className="flex gap-2">
                       {sms.status === 'delivered' ? (
-                        <span className="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full text-xs font-medium">
-                          ✓ Envoyé
+                        <span className="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full text-[10px] md:text-xs font-semibold">
+                          Envoyé
                         </span>
                       ) : (
-                        <span className="px-2 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-full text-xs font-medium">
-                          ✗ Échec
+                        <span className="px-2 py-1 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-full text-[10px] md:text-xs font-semibold">
+                          Échec
                         </span>
                       )}
                     </div>
                   </div>
 
-                  <p className="text-sm text-slate-700 dark:text-slate-300 mb-3 line-clamp-1">
+                  <p className="text-xs md:text-sm text-black dark:text-white mb-3 line-clamp-1">
                     {sms.message}
                   </p>
 
                   <div className="flex items-center gap-4 text-xs">
                     <div className="flex items-center gap-1">
-                      <span className={sms.read ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'}>👀</span>
-                      <span className={sms.read ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'}>
+                      <span className={sms.read ? 'theme-text-primary dark:theme-text-primary-light' : 'text-black/40 dark:text-white/40'}>
                         {sms.read ? 'Lu' : 'Non lu'}
                       </span>
                     </div>
                     {sms.confirmed && (
                       <div className="flex items-center gap-1 text-green-600 dark:text-green-400">
-                        <span>✅</span>
                         <span>Confirmé</span>
                       </div>
                     )}
@@ -258,14 +251,13 @@ export default function PilotSMSPage() {
           </div>
 
           {/* Insight Card */}
-          <div className="bg-gradient-to-br from-pink-500 to-rose-500 rounded-2xl p-6 text-white">
+          <div className="theme-primary rounded-lg p-6 text-white">
             <div className="flex items-start justify-between mb-4">
-              <div className="text-5xl">🚀</div>
-              <span className="px-3 py-1 bg-white/20 rounded-full text-sm font-medium">
+              <span className="px-3 py-1 bg-white/20 rounded-full text-xs md:text-sm font-medium">
                 +24% ce mois
               </span>
             </div>
-            <h3 className="text-2xl font-bold mb-2">94% de taux de lecture</h3>
+            <h3 className="text-xl md:text-2xl font-semibold mb-2">94% de taux de lecture</h3>
             <p className="text-white/90">
               Votre équipe est parfaitement informée grâce à PilotSMS
             </p>
@@ -274,53 +266,52 @@ export default function PilotSMSPage() {
       </div>
 
       {/* Settings */}
-      <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-200/50 dark:border-slate-800/50">
-        <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
-          <span>⚙️</span>
+      <div className="bg-white dark:bg-[#1C1C1E] rounded-lg p-4 md:p-6 border border-black/5 dark:border-white/5 shadow-sm">
+        <h2 className="text-lg md:text-xl font-semibold text-black dark:text-white mb-6">
           Paramètres des alertes
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50">
+          <div className="p-4 rounded-lg bg-black/5 dark:bg-white/5">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Planning hebdomadaire</span>
+              <span className="text-sm font-medium text-black dark:text-white">Planning hebdomadaire</span>
               <span className="text-xs text-green-600 dark:text-green-400">Actif</span>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">Envoi : Chaque lundi 9h00</p>
+            <p className="text-xs text-black/60 dark:text-white/60 mb-2">Envoi : Chaque lundi 9h00</p>
             <div className="flex gap-2">
-              <button className="flex-1 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-medium">
+              <button className="flex-1 px-3 py-1.5 theme-primary hover:theme-primary text-white rounded-lg text-xs font-medium transition-colors">
                 Modifier
               </button>
-              <button className="px-3 py-1.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-medium">
-                ✓
+              <button className="px-3 py-1.5 bg-black/5 dark:bg-white/5 text-black dark:text-white rounded-lg text-xs font-medium">
+                Actif
               </button>
             </div>
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50">
+          <div className="p-4 rounded-lg bg-black/5 dark:bg-white/5">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Rappel avant shift</span>
+              <span className="text-sm font-medium text-black dark:text-white">Rappel avant shift</span>
               <span className="text-xs text-green-600 dark:text-green-400">Actif</span>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">Envoi : 2h avant le shift</p>
+            <p className="text-xs text-black/60 dark:text-white/60 mb-2">Envoi : 2h avant le shift</p>
             <div className="flex gap-2">
-              <button className="flex-1 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-medium">
+              <button className="flex-1 px-3 py-1.5 theme-primary hover:theme-primary text-white rounded-lg text-xs font-medium transition-colors">
                 Modifier
               </button>
-              <button className="px-3 py-1.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-medium">
-                ✓
+              <button className="px-3 py-1.5 bg-black/5 dark:bg-white/5 text-black dark:text-white rounded-lg text-xs font-medium">
+                Actif
               </button>
             </div>
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50">
+          <div className="p-4 rounded-lg bg-black/5 dark:bg-white/5">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Demande confirmation</span>
-              <span className="text-xs text-slate-400">Inactif</span>
+              <span className="text-sm font-medium text-black dark:text-white">Demande confirmation</span>
+              <span className="text-xs text-black/60 dark:text-white/60">Inactif</span>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">Demander réponse employé</p>
+            <p className="text-xs text-black/60 dark:text-white/60 mb-2">Demander réponse employé</p>
             <div className="flex gap-2">
-              <button className="flex-1 px-3 py-1.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-medium">
+              <button className="flex-1 px-3 py-1.5 bg-black/5 dark:bg-white/5 text-black dark:text-white rounded-lg text-xs font-medium">
                 Activer
               </button>
             </div>

@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Bot } from 'lucide-react'
+import { Logo } from '@/components/ui/Logo'
 
 type PlanningVariant = 'balanced' | 'economical' | 'staff-friendly'
 
@@ -53,8 +55,13 @@ export default function AIPlanningPage() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-3 mb-3">
-          <div className="w-10 h-10 md:w-12 md:h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
-          </div>
+          <motion.div
+            className="w-10 h-10 md:w-12 md:h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center text-purple-600 dark:text-purple-400"
+            whileHover={{ rotate: 10 }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+          >
+            <Bot size={20} />
+          </motion.div>
           <div>
             <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-black dark:text-white">Planning IA</h1>
             <p className="text-black/60 dark:text-white/60">Générez un planning optimal en 30 secondes</p>
@@ -73,7 +80,7 @@ export default function AIPlanningPage() {
             <div className={`
               flex items-center gap-3 px-6 py-3 rounded-full transition-all text-sm
               ${step === s.key
-                ? 'bg-blue-600 text-white shadow-lg'
+                ? 'theme-primary text-white shadow-lg'
                 : 'bg-white dark:bg-[#1C1C1E] text-black/60 dark:text-white/60 border border-black/5 dark:border-white/5'
               }
             `}>
@@ -82,7 +89,7 @@ export default function AIPlanningPage() {
             {index < 2 && (
               <div className={`w-12 h-1 rounded-full ${
                 ['generating', 'results'].includes(step) && index === 0 || step === 'results' && index === 1
-                  ? 'bg-blue-600'
+                  ? 'theme-primary'
                   : 'bg-black/10 dark:bg-white/10'
               }`} />
             )}
@@ -138,8 +145,8 @@ export default function AIPlanningPage() {
                     className={`
                       relative overflow-hidden text-left rounded-lg p-4 md:p-6 transition-all
                       ${selectedVariant === variant.id
-                        ? 'bg-blue-600 text-white shadow-lg scale-105'
-                        : 'bg-white dark:bg-[#1C1C1E] border border-black/5 dark:border-white/5 hover:border-blue-600/30 dark:hover:border-blue-400/30'
+                        ? 'theme-primary text-white shadow-lg scale-105'
+                        : 'bg-white dark:bg-[#1C1C1E] border border-black/5 dark:border-white/5 hover:theme-border-primary'
                       }
                     `}
                   >
@@ -177,7 +184,8 @@ export default function AIPlanningPage() {
                 onClick={generatePlanning}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-8 md:px-12 py-3 md:py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-semibold text-base md:text-lg shadow-lg shadow-blue-500/20 transition-all"
+                className="px-8 md:px-12 py-3 md:py-4 theme-primary hover:theme-primary text-white rounded-full font-semibold text-base md:text-lg shadow-lg transition-all"
+                style={{ boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px var(--theme-primary)40' }}
               >
                 Générer le planning IA
               </motion.button>
@@ -203,8 +211,18 @@ export default function AIPlanningPage() {
                 rotate: { duration: 2, repeat: Infinity, ease: "linear" },
                 scale: { duration: 1, repeat: Infinity }
               }}
-              className="w-24 h-24 md:w-32 md:h-32 bg-blue-600 rounded-lg md:rounded-xl flex items-center justify-center mb-8 shadow-lg"
+              className="w-24 h-24 md:w-32 md:h-32 theme-primary rounded-lg md:rounded-xl flex items-center justify-center mb-8 shadow-lg"
             >
+              <motion.div
+                animate={{
+                  rotate: -360
+                }}
+                transition={{
+                  rotate: { duration: 2, repeat: Infinity, ease: "linear" }
+                }}
+              >
+                <Logo size={48} />
+              </motion.div>
             </motion.div>
 
             <h2 className="text-2xl md:text-3xl font-semibold text-black dark:text-white mb-4">
@@ -232,7 +250,7 @@ export default function AIPlanningPage() {
                   <motion.div
                     animate={{ scale: [1, 1.2, 1] }}
                     transition={{ duration: 0.5, repeat: Infinity, delay: item.delay }}
-                    className="w-2 h-2 bg-blue-600 rounded-full"
+                    className="w-2 h-2 theme-primary rounded-full"
                   />
                   <span className="text-black dark:text-white">{item.label}</span>
                 </motion.div>
@@ -283,7 +301,10 @@ export default function AIPlanningPage() {
 
             {/* Actions */}
             <div className="flex gap-4 justify-center">
-              <button className="px-6 md:px-8 py-2 md:py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-medium shadow-lg shadow-blue-500/20 transition-all">
+              <button 
+                className="px-6 md:px-8 py-2 md:py-3 theme-primary hover:theme-primary text-white rounded-full font-medium shadow-lg transition-all"
+                style={{ boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px var(--theme-primary)40' }}
+              >
                 Valider et publier
               </button>
               <button className="px-6 md:px-8 py-2 md:py-3 bg-white dark:bg-[#1C1C1E] text-black dark:text-white rounded-lg font-medium border border-black/5 dark:border-white/5 hover:bg-black/5 dark:hover:bg-white/5 transition-all">

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Bell, Send, CheckCircle2, Clock, Users } from 'lucide-react'
+import { Bell, Send, CheckCircle2, Clock, Users, Smartphone } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { SectionTitle } from '@/components/dashboard/ui/SectionTitle'
 import { KPICard } from '@/components/dashboard/ui/KPICard'
@@ -32,10 +32,19 @@ export default function SMSPage() {
 
   return (
     <div className="space-y-6 relative z-10">
-      <SectionTitle
-        title="PilotSMS"
-        subtitle="Gérer toute votre équipe par SMS"
-      />
+      <div className="flex items-center gap-3 mb-6">
+        <motion.div
+          className="w-10 h-10 md:w-12 md:h-12 bg-pink-100 dark:bg-pink-900/30 rounded-lg flex items-center justify-center text-pink-600 dark:text-pink-400"
+          whileHover={{ rotate: 10 }}
+          transition={{ type: "spring", stiffness: 400, damping: 10 }}
+        >
+          <Smartphone size={20} />
+        </motion.div>
+        <div>
+          <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-black dark:text-white">PilotSMS</h1>
+          <p className="text-black/60 dark:text-white/60">Gérer toute votre équipe par SMS</p>
+        </div>
+      </div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
@@ -68,19 +77,19 @@ export default function SMSPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Message Templates */}
         <DashboardCard>
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Modèles de messages</h3>
+          <h3 className="text-lg font-semibold text-black dark:text-white mb-4">Modèles de messages</h3>
           <div className="space-y-3">
             {messageTemplates.map((template) => (
               <motion.button
                 key={template.id}
-                className="w-full p-4 rounded-lg border-2 border-slate-200 dark:border-slate-800 hover:border-green-300 text-left transition-all"
+                className="w-full p-4 rounded-lg border-2 border-black/5 dark:border-white/5 hover:theme-border-primary text-left transition-all bg-white dark:bg-[#1C1C1E]"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <div className="text-sm font-semibold text-slate-900 dark:text-white mb-1">
+                <div className="text-sm font-semibold text-black dark:text-white mb-1">
                   {template.title}
                 </div>
-                <div className="text-xs text-slate-500 dark:text-slate-400">
+                <div className="text-xs text-black/60 dark:text-white/60">
                   {template.text}
                 </div>
               </motion.button>
@@ -90,7 +99,7 @@ export default function SMSPage() {
 
         {/* Recipients List */}
         <DashboardCard>
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Destinataires</h3>
+          <h3 className="text-lg font-semibold text-black dark:text-white mb-4">Destinataires</h3>
           <div className="space-y-2 max-h-[400px] overflow-y-auto">
             {employees.map((emp, i) => (
               <motion.div
@@ -98,17 +107,17 @@ export default function SMSPage() {
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2 + i * 0.1 }}
-                className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg"
+                className="flex items-center justify-between p-3 bg-black/5 dark:bg-white/5 rounded-lg"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                    <span className="text-sm font-bold text-green-600 dark:text-green-400">
+                  <div className="w-10 h-10 rounded-full theme-primary flex items-center justify-center">
+                    <span className="text-sm font-bold text-white">
                       {emp.name.split(' ').map(n => n[0]).join('')}
                     </span>
                   </div>
                   <div>
-                    <div className="text-sm font-medium text-slate-900 dark:text-white">{emp.name}</div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400">{emp.phone}</div>
+                    <div className="text-sm font-medium text-black dark:text-white">{emp.name}</div>
+                    <div className="text-xs text-black/60 dark:text-white/60">{emp.phone}</div>
                   </div>
                 </div>
                 {emp.status === 'sent' ? (
@@ -117,7 +126,7 @@ export default function SMSPage() {
                     <span className="font-semibold">Envoyé</span>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                  <div className="flex items-center gap-1.5 text-xs text-black/60 dark:text-white/60">
                     <Clock className="w-4 h-4" />
                     <span>En attente...</span>
                   </div>
@@ -130,7 +139,8 @@ export default function SMSPage() {
 
       {/* Send Button */}
       <motion.button
-        className="w-full py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-semibold flex items-center justify-center gap-2"
+        className="w-full py-4 theme-primary hover:theme-primary text-white rounded-full font-semibold flex items-center justify-center gap-2 shadow-lg transition-all"
+        style={{ boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px var(--theme-primary)40' }}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
       >

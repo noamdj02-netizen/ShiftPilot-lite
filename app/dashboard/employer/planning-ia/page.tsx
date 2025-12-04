@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { CalendarCheck2, Sparkles, Clock, Users, TrendingUp } from 'lucide-react'
+import { CalendarCheck2, Sparkles, Clock, Users, TrendingUp, Bot } from 'lucide-react'
 import { SectionTitle } from '@/components/dashboard/ui/SectionTitle'
 import { DashboardCard } from '@/components/dashboard/ui/DashboardCard'
 import { KPICard } from '@/components/dashboard/ui/KPICard'
@@ -18,33 +18,41 @@ export default function PlanningIAPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <SectionTitle
-        title="Planning IA"
-        subtitle="Génération automatique de vos plannings optimisés"
-      />
+    <div className="space-y-6 relative z-10">
+      <div className="flex items-center gap-3 mb-6">
+        <motion.div
+          className="w-10 h-10 md:w-12 md:h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center text-purple-600 dark:text-purple-400"
+          whileHover={{ rotate: 10 }}
+          transition={{ type: "spring", stiffness: 400, damping: 10 }}
+        >
+          <Bot size={20} />
+        </motion.div>
+        <div>
+          <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-black dark:text-white">Planning IA</h1>
+          <p className="text-black/60 dark:text-white/60">Génération automatique de vos plannings optimisés</p>
+        </div>
+      </div>
 
       {/* Mode Selection */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {[
-          { id: 'balanced', label: 'Équilibré', desc: 'Répartition équitable des shifts', icon: '⚖️' },
-          { id: 'economic', label: 'Économique', desc: 'Optimisation des coûts', icon: '💰' },
-          { id: 'staff-friendly', label: 'Staff-friendly', desc: 'Priorité au bien-être', icon: '❤️' },
+          { id: 'balanced', label: 'Équilibré', desc: 'Répartition équitable des shifts' },
+          { id: 'economic', label: 'Économique', desc: 'Optimisation des coûts' },
+          { id: 'staff-friendly', label: 'Staff-friendly', desc: 'Priorité au bien-être' },
         ].map((mode) => (
           <motion.button
             key={mode.id}
             onClick={() => setPlanningMode(mode.id as any)}
-            className={`p-4 rounded-xl border-2 transition-all text-left ${
+            className={`p-4 rounded-lg border-2 transition-all text-left ${
               planningMode === mode.id
-                ? 'border-accent bg-accent/10 dark:bg-accent/20'
-                : 'border-slate-200 dark:border-slate-800 hover:border-accent/50'
+                ? 'theme-border-primary theme-bg-light dark:theme-bg-dark'
+                : 'border-black/5 dark:border-white/5 bg-white dark:bg-[#1C1C1E] hover:theme-border-primary'
             }`}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            <div className="text-2xl mb-2">{mode.icon}</div>
-            <div className="text-sm font-semibold text-slate-900 dark:text-white">{mode.label}</div>
-            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">{mode.desc}</div>
+            <div className="text-sm font-semibold text-black dark:text-white mb-1">{mode.label}</div>
+            <div className="text-xs text-black/60 dark:text-white/60 mt-1">{mode.desc}</div>
           </motion.button>
         ))}
       </div>
@@ -53,7 +61,8 @@ export default function PlanningIAPage() {
       <motion.button
         onClick={handleGenerate}
         disabled={isGenerating}
-        className="w-full py-4 bg-gradient-to-r from-accent to-primary text-white rounded-xl font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
+        className="w-full py-4 theme-primary hover:theme-primary text-white rounded-full font-semibold flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg transition-all"
+        style={{ boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px var(--theme-primary)40' }}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
       >
@@ -108,7 +117,7 @@ export default function PlanningIAPage() {
       {/* Planning Preview */}
       {!isGenerating && (
         <DashboardCard>
-          <div className="text-center py-12 text-slate-500 dark:text-slate-400">
+          <div className="text-center py-12 text-black/60 dark:text-white/60">
             <CalendarCheck2 className="w-12 h-12 mx-auto mb-4 opacity-50" />
             <p className="text-sm">Cliquez sur "Générer le planning" pour commencer</p>
           </div>

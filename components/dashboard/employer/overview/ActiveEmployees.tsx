@@ -16,8 +16,10 @@ export function ActiveEmployees() {
   return (
     <div className="bg-white dark:bg-[#1C1C1E] rounded-xl border border-black/5 dark:border-white/5 p-4 md:p-6">
       <div className="flex items-center gap-2 mb-4">
-        <Users className="w-5 h-5 text-blue-500" />
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Équipe active aujourd'hui</h3>
+        <div className="w-10 h-10 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
+          <Users className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+        </div>
+        <h3 className="text-lg font-semibold text-black dark:text-white">Équipe active aujourd'hui</h3>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {employees.map((emp, i) => (

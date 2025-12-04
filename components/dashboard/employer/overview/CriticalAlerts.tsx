@@ -12,8 +12,10 @@ export function CriticalAlerts() {
   return (
     <div className="bg-white dark:bg-[#1C1C1E] rounded-xl border border-black/5 dark:border-white/5 p-4 md:p-6">
       <div className="flex items-center gap-2 mb-4">
-        <AlertTriangle className="w-5 h-5 text-amber-500" />
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Alertes critiques</h3>
+        <div className="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+          <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+        </div>
+        <h3 className="text-lg font-semibold text-black dark:text-white">Alertes critiques</h3>
       </div>
       <div className="space-y-3">
         {alerts.map((alert, i) => (
@@ -32,7 +34,7 @@ export function CriticalAlerts() {
               <AlertTriangle className={`w-4 h-4 mt-0.5 flex-shrink-0 ${
                 alert.severity === 'critical' ? 'text-red-400' : 'text-amber-400'
               }`} />
-              <div className="text-sm text-slate-900 dark:text-white">{alert.message}</div>
+              <div className="text-sm text-black dark:text-white">{alert.message}</div>
             </div>
           </motion.div>
         ))}

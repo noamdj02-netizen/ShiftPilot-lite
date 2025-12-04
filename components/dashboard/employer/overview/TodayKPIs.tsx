@@ -6,7 +6,7 @@ import { KPICard } from '@/components/dashboard/ui/KPICard'
 export function TodayKPIs() {
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-semibold text-slate-900 dark:text-white">Aujourd'hui</h2>
+      <h2 className="text-lg md:text-xl font-semibold text-black dark:text-white">Aujourd'hui</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <KPICard
           icon={Euro}

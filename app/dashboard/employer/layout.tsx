@@ -1,22 +1,32 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   BarChart3, Calendar, Bot, Users, Umbrella,
   MessageSquare, Star, Smartphone, Settings,
-  ChevronLeft, ChevronRight, Bell, LogOut
+  ChevronLeft, ChevronRight, Bell, LogOut, Menu, X
 } from 'lucide-react'
+import { ColorThemeProvider, useColorThemeContext } from '@/components/providers/ColorThemeProvider'
+import { Logo } from '@/components/ui/Logo'
 
-export default function EmployerDashboardLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+function EmployerDashboardContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isDesktop, setIsDesktop] = useState(false)
+  const { colors } = useColorThemeContext()
+
+  useEffect(() => {
+    const checkDesktop = () => {
+      setIsDesktop(window.innerWidth >= 1024)
+    }
+    checkDesktop()
+    window.addEventListener('resize', checkDesktop)
+    return () => window.removeEventListener('resize', checkDesktop)
+  }, [])
 
   const navigation = [
     {
@@ -92,44 +102,49 @@ export default function EmployerDashboardLayout({
       {/* Ambient Light */}
       <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[100vw] h-[100vh] bg-gradient-to-b from-blue-400/10 to-transparent pointer-events-none blur-[120px] dark:opacity-20"></div>
       
-      {/* Sidebar */}
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={() => setIsMobileMenuOpen(false)}
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+        />
+      )}
+
+      {/* Sidebar Desktop */}
       <motion.aside
         initial={false}
         animate={{
           width: isSidebarOpen ? '280px' : '80px'
         }}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
-        className="fixed left-0 top-0 h-screen bg-white dark:bg-[#1C1C1E] border-r border-black/5 dark:border-white/5 z-50 shadow-lg"
+        className="hidden lg:flex fixed left-0 top-0 h-screen bg-white dark:bg-[#1C1C1E] border-r border-black/5 dark:border-white/5 z-50 shadow-lg"
       >
         {/* Logo */}
         <div className="flex items-center justify-between p-6 border-b border-black/5 dark:border-white/10">
-          <motion.div
-            animate={{
-              opacity: isSidebarOpen ? 1 : 0,
-              scale: isSidebarOpen ? 1 : 0.8
-            }}
-            transition={{ duration: 0.2 }}
-            className="flex items-center gap-3"
-          >
-            <motion.div
-              whileHover={{ scale: 1.05, rotate: 5 }}
-              className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-md"
-            >
-              <BarChart3 className="w-6 h-6 text-white" />
-            </motion.div>
-            {isSidebarOpen && (
-              <motion.div
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 }}
-              >
-                <h1 className="text-xl font-semibold tracking-tight text-black dark:text-white">
-                  ShiftPilot
-                </h1>
-                <p className="text-xs text-black/60 dark:text-white/60">Dashboard Pro</p>
-              </motion.div>
-            )}
-          </motion.div>
+          <div className="flex items-center gap-3">
+            {/* Logo toujours visible */}
+            <Logo size={32} />
+            
+            {/* Texte qui s'affiche/masque selon l'état */}
+            <AnimatePresence>
+              {isSidebarOpen && (
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <h1 className="text-xl font-semibold tracking-tight text-black dark:text-white">
+                    ShiftPilot
+                  </h1>
+                  <p className="text-xs text-black/60 dark:text-white/60">Dashboard Pro</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
 
           <motion.button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -166,10 +181,13 @@ export default function EmployerDashboardLayout({
                     className={`
                       relative flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300
                       ${active
-                        ? 'bg-blue-600 text-white shadow-md'
+                        ? 'text-white shadow-md'
                         : 'hover:bg-black/5 dark:hover:bg-white/5 text-black/60 dark:text-white/60'
                       }
                     `}
+                    style={active ? {
+                      backgroundColor: colors.primary,
+                    } : {}}
                   >
                     <motion.div
                       whileHover={{ rotate: 360 }}
@@ -196,7 +214,7 @@ export default function EmployerDashboardLayout({
                                 px-2 py-0.5 text-xs font-semibold rounded-full
                                 ${active
                                   ? 'bg-white/20 text-white'
-                                  : 'bg-blue-600 text-white'
+                                  : 'theme-primary text-white'
                                 }
                               `}
                             >
@@ -207,14 +225,15 @@ export default function EmployerDashboardLayout({
                       )}
                     </AnimatePresence>
 
-                    {/* Active indicator */}
-                    {active && (
-                      <motion.div
-                        layoutId="activeIndicator"
-                        className="absolute left-0 top-0 bottom-0 w-1 bg-white rounded-r-full"
-                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                      />
-                    )}
+                           {/* Active indicator */}
+                           {active && (
+                             <motion.div
+                               layoutId="activeIndicator"
+                               className="absolute left-0 top-0 bottom-0 w-1 rounded-r-full"
+                               style={{ backgroundColor: 'white' }}
+                               transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                             />
+                           )}
                   </motion.div>
 
                   {/* Tooltip pour sidebar collapsed */}
@@ -242,7 +261,7 @@ export default function EmployerDashboardLayout({
           >
             <motion.div
               whileHover={{ scale: 1.1, rotate: 5 }}
-              className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md cursor-pointer"
+              className="w-10 h-10 theme-primary rounded-full flex items-center justify-center text-white font-semibold shadow-md cursor-pointer"
             >
               JD
             </motion.div>
@@ -269,11 +288,121 @@ export default function EmployerDashboardLayout({
         </div>
       </motion.aside>
 
+      {/* Sidebar Mobile */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.aside
+            initial={{ x: -280 }}
+            animate={{ x: 0 }}
+            exit={{ x: -280 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="fixed left-0 top-0 h-screen w-[280px] bg-white dark:bg-[#1C1C1E] border-r border-black/5 dark:border-white/5 z-50 shadow-xl lg:hidden"
+          >
+            {/* Logo Mobile */}
+            <div className="flex items-center justify-between p-6 border-b border-black/5 dark:border-white/10">
+              <div className="flex items-center gap-3">
+                <Logo size={32} />
+                <div>
+                  <h1 className="text-xl font-semibold tracking-tight text-black dark:text-white">
+                    ShiftPilot
+                  </h1>
+                  <p className="text-xs text-black/60 dark:text-white/60">Dashboard Pro</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5 text-black/60 dark:text-white/60" />
+              </button>
+            </div>
+
+            {/* Navigation Mobile */}
+            <nav className="p-4 space-y-2 overflow-y-auto h-[calc(100vh-200px)]">
+              {navigation.map((item) => {
+                const active = isActive(item)
+                const Icon = item.icon
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block group relative"
+                  >
+                    <div
+                      className={`
+                        relative flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300
+                        ${active
+                          ? 'text-white shadow-md'
+                          : 'hover:bg-black/5 dark:hover:bg-white/5 text-black/60 dark:text-white/60'
+                        }
+                      `}
+                      style={active ? {
+                        backgroundColor: colors.primary,
+                      } : {}}
+                    >
+                      <Icon className={`w-5 h-5 flex-shrink-0 ${active ? 'text-white' : ''}`} />
+                      <div className="flex items-center justify-between flex-1">
+                        <span className="font-medium text-sm">{item.name}</span>
+                        {item.badge && (
+                          <span
+                            className={`
+                              px-2 py-0.5 text-xs font-semibold rounded-full
+                              ${active
+                                ? 'bg-white/20 text-white'
+                                : 'theme-primary text-white'
+                              }
+                            `}
+                          >
+                            {item.badge}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                )
+              })}
+            </nav>
+
+            {/* User Profile Mobile */}
+            <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-black/5 dark:border-white/5 bg-white dark:bg-[#1C1C1E]">
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-10 h-10 theme-primary rounded-full flex items-center justify-center text-white font-semibold shadow-md"
+                  style={{ backgroundColor: colors.primary }}
+                >
+                  JD
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-black dark:text-white">John Doe</p>
+                  <p className="text-xs text-black/60 dark:text-white/60">Manager</p>
+                </div>
+              </div>
+            </div>
+          </motion.aside>
+        )}
+      </AnimatePresence>
+
+      {/* Mobile Header */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white dark:bg-[#1C1C1E] border-b border-black/5 dark:border-white/5 z-40 flex items-center justify-between px-4">
+        <button
+          onClick={() => setIsMobileMenuOpen(true)}
+          className="p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg transition-colors"
+        >
+          <Menu className="w-6 h-6 text-black dark:text-white" />
+        </button>
+        <div className="flex items-center gap-2">
+          <Logo size={24} />
+          <span className="text-lg font-semibold tracking-tight text-black dark:text-white">ShiftPilot</span>
+        </div>
+        <div className="w-10" /> {/* Spacer */}
+      </div>
+
       {/* Main Content */}
       <motion.main
-        className="transition-all duration-300 relative z-10"
+        className="transition-all duration-300 relative z-10 pt-16 lg:pt-0"
         style={{
-          marginLeft: isSidebarOpen ? '280px' : '80px'
+          marginLeft: isDesktop ? (isSidebarOpen ? '280px' : '80px') : '0'
         }}
       >
         <div className="p-4 md:p-6 lg:p-8">
@@ -287,5 +416,17 @@ export default function EmployerDashboardLayout({
         </div>
       </motion.main>
     </div>
+  )
+}
+
+export default function EmployerDashboardLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <ColorThemeProvider>
+      <EmployerDashboardContent>{children}</EmployerDashboardContent>
+    </ColorThemeProvider>
   )
 }

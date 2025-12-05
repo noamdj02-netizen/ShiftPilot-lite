@@ -1,0 +1,19 @@
+[1mdiff --git a/lib/types/planning.ts b/lib/types/planning.ts[m
+[1mindex 77b60a1..4c7951b 100644[m
+[1m--- a/lib/types/planning.ts[m
+[1m+++ b/lib/types/planning.ts[m
+[36m@@ -69,11 +69,14 @@[m [mexport interface TimeOffRequest {[m
+   status: 'PENDING' | 'APPROVED' | 'REJECTED';[m
+ }[m
+ [m
+[32m+[m[32mexport type ScheduleVariant = 'balanced' | 'economical' | 'staff-friendly';[m
+[32m+[m
+ export interface ScheduleGenerationParams {[m
+   organizationId: string;[m
+   establishmentId?: string;[m
+   startDate: string; // YYYY-MM-DD (Monday)[m
+   useWeather?: boolean;[m
+[32m+[m[32m  variant?: ScheduleVariant;[m
+ }[m
+ [m
+ export interface GeneratedShift {[m

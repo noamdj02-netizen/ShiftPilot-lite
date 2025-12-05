@@ -55,7 +55,9 @@ export async function getAuthenticatedUser(): Promise<{
         organization_id: profile.organization_id,
         profile: {
           id: profile.id,
-          full_name: profile.full_name,
+          full_name: profile.first_name && profile.last_name 
+            ? `${profile.first_name} ${profile.last_name}` 
+            : profile.first_name || profile.last_name || null,
           first_name: profile.first_name,
           last_name: profile.last_name,
           role: profile.role,

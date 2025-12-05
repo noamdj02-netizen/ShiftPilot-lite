@@ -1,4 +1,4 @@
-import { Client } from '@googlemaps/google-maps-services-js';
+import { Client, Language } from '@googlemaps/google-maps-services-js';
 
 const client = new Client({});
 
@@ -33,7 +33,7 @@ export async function fetchGoogleReviews(placeId: string): Promise<GoogleReview[
         place_id: placeId,
         fields: ['reviews', 'rating', 'user_ratings_total', 'name'],
         key: process.env.GOOGLE_PLACES_API_KEY,
-        language: 'fr', // Français
+        language: Language.fr, // Français
       },
     });
 

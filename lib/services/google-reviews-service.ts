@@ -33,7 +33,8 @@ export async function fetchGoogleReviews(placeId: string): Promise<GoogleReview[
         place_id: placeId,
         fields: ['reviews', 'rating', 'user_ratings_total', 'name'],
         key: process.env.GOOGLE_PLACES_API_KEY,
-        language: Language.fr, // Français
+        language:language: 'fr' as any,  
+
       },
     });
 

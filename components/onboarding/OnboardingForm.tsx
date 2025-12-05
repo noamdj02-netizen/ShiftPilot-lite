@@ -52,7 +52,7 @@ export function OnboardingForm() {
     }
   })
 
-  const onSubmit = async (data: OnboardingForm) => {
+  const onSubmit = async (formData: OnboardingForm) => {
     setIsLoading(true)
     try {
       const { data: { user } } = await supabase.auth.getUser()
@@ -62,10 +62,10 @@ export function OnboardingForm() {
         return
       }
 
-      const response = await fetch('/api/employer/create-restaurant', {
+      const response: Response = await fetch('/api/employer/create-restaurant', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, userId: user.id }),
+        body: JSON.stringify({ ...formData, userId: user.id }),
       })
 
       if (!response.ok) {

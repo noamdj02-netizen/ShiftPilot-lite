@@ -69,11 +69,14 @@ export interface TimeOffRequest {
   status: 'PENDING' | 'APPROVED' | 'REJECTED';
 }
 
+export type ScheduleVariant = 'balanced' | 'economical' | 'staff-friendly';
+
 export interface ScheduleGenerationParams {
   organizationId: string;
   establishmentId?: string;
   startDate: string; // YYYY-MM-DD (Monday)
   useWeather?: boolean;
+  variant?: ScheduleVariant;
 }
 
 export interface GeneratedShift {

@@ -51,7 +51,7 @@ export default function PlanningPage() {
         date.setDate(date.getDate() - date.getDay() + 1 + shift.day) // Lundi + offset
         
         return {
-          profile_id: shift.employeeId || null, // À adapter selon votre structure
+          profile_id: shift.employee || null,
           date: date.toISOString().split('T')[0],
           start_time: `${String(shift.start).padStart(2, '0')}:00:00`,
           end_time: `${String(shift.start + shift.duration).padStart(2, '0')}:00:00`,

@@ -2,368 +2,690 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { Navbar } from '@/components/layout/Navbar'
+import { useState } from 'react'
+import { Logo } from '@/components/ui/Logo'
+import { 
+  BarChart3, 
+  Calendar, 
+  Users, 
+  Umbrella, 
+  MessageSquare, 
+  Star, 
+  Phone, 
+  Settings,
+  ChevronLeft,
+  Zap,
+  AlertTriangle,
+  Clock,
+  TrendingUp,
+  TrendingDown,
+  AlertCircle,
+  CheckCircle2,
+  XCircle,
+  Moon,
+  Sun
+} from 'lucide-react'
 
 export function Hero() {
+  const [serviceMode, setServiceMode] = useState(false)
+
   return (
     <section
       data-hero-section="true"
-      className="relative min-h-0 md:min-h-[80vh] w-full pt-20 md:pt-24 lg:pt-24 pb-8 md:pb-16 lg:pb-16 px-4 md:px-6 lg:px-8 overflow-x-hidden font-sans bg-white dark:bg-slate-950"
+      className="relative min-h-0 md:min-h-[80vh] w-full pt-20 md:pt-24 lg:pt-28 pb-8 md:pb-16 lg:pb-20 px-4 md:px-6 lg:px-8 font-sans bg-white"
       style={{ zIndex: 0 }}
     >
-      {/* Premium Background with Gradient Bloom */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50/40 via-indigo-50/30 via-purple-50/20 to-pink-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 pointer-events-none" style={{ zIndex: -1 }}></div>
-      
-      {/* Animated Bloom Halos */}
-      <motion.div
-        animate={{
-          scale: [1, 1.2, 1],
-          opacity: [0.3, 0.5, 0.3],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        className="absolute top-1/4 right-1/4 w-[300px] h-[300px] sm:w-[400px] sm:h-[400px] lg:w-[600px] lg:h-[600px] bg-gradient-to-r from-blue-400/20 via-cyan-400/15 to-purple-400/20 rounded-full blur-[80px] sm:blur-[100px] lg:blur-[120px] pointer-events-none"
-        style={{ zIndex: -1 }}
-      />
-      <motion.div
-        animate={{
-          scale: [1.2, 1, 1.2],
-          opacity: [0.2, 0.4, 0.2],
-        }}
-        transition={{
-          duration: 10,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 1,
-        }}
-        className="absolute bottom-1/4 left-1/4 w-[250px] h-[250px] sm:w-[350px] sm:h-[350px] lg:w-[500px] lg:h-[500px] bg-gradient-to-r from-purple-400/20 via-pink-400/15 to-blue-400/20 rounded-full blur-[60px] sm:blur-[80px] lg:blur-[100px] pointer-events-none"
-        style={{ zIndex: -1 }}
-      />
-
-      {/* Subtle Grid Texture */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] opacity-30 dark:opacity-10 pointer-events-none" style={{ zIndex: -1 }}></div>
-
-      {/* Navbar */}
-      <Navbar />
+      {/* Background - Light blue/white gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-blue-50/30 via-white to-white pointer-events-none" style={{ zIndex: -1 }}></div>
 
       {/* Main Content Container */}
-      <div className="relative max-w-7xl mx-auto px-4 md:px-6 lg:px-8 pb-8 md:pb-16 lg:pb-16" style={{ zIndex: 0 }}>
-        <div className="flex flex-col md:grid md:grid-cols-2 gap-8 md:gap-8 lg:gap-12 items-center">
+      <div className="relative max-w-7xl mx-auto px-4 md:px-6 lg:px-8 pb-8 md:pb-16 lg:pb-20" style={{ zIndex: 0 }}>
+        <div className="flex flex-col space-y-12 md:space-y-16 lg:space-y-20">
           
-          {/* LEFT COLUMN - Text Content */}
-          <div className="text-center md:text-left space-y-5 md:space-y-6 w-full max-w-full md:max-w-2xl order-1 md:order-1">
+          {/* Top Section - Text Content (Centered) */}
+          <div className="flex flex-col items-center text-center space-y-8 md:space-y-10">
+            
+            {/* Trust Badge */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="inline-flex items-center gap-3 px-4 py-2 bg-blue-100/80 border border-blue-200/50 rounded-full"
+            >
+              {/* Avatars avec photos de profil */}
+              <div className="flex -space-x-2">
+                {[
+                  'https://i.pravatar.cc/150?img=1',
+                  'https://i.pravatar.cc/150?img=12',
+                  'https://i.pravatar.cc/150?img=33',
+                  'https://i.pravatar.cc/150?img=47',
+                ].map((avatarUrl, i) => (
+                  <img
+                    key={i}
+                    src={avatarUrl}
+                    alt={`Utilisateur ${i + 1}`}
+                    className="w-7 h-7 rounded-full border-2 border-white object-cover"
+                  />
+                ))}
+              </div>
+              <span className="text-sm font-medium text-blue-700">
+                Utilisé par plus de 1M+ utilisateurs
+              </span>
+            </motion.div>
+
             {/* Main Title */}
-            <div>
-              <h1 className="text-xl md:text-4xl lg:text-6xl xl:text-7xl font-bold tracking-tight leading-[1.2] md:leading-tight text-slate-900 dark:text-white">
-                La gestion des plannings{' '}
-                <span className="relative inline-block">
-                  <span className="relative">réinventée</span>
-                  <span className="absolute bottom-0 md:bottom-1 left-0 right-0 h-1 md:h-3 bg-gradient-to-r from-blue-400/30 via-cyan-400/30 to-purple-400/30 dark:from-blue-500/20 dark:via-cyan-500/20 dark:to-purple-500/20 -z-0"></span>
-                </span>{' '}
-                pour les équipes terrain.
-              </h1>
-            </div>
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold tracking-tight leading-tight text-slate-900 max-w-5xl"
+            >
+              <span className="text-black">Planifiez Vos Équipes. Unifiez Vos Sites.</span>{' '}
+              <span className="text-blue-600">Simplifiez</span>{' '}
+              <span className="text-black">Vos Opérations.</span>
+            </motion.h1>
 
             {/* Subtitle */}
-            <div>
-              <p className="text-sm md:text-lg lg:text-xl xl:text-2xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-full md:max-w-2xl font-light">
-                ShiftPilot automatise vos horaires, simplifie la communication et vous fait gagner un temps précieux. Pour les managers, RH et PME.
-              </p>
-            </div>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="text-lg md:text-xl lg:text-2xl text-slate-600 leading-relaxed max-w-3xl font-light"
+            >
+              Centralisez vos plannings, vos équipes et vos sites sur une seule plateforme. La performance terrain, sans la complexité.
+            </motion.p>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col md:flex-row gap-4 w-full">
+            {/* CTA Button */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
               <Link
-                href="/register"
-                className="group relative w-full md:w-auto inline-flex items-center justify-center px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold text-base transition-all duration-300 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/40 hover:-translate-y-0.5 overflow-hidden"
+                href="#fonctionnalites"
+                className="inline-flex items-center justify-center px-8 py-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium text-base transition-all duration-300 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/40 hover:-translate-y-0.5"
               >
-                <span className="relative flex items-center gap-2">
-                  Démarrer l'essai gratuit
-                  <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                </span>
+                Découvrir les fonctionnalités
               </Link>
-
-              <Link
-                href="/register"
-                className="group w-full md:w-auto inline-flex items-center justify-center px-6 py-3 rounded-xl border-2 border-slate-300/80 dark:border-slate-700/80 text-slate-700 dark:text-slate-200 hover:bg-slate-50/80 dark:hover:bg-slate-900/80 backdrop-blur-sm font-semibold text-base transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
-              >
-                Demander une démo
-              </Link>
-            </div>
+            </motion.div>
           </div>
 
-          {/* RIGHT COLUMN - Visuals - Hidden on mobile, visible on desktop */}
-          <div className="hidden md:block relative mt-8 md:mt-0 w-full order-2 md:order-2">
-            {/* Dashboard Mockup with Glassmorphism */}
-            <div className="relative w-full max-w-full md:max-w-3xl mx-auto lg:mx-0">
-              <div className="relative">
-                {/* Glow Effect Behind Dashboard */}
-                <div className="absolute -inset-2 md:-inset-4 bg-gradient-to-r from-blue-500/20 via-cyan-500/20 to-purple-500/20 rounded-[2rem] blur-2xl opacity-60 pointer-events-none" style={{ zIndex: -1 }}></div>
-                
-                <div className="relative bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl rounded-xl md:rounded-2xl shadow-2xl overflow-hidden border border-slate-200/50 dark:border-slate-800/50">
-                  {/* Top Header Bar - Clean & Light */}
-                  <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/50 px-4 md:px-6 py-3 md:py-4 flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2 md:gap-3 min-w-0">
-                      <span className="text-xs md:text-sm font-medium text-slate-600 dark:text-slate-400 truncate">Voir dashboard</span>
-                      <span className="text-[10px] md:text-xs px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium whitespace-nowrap">
-                        Semaine 42
-                      </span>
+          {/* Bottom Section - Full Dashboard */}
+          <motion.div
+            initial={{ opacity: 0, y: 60 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
+            className="relative w-full max-w-7xl mx-auto"
+          >
+            <div className="relative bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+              <div className="flex flex-row">
+                {/* Left Sidebar */}
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, delay: 0.7 }}
+                  className="hidden lg:flex flex-col w-64 bg-white border-r border-slate-200 flex-shrink-0"
+                >
+                  {/* Logo */}
+                  <div className="p-6 border-b border-slate-200">
+                    <div className="flex items-center gap-3">
+                      <Logo size={32} />
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg font-bold text-slate-900">ShiftPilot</span>
+                          <ChevronLeft className="w-4 h-4 text-slate-500" />
                     </div>
-                    <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
-                      <button className="px-2 md:px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs md:text-xs font-semibold flex items-center gap-1 md:gap-1.5 shadow-sm transition-all duration-200">
-                        <svg className="w-3 h-3 md:w-3.5 md:h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                        <span className="hidden md:inline">IA</span>
-                      </button>
-                      <div className="w-8 h-8 md:w-9 md:h-9 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-xs font-bold shadow-md">
-                        AM
+                        <span className="text-sm font-semibold text-slate-600">Dashboard Pro</span>
                       </div>
-                      <button className="w-8 h-8 md:w-9 md:h-9 rounded-full flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 backdrop-blur-sm transition-all duration-200">
-                        <svg className="w-4 h-4 md:w-4 md:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                        </svg>
-                      </button>
                     </div>
                   </div>
 
-                  {/* Main Content - Mobile: Vertical Layout */}
-                  <div className="flex flex-col md:flex-row">
-                    {/* Dark Sidebar - Hidden on mobile */}
-                    <div className="hidden md:flex w-16 bg-slate-800/95 dark:bg-slate-950/95 backdrop-blur-xl flex-col items-center py-6 gap-5 border-r border-slate-700/50 dark:border-slate-800/50">
-                      <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
-                        <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                        </svg>
+                  {/* Navigation */}
+                  <nav className="flex-1 p-4 space-y-1">
+                    {[
+                      { icon: BarChart3, label: "Vue d'ensemble", active: true },
+                      { icon: Calendar, label: "Planning Manuel" },
+                      { icon: Calendar, label: "Planning IA", badge: "NEW" },
+                      { icon: Users, label: "Employés" },
+                      { icon: Umbrella, label: "Congés & Absences" },
+                      { icon: MessageSquare, label: "PilotBot", badge: "IA" },
+                      { icon: Star, label: "PilotReview", badge: "IA" },
+                      { icon: Phone, label: "PilotSMS", badge: "IA" },
+                      { icon: Settings, label: "Paramètres" },
+                    ].map((item, idx) => (
+                      <motion.div
+                        key={item.label}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.3, delay: 0.8 + idx * 0.05 }}
+                        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition-all ${
+                          item.active
+                            ? 'bg-blue-600 text-white'
+                            : 'text-slate-600 hover:bg-slate-100'
+                        }`}
+                      >
+                        <item.icon className="w-5 h-5" />
+                        <span className="text-sm font-medium flex-1">{item.label}</span>
+                        {item.badge && (
+                          <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-600 rounded-full font-medium">
+                            {item.badge}
+                          </span>
+                        )}
+                      </motion.div>
+                    ))}
+                  </nav>
+
+                  {/* User Profile */}
+                  <div className="p-4 border-t border-slate-200">
+                    <div className="flex items-center gap-3 px-3 py-2">
+                      <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold">
+                        JD
                       </div>
-                      <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white/50 hover:bg-white/10 transition-all duration-300 cursor-pointer group">
-                        <svg className="w-5 h-5 group-hover:text-white/70 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-semibold text-slate-900 truncate">John Doe</div>
+                        <div className="text-xs text-slate-500">Manager</div>
                       </div>
-                      <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white/50 hover:bg-white/10 transition-all duration-300 cursor-pointer group">
-                        <svg className="w-5 h-5 group-hover:text-white/70 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
+                      <ChevronLeft className="w-4 h-4 text-slate-400 rotate-180" />
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Main Content */}
+                <div className="flex-1 flex flex-col min-w-0">
+                  {/* Header */}
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.9 }}
+                    className="bg-white border-b border-slate-200 px-4 sm:px-6 py-4 sm:py-6"
+                  >
+                    <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 sm:gap-4">
+                      <div className="min-w-0 flex-1">
+                        <h2 className="text-xl sm:text-2xl font-bold text-black mb-1">Bonjour, John</h2>
+                        <p className="text-xs sm:text-sm text-slate-700">
+                          {serviceMode 
+                            ? "Mode service actif - Focus 18h-23h" 
+                            : "Voici ce qui se passe dans votre restaurant aujourd'hui"}
+                        </p>
                       </div>
-                      <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white/50 hover:bg-white/10 transition-all duration-300 cursor-pointer group">
-                        <svg className="w-5 h-5 group-hover:text-white/70 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
+                      <div className="flex items-center gap-2 sm:gap-3 w-full lg:w-auto">
+                        {/* Service Mode Toggle */}
+                        <button
+                          onClick={() => setServiceMode(!serviceMode)}
+                          className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-medium text-xs sm:text-sm transition-all ${
+                            serviceMode
+                              ? 'bg-orange-600 hover:bg-orange-700 text-white'
+                              : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
+                          }`}
+                        >
+                          {serviceMode ? <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
+                          <span className="hidden sm:inline">Mode Service</span>
+                          <span className="sm:hidden">Service</span>
+                        </button>
+                        <button className="hidden md:flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-xs sm:text-sm transition-colors">
+                          <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                          <span className="hidden lg:inline">Générer Planning IA</span>
+                          <span className="lg:hidden">IA</span>
+                        </button>
                       </div>
                     </div>
+                  </motion.div>
 
-                    {/* Main Content */}
-                    <div className="flex-1 min-w-0">
-                      {/* Section Header */}
-                      <div className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl px-4 md:px-6 lg:px-8 py-4 md:py-6 border-b border-slate-200/50 dark:border-slate-800/50">
-                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-0 mb-4 md:mb-6">
+                  {/* KPIs Critiques avec Indicateurs de Tension */}
+                  <div className="px-4 sm:px-6 pb-4">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
+                      {/* Card 1: Tension Personnel - CRITIQUE */}
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3, delay: 1.2 }}
+                        className="relative bg-white rounded-lg p-2 sm:p-3 border-l-4 border-red-500 shadow-sm hover:shadow-md transition-shadow"
+                      >
+                        <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2">
+                          <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
+                        </div>
+                        <div className="flex items-start justify-between mb-1.5 sm:mb-2">
+                          <div className="flex items-center gap-1.5 sm:gap-2">
+                            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-md bg-red-500/10 flex items-center justify-center">
+                              <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-600" />
+                            </div>
                           <div>
-                            <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-slate-900 dark:text-white mb-1 tracking-tight">Planning de la semaine</h3>
-                            <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400">4-10 Décembre 2025</p>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <button className="px-2 md:px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 transition-colors">
-                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                              </svg>
-                            </button>
-                            <button className="px-2 md:px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 transition-colors">
-                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                              </svg>
-                            </button>
+                              <span className="text-[9px] sm:text-[10px] font-medium text-black block">Tension</span>
+                              <span className="text-[8px] sm:text-[9px] text-red-600 font-semibold">Critique</span>
+                            </div>
                           </div>
                         </div>
+                        <div className="text-lg sm:text-xl font-bold text-slate-900 mb-0.5">80%</div>
+                        <div className="text-[9px] sm:text-[10px] text-slate-500 mb-1.5 sm:mb-2">12/15 présents</div>
+                        <div className="h-1 bg-slate-100 rounded-full overflow-hidden mb-1 sm:mb-1.5">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: '80%' }}
+                            transition={{ duration: 0.8, delay: 1.4 }}
+                            className="h-full bg-red-500 rounded-full"
+                          />
+                        </div>
+                        <div className="flex items-center gap-1 text-[9px] sm:text-[10px] text-red-600">
+                          <AlertTriangle className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                          <span className="truncate">-3 ce soir</span>
+                        </div>
+                      </motion.div>
 
-                        {/* Compact Stats Row - Mobile: 2x2 Grid */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-3">
-                          {[
-                            { 
-                              label: 'Couverture', 
-                              value: '95%', 
-                              trend: '+2%',
-                              icon: (
-                                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                                </svg>
-                              ), 
-                              bgColor: 'bg-emerald-50 dark:bg-emerald-950/20', 
-                              iconColor: 'text-emerald-600 dark:text-emerald-400',
-                              trendColor: 'text-emerald-600 dark:text-emerald-400'
-                            },
-                            { 
-                              label: 'Shifts aujourd\'hui', 
-                              value: '8', 
-                              trend: '3 équipes',
-                              icon: (
-                                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                              ), 
-                              bgColor: 'bg-blue-50 dark:bg-blue-950/20', 
-                              iconColor: 'text-blue-600 dark:text-blue-400',
-                              trendColor: 'text-blue-600 dark:text-blue-400'
-                            },
-                            { 
-                              label: 'Coût semaine', 
-                              value: '€5.2K', 
-                              trend: '-120€',
-                              icon: (
-                                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                              ), 
-                              bgColor: 'bg-amber-50 dark:bg-amber-950/20', 
-                              iconColor: 'text-amber-600 dark:text-amber-400',
-                              trendColor: 'text-amber-600 dark:text-amber-400'
-                            },
-                            { 
-                              label: 'Équipe active', 
-                              value: '12/15', 
-                              trend: '+2',
-                              icon: (
-                                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                                </svg>
-                              ), 
-                              bgColor: 'bg-purple-50 dark:bg-purple-950/20', 
-                              iconColor: 'text-purple-600 dark:text-purple-400',
-                              trendColor: 'text-purple-600 dark:text-purple-400'
-                            },
-                          ].map((stat, idx) => (
-                            <div
-                              key={idx}
-                              className={`${stat.bgColor} rounded-xl p-3 md:p-3 border border-slate-200/30 dark:border-slate-800/30`}
-                            >
-                              <div className="flex items-center gap-2 mb-2">
-                                <div className={`${stat.iconColor} p-1.5 rounded-lg bg-white/60 dark:bg-slate-800/60`}>
-                                  {stat.icon}
+                      {/* Card 2: Conformité Juridique */}
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3, delay: 1.25 }}
+                        className="relative bg-white rounded-lg p-2 sm:p-3 border-l-4 border-green-500 shadow-sm hover:shadow-md transition-shadow"
+                      >
+                        <div className="flex items-start justify-between mb-1.5 sm:mb-2">
+                          <div className="flex items-center gap-1.5 sm:gap-2">
+                            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-md bg-green-500/10 flex items-center justify-center">
+                              <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-600" />
+                            </div>
+                            <span className="text-[9px] sm:text-[10px] font-medium text-black">Conformité</span>
+                          </div>
+                        </div>
+                        <div className="text-lg sm:text-xl font-bold text-black mb-0.5">98%</div>
+                        <div className="text-[9px] sm:text-[10px] text-slate-700 mb-1.5 sm:mb-2">Planning OK</div>
+                        <div className="h-1 bg-slate-100 rounded-full overflow-hidden mb-1 sm:mb-1.5">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: '98%' }}
+                            transition={{ duration: 0.8, delay: 1.45 }}
+                            className="h-full bg-green-500 rounded-full"
+                          />
+                        </div>
+                        <div className="flex items-center gap-1 text-[9px] sm:text-[10px] text-green-600">
+                          <TrendingUp className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                          <span>+3%</span>
+                        </div>
+                      </motion.div>
+
+                      {/* Card 3: Coût réel vs prévu */}
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3, delay: 1.3 }}
+                        className="relative bg-white rounded-lg p-2 sm:p-3 border-l-4 border-blue-500 shadow-sm hover:shadow-md transition-shadow"
+                      >
+                        <div className="flex items-start justify-between mb-1.5 sm:mb-2">
+                          <div className="flex items-center gap-1.5 sm:gap-2">
+                            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-md bg-blue-500/10 flex items-center justify-center">
+                              <TrendingDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600" />
+                            </div>
+                            <span className="text-[9px] sm:text-[10px] font-medium text-black">Coût</span>
+                          </div>
+                        </div>
+                        <div className="text-lg sm:text-xl font-bold text-black mb-0.5">3,240€</div>
+                        <div className="text-[9px] sm:text-[10px] text-slate-700 mb-1.5 sm:mb-2">
+                          <span className="line-through">3,360€</span> <span className="hidden sm:inline">prévu</span>
+                        </div>
+                        <div className="h-1 bg-slate-100 rounded-full overflow-hidden mb-1 sm:mb-1.5">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: '96.4%' }}
+                            transition={{ duration: 0.8, delay: 1.5 }}
+                            className="h-full bg-blue-500 rounded-full"
+                          />
+                        </div>
+                        <div className="flex items-center gap-1 text-[9px] sm:text-[10px] text-green-600">
+                          <TrendingDown className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                          <span>-120€</span>
+                        </div>
+                      </motion.div>
+
+                      {/* Card 4: Fiabilité Équipe */}
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3, delay: 1.35 }}
+                        className="relative bg-white rounded-lg p-2 sm:p-3 border-l-4 border-purple-500 shadow-sm hover:shadow-md transition-shadow"
+                      >
+                        <div className="flex items-start justify-between mb-1.5 sm:mb-2">
+                          <div className="flex items-center gap-1.5 sm:gap-2">
+                            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-md bg-purple-500/10 flex items-center justify-center">
+                              <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-600" />
+                            </div>
+                            <span className="text-[9px] sm:text-[10px] font-medium text-black">Fiabilité</span>
+                          </div>
+                        </div>
+                        <div className="text-lg sm:text-xl font-bold text-black mb-0.5">94%</div>
+                        <div className="text-[9px] sm:text-[10px] text-slate-700 mb-1.5 sm:mb-2">Présence</div>
+                        <div className="h-1 bg-slate-100 rounded-full overflow-hidden mb-1 sm:mb-1.5">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: '94%' }}
+                            transition={{ duration: 0.8, delay: 1.55 }}
+                            className="h-full bg-purple-500 rounded-full"
+                          />
+                        </div>
+                        <div className="flex items-center gap-1 text-[9px] sm:text-[10px] text-orange-600">
+                          <AlertCircle className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                          <span>2 absences</span>
+                        </div>
+                      </motion.div>
+                    </div>
+                  </div>
+
+
+                  {/* Analytics Section avec Graphiques Pertinents */}
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.6, delay: 1.4 }}
+                    className="p-4 sm:p-6 border-t border-slate-200 bg-slate-50/50"
+                  >
+                    {/* Section Header */}
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-2">
+                      <div>
+                        <h3 className="text-base sm:text-lg font-semibold text-black">Analyse opérationnelle</h3>
+                        <p className="text-xs sm:text-sm text-slate-700">
+                          {serviceMode ? 'Focus service 18h-23h' : '4-10 Décembre 2025'}
+                        </p>
+                      </div>
+                      <Link href="#" className="text-xs sm:text-sm text-blue-600 hover:underline">
+                        Voir tout →
+                      </Link>
                                 </div>
-                                <span className={`text-base md:text-base font-bold ${stat.iconColor}`}>{stat.value}</span>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                      {/* Mini Planning avec Absences */}
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 1.5 }}
+                        className="bg-white rounded-xl p-3 sm:p-4 border border-slate-200 shadow-sm"
+                      >
+                        <div className="flex items-center justify-between mb-3 sm:mb-4">
+                          <h4 className="text-xs sm:text-sm font-semibold text-black">Mini Planning</h4>
+                          <div className="flex items-center gap-1.5 sm:gap-2">
+                            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-orange-500"></div>
+                            <span className="text-[10px] sm:text-xs text-slate-500">4-10 Déc</span>
                               </div>
-                              <div className="flex items-center justify-between">
-                                <p className="text-[10px] md:text-[10px] font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">{stat.label}</p>
-                                <span className={`text-[9px] md:text-[9px] font-semibold ${stat.trendColor}`}>{stat.trend}</span>
                               </div>
+                        
+                        {/* Header des jours */}
+                        <div className="grid grid-cols-7 gap-0.5 sm:gap-1 mb-1.5 sm:mb-2">
+                          {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((day) => (
+                            <div key={day} className="text-center">
+                              <span className="text-[9px] sm:text-[10px] font-medium text-slate-500">{day}</span>
                             </div>
                           ))}
                         </div>
+
+                        {/* Dates */}
+                        <div className="grid grid-cols-7 gap-0.5 sm:gap-1 mb-2 sm:mb-3">
+                          {[4, 5, 6, 7, 8, 9, 10].map((date, idx) => (
+                            <div key={date} className="text-center">
+                              <span className="text-[10px] sm:text-xs font-semibold text-slate-700">{date}</span>
+                            </div>
+                          ))}
                       </div>
 
-                      {/* Planning Grid Section - Premium - Mobile: Vertical Cards */}
-                      <div className="p-4 md:p-6 lg:p-8 bg-gradient-to-b from-slate-50/40 to-white/60 dark:from-slate-950/40 dark:to-slate-900/60 backdrop-blur-sm">
-                        {/* Mobile: Employee Cards Layout (Vertical) */}
-                        <div className="md:hidden space-y-4">
+                        {/* Planning Grid */}
+                        <div className="space-y-2">
                           {[
-                            { name: 'Anna Smith', role: 'Vendeuse', team: 'Équipe caisse', shifts: [{ day: 'Mar', time: '9h-17h' }, { day: 'Jeu', time: '9h-17h' }, { day: 'Ven', time: '9h-17h' }], color: 'from-blue-500 to-blue-600', badge: 'CAISSE' },
-                            { name: 'John Doe', role: 'Manager', team: 'Équipe terrain', shifts: [{ day: 'Lun', time: '9h-17h' }, { day: 'Mer', time: '9h-17h' }, { day: 'Ven', time: '9h-17h' }, { day: 'Sam', time: '9h-17h' }], color: 'from-emerald-500 to-emerald-600', badge: 'TERRAIN' },
-                            { name: 'Marie Curie', role: 'Technicien', team: 'Équipe support', shifts: [{ day: 'Mar', time: '9h-17h' }, { day: 'Mer', time: '9h-17h' }, { day: 'Jeu', time: '9h-17h' }, { day: 'Dim', time: '9h-17h' }], color: 'from-amber-500 to-amber-600', badge: 'SUPPORT' },
-                            { name: 'Tom Brown', role: 'Vendeur', team: 'Équipe caisse', shifts: [{ day: 'Lun', time: '9h-17h' }, { day: 'Mar', time: '9h-17h' }, { day: 'Jeu', time: '9h-17h' }, { day: 'Ven', time: '9h-17h' }], color: 'from-purple-500 to-purple-600', badge: 'CAISSE' },
+                            { name: 'Marie D.', role: 'Serveuse', absences: [false, true, false, false, false, true, false], present: 5 },
+                            { name: 'Jean P.', role: 'Cuisinier', absences: [false, false, true, true, false, false, false], present: 5 },
+                            { name: 'Sophie L.', role: 'Bar', absences: [false, false, false, false, false, false, true], present: 6 },
                           ].map((employee, empIdx) => (
-                            <div
-                              key={empIdx}
-                              className="bg-white/90 dark:bg-slate-900/90 rounded-xl p-4 border border-slate-200/50 dark:border-slate-800/50 shadow-sm"
-                            >
-                              <div className="flex items-center gap-3 mb-3">
-                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-xs font-bold shadow-md">
+                            <div key={empIdx} className="space-y-1">
+                              <div className="flex items-center justify-between mb-1">
+                                <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
+                                  <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-blue-500 flex items-center justify-center text-white text-[8px] sm:text-[9px] font-semibold flex-shrink-0">
                                   {employee.name.split(' ').map(n => n[0]).join('')}
                                 </div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-center gap-2 mb-1">
-                                    <p className="text-sm font-semibold text-slate-900 dark:text-white">{employee.name}</p>
-                                    <span className="text-[9px] px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-semibold uppercase tracking-tight">
-                                      {employee.badge}
-                                    </span>
+                                  <div className="min-w-0 flex-1">
+                                    <span className="text-[9px] sm:text-[10px] font-medium text-black block truncate">{employee.name}</span>
+                                    <span className="text-[8px] sm:text-[9px] text-slate-700 block truncate">{employee.role}</span>
                                   </div>
-                                  <p className="text-xs text-slate-500 dark:text-slate-400">{employee.role}</p>
                                 </div>
+                                <span className="text-[8px] sm:text-[9px] text-slate-700 flex-shrink-0 ml-2">{employee.present}/7</span>
                               </div>
-                              <div className="flex flex-wrap gap-2">
-                                {employee.shifts.map((shift, shiftIdx) => (
-                                  <div
-                                    key={shiftIdx}
-                                    className={`bg-gradient-to-br ${employee.color} rounded-lg px-3 py-2 text-white shadow-md`}
+                              <div className="grid grid-cols-7 gap-0.5 sm:gap-1">
+                                {employee.absences.map((isAbsent, dayIdx) => (
+                                  <motion.div
+                                    key={dayIdx}
+                                    initial={{ scale: 0 }}
+                                    animate={{ scale: 1 }}
+                                    transition={{ duration: 0.2, delay: 1.6 + empIdx * 0.15 + dayIdx * 0.02 }}
+                                    className={`h-5 sm:h-6 rounded flex items-center justify-center ${
+                                      isAbsent
+                                        ? 'bg-red-100 border border-red-300'
+                                        : 'bg-green-100 border border-green-300'
+                                    }`}
                                   >
-                                    <p className="text-[10px] font-semibold">{shift.day}</p>
-                                    <p className="text-xs font-bold">{shift.time}</p>
-                                  </div>
+                                    {isAbsent ? (
+                                      <XCircle className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-red-600" />
+                                    ) : (
+                                      <CheckCircle2 className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-green-600" />
+                                    )}
+                                  </motion.div>
                                 ))}
                               </div>
                             </div>
                           ))}
                         </div>
 
-                        {/* Desktop: Original Grid Layout */}
-                        <div className="hidden md:block">
-                          {/* Days Header */}
-                          <div className="grid grid-cols-[160px_repeat(7,1fr)] gap-3 mb-4">
-                            <div></div>
-                            {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((day, idx) => (
-                              <div key={day} className="text-center">
-                                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">{day}</p>
-                                <div className="h-12 rounded-xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border border-slate-200/50 dark:border-slate-800/50 flex items-center justify-center shadow-sm">
-                                  <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{idx + 4}</span>
-                                </div>
-                              </div>
-                            ))}
+                        {/* Légende */}
+                        <div className="flex items-center justify-center gap-3 sm:gap-4 mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-slate-200">
+                          <div className="flex items-center gap-1 sm:gap-1.5">
+                            <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded bg-green-100 border border-green-300 flex items-center justify-center">
+                              <CheckCircle2 className="w-1.5 h-1.5 sm:w-2 sm:h-2 text-green-600" />
+                            </div>
+                            <span className="text-[8px] sm:text-[9px] text-slate-500">Présent</span>
                           </div>
-
-                          {/* Employee Rows with Team Labels */}
-                          <div className="space-y-3">
-                            {[
-                              { name: 'Anna Smith', role: 'Vendeuse', team: 'Équipe caisse', shifts: [0, 1, 0, 1, 1, 0, 0], color: 'from-blue-500 to-blue-600', times: ['', '9h-17h', '', '9h-17h', '9h-17h', '', ''], badge: 'CAISSE' },
-                              { name: 'John Doe', role: 'Manager', team: 'Équipe terrain', shifts: [1, 0, 1, 0, 1, 1, 0], color: 'from-emerald-500 to-emerald-600', times: ['9h-17h', '', '9h-17h', '', '9h-17h', '9h-17h', ''], badge: 'TERRAIN' },
-                              { name: 'Marie Curie', role: 'Technicien', team: 'Équipe support', shifts: [0, 1, 1, 1, 0, 0, 1], color: 'from-amber-500 to-amber-600', times: ['', '9h-17h', '9h-17h', '9h-17h', '', '', '9h-17h'], badge: 'SUPPORT' },
-                              { name: 'Tom Brown', role: 'Vendeur', team: 'Équipe caisse', shifts: [1, 1, 0, 1, 1, 0, 0], color: 'from-purple-500 to-purple-600', times: ['9h-17h', '9h-17h', '', '9h-17h', '9h-17h', '', ''], badge: 'CAISSE' },
-                            ].map((employee, empIdx) => (
-                              <div
-                                key={empIdx}
-                                className="grid grid-cols-[160px_repeat(7,1fr)] gap-3"
-                              >
-                                <div className="flex items-center gap-3">
-                                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-xs font-bold shadow-md">
-                                    {employee.name.split(' ').map(n => n[0]).join('')}
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-2 mb-0.5">
-                                      <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">{employee.name}</p>
-                                      <span className="text-[9px] px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-semibold uppercase tracking-tight">
-                                        {employee.badge}
-                                      </span>
-                                    </div>
-                                    <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{employee.role}</p>
-                                  </div>
-                                </div>
-                                {employee.shifts.map((hasShift, dayIdx) => (
-                                  <div key={dayIdx} className="h-14 rounded-xl flex items-center justify-center">
-                                    {hasShift ? (
-                                      <div className={`w-full h-full bg-gradient-to-br ${employee.color} rounded-xl flex flex-col items-center justify-center text-white p-2 shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105`}>
-                                        <span className="text-[10px] font-semibold mb-0.5">{employee.times[dayIdx]}</span>
-                                        <span className="text-[9px] opacity-90 font-medium">Shift</span>
-                                      </div>
-                                    ) : (
-                                      <div className="w-full h-full bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm rounded-xl border border-slate-200/40 dark:border-slate-800/40"></div>
-                                    )}
-                                  </div>
-                                ))}
-                              </div>
-                            ))}
+                          <div className="flex items-center gap-1 sm:gap-1.5">
+                            <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded bg-red-100 border border-red-300 flex items-center justify-center">
+                              <XCircle className="w-1.5 h-1.5 sm:w-2 sm:h-2 text-red-600" />
+                            </div>
+                            <span className="text-[8px] sm:text-[9px] text-slate-500">Absent</span>
                           </div>
                         </div>
-                      </div>
+                      </motion.div>
+
+                      {/* Graphique 2: Charge par Poste (Mode Service si actif) */}
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 1.6 }}
+                        className="bg-white rounded-xl p-3 sm:p-5 border border-slate-200 shadow-sm"
+                      >
+                        <div className="flex items-center justify-between mb-3 sm:mb-4">
+                          <h4 className="text-xs sm:text-sm font-semibold text-black">
+                            {serviceMode ? 'Charge Service (18h-23h)' : 'Charge par Poste'}
+                          </h4>
+                          {serviceMode && (
+                            <span className="text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 bg-orange-100 text-orange-600 rounded-full font-medium">
+                              Service
+                            </span>
+                          )}
+                        </div>
+                        <div className="space-y-3 sm:space-y-4">
+                          {[
+                            { poste: 'Cuisine', charge: 85, max: 100, couleur: 'bg-blue-500', service: 95 },
+                            { poste: 'Salle', charge: 70, max: 100, couleur: 'bg-purple-500', service: 90 },
+                            { poste: 'Bar', charge: 60, max: 100, couleur: 'bg-green-500', service: 75 },
+                            { poste: 'Caissier', charge: 50, max: 100, couleur: 'bg-yellow-500', service: 65 },
+                          ].map((poste, i) => {
+                            const value = serviceMode ? poste.service : poste.charge
+                            return (
+                              <div key={poste.poste}>
+                                <div className="flex items-center justify-between mb-1">
+                                  <span className="text-[10px] sm:text-xs font-medium text-black">{poste.poste}</span>
+                                  <span className="text-[10px] sm:text-xs font-bold text-black">{value}%</span>
+                                </div>
+                                <div className="h-2 sm:h-3 bg-slate-100 rounded-full overflow-hidden">
+                                  <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${value}%` }}
+                                    transition={{ duration: 0.8, delay: 1.7 + i * 0.1 }}
+                                    className={`h-full ${poste.couleur} rounded-full`}
+                                  />
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </motion.div>
+
+                      {/* Graphique 3: Coût Réel vs Prévu */}
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 1.7 }}
+                        className="bg-white rounded-xl p-3 sm:p-5 border border-slate-200 shadow-sm"
+                      >
+                        <h4 className="text-xs sm:text-sm font-semibold text-black mb-3 sm:mb-4">Coût réel vs prévu</h4>
+                        <div className="h-40 sm:h-48 relative">
+                          <svg className="w-full h-full" viewBox="0 0 400 180" preserveAspectRatio="none">
+                            <defs>
+                              <linearGradient id="realGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stopColor="rgba(59, 130, 246, 0.3)" />
+                                <stop offset="100%" stopColor="rgba(59, 130, 246, 0)" />
+                              </linearGradient>
+                              <linearGradient id="plannedGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stopColor="rgba(168, 85, 247, 0.2)" />
+                                <stop offset="100%" stopColor="rgba(168, 85, 247, 0)" />
+                              </linearGradient>
+                            </defs>
+                            {/* Ligne prévu (pointillée) */}
+                            <motion.path
+                              initial={{ pathLength: 0, opacity: 0 }}
+                              animate={{ pathLength: 1, opacity: 1 }}
+                              transition={{ duration: 1, delay: 1.8 }}
+                              d="M 0 140 L 66 135 L 132 130 L 198 125 L 264 120 L 330 115 L 400 110"
+                              stroke="rgb(168, 85, 247)"
+                              strokeWidth="2"
+                              strokeDasharray="4,4"
+                              fill="none"
+                            />
+                            {/* Zone prévu */}
+                            <motion.path
+                              initial={{ pathLength: 0, opacity: 0 }}
+                              animate={{ pathLength: 1, opacity: 1 }}
+                              transition={{ duration: 1, delay: 1.85 }}
+                              d="M 0 140 L 66 135 L 132 130 L 198 125 L 264 120 L 330 115 L 400 110 L 400 180 L 0 180 Z"
+                              fill="url(#plannedGradient)"
+                            />
+                            {/* Zone réel */}
+                            <motion.path
+                              initial={{ pathLength: 0, opacity: 0 }}
+                              animate={{ pathLength: 1, opacity: 1 }}
+                              transition={{ duration: 1, delay: 1.9 }}
+                              d="M 0 145 L 66 140 L 132 135 L 198 130 L 264 125 L 330 120 L 400 115 L 400 180 L 0 180 Z"
+                              fill="url(#realGradient)"
+                            />
+                            {/* Ligne réel */}
+                            <motion.path
+                              initial={{ pathLength: 0, opacity: 0 }}
+                              animate={{ pathLength: 1, opacity: 1 }}
+                              transition={{ duration: 1, delay: 1.95 }}
+                              d="M 0 145 L 66 140 L 132 135 L 198 130 L 264 125 L 330 120 L 400 115"
+                              stroke="rgb(59, 130, 246)"
+                              strokeWidth="3"
+                              fill="none"
+                            />
+                          </svg>
+                          <div className="absolute bottom-0 left-0 right-0 flex justify-between text-[9px] sm:text-xs text-slate-500 px-1 sm:px-2">
+                            {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((day) => (
+                              <span key={day} className="text-[8px] sm:text-[9px]">{day}</span>
+                            ))}
+                          </div>
+                          <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 flex flex-col gap-1.5 sm:gap-2">
+                            <div className="flex items-center gap-1 sm:gap-2">
+                              <div className="w-2 h-2 sm:w-3 sm:h-3 bg-blue-500 rounded"></div>
+                              <span className="text-[9px] sm:text-xs text-slate-600">Réel</span>
+                            </div>
+                            <div className="flex items-center gap-1 sm:gap-2">
+                              <div className="w-2 h-2 sm:w-3 sm:h-3 border-2 border-purple-500"></div>
+                              <span className="text-[9px] sm:text-xs text-slate-600">Prévu</span>
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+
+                      {/* Graphique 4: Fiabilité Équipe */}
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 1.8 }}
+                        className="bg-white rounded-xl p-3 sm:p-5 border border-slate-200 shadow-sm"
+                      >
+                        <h4 className="text-xs sm:text-sm font-semibold text-black mb-3 sm:mb-4">Fiabilité par équipe</h4>
+                        <div className="h-40 sm:h-48 flex items-end gap-2 sm:gap-3">
+                          {[
+                            { team: 'Cuisine', reliability: 92, color: 'bg-blue-500' },
+                            { team: 'Salle', reliability: 88, color: 'bg-purple-500' },
+                            { team: 'Bar', reliability: 95, color: 'bg-green-500' },
+                            { team: 'Caissier', reliability: 100, color: 'bg-emerald-500' },
+                          ].map((team, i) => (
+                            <motion.div
+                              key={team.team}
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              transition={{ duration: 0.6, delay: 1.9 + i * 0.1 }}
+                              className="flex-1 flex flex-col items-center gap-2"
+                            >
+                              <div 
+                                className={`w-full ${team.color} rounded-t-lg transition-all hover:opacity-80 relative`}
+                                style={{ height: `${team.reliability}%`, minHeight: '50px' }}
+                              >
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  <span className="text-[9px] sm:text-xs font-bold text-white">{team.reliability}%</span>
+                                </div>
+                              </div>
+                              <span className="text-[9px] sm:text-xs text-black font-medium">{team.team}</span>
+                            </motion.div>
+                            ))}
+                        </div>
+                      </motion.div>
                     </div>
-                  </div>
+
+                    {/* Day Buttons */}
+                    <div className="flex gap-1.5 sm:gap-2 mt-4 sm:mt-6 overflow-x-auto pb-2 scrollbar-hide">
+                      {['Lun 1', 'Mar 2', 'Mer 3', 'Jeu 4', 'Ven 5'].map((day, idx) => (
+                        <motion.button
+                          key={day}
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.3, delay: 1.8 + idx * 0.05 }}
+                          className={`px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg font-medium text-xs sm:text-sm whitespace-nowrap transition-all flex-shrink-0 ${
+                            idx === 0
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
+                          }`}
+                        >
+                          {day}
+                        </motion.button>
+                      ))}
+                    </div>
+                  </motion.div>
+
+                  {/* Notifications Bar */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 2.0 }}
+                    className="bg-slate-100 border-t border-slate-200 px-4 sm:px-6 py-2 sm:py-3 flex items-center justify-between gap-2"
+                  >
+                    <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                      <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0">
+                        <span className="text-white text-[10px] sm:text-xs">!</span>
+                      </div>
+                      <span className="text-xs sm:text-sm text-slate-700 truncate">
+                        2 demandes de congé en attente
+                      </span>
+                    </div>
+                    <Link href="#" className="text-xs sm:text-sm text-blue-400 hover:text-blue-300 flex-shrink-0">
+                      Voir
+                    </Link>
+                  </motion.div>
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

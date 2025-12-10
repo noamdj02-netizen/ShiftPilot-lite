@@ -23,9 +23,9 @@ export async function POST(request: NextRequest) {
       return errorResponse("Insufficient permissions. Only managers can invite employees.", 403);
     }
 
-    // Vérifier que l'utilisateur a une organisation
-    if (!user.organization_id) {
-      return errorResponse("Organization required. Please complete onboarding first.", 400);
+    // Vérifier que l'utilisateur a un restaurant
+    if (!user.restaurant_id) {
+      return errorResponse("Restaurant required. Please complete onboarding first.", 400);
     }
 
     const body = await request.json();
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
       const { error: updateError } = await supabase
         .from('profiles')
         .update({
-          organization_id: user.organization_id,
+          restaurant_id: user.restaurant_id,
           role: 'EMPLOYEE',
           first_name,
           last_name,
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
       const { data: employee, error: employeeError } = await supabase
         .from('employees')
         .insert({
-          organization_id: user.organization_id,
+          restaurant_id: user.restaurant_id,
           location_id: location_id || null,
           first_name,
           last_name,

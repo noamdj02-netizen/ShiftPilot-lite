@@ -115,7 +115,7 @@ export async function POST(request: NextRequest) {
     const { data: employee, error: employeeError } = await supabase
       .from('employees')
       .insert({
-        organization_id: user.organization_id,
+        restaurant_id: user.restaurant_id,
         location_id: location_id || null,
         profile_id: profileId,
         first_name,
@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
     await supabase
       .from('audit_logs')
       .insert({
-        organization_id: user.organization_id,
+        restaurant_id: user.restaurant_id,
         actor_id: user.id,
         action: 'EMPLOYEE_INVITED',
         payload: { email, first_name, last_name, position }

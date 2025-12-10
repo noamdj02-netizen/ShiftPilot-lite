@@ -50,10 +50,10 @@ export function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-3 px-4 py-2 bg-blue-100/80 border border-blue-200/50 rounded-full"
+              className="inline-flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-100/80 border border-blue-200/50 rounded-full"
             >
               {/* Avatars avec photos de profil */}
-              <div className="flex -space-x-2">
+              <div className="flex -space-x-1.5 sm:-space-x-2">
                 {[
                   'https://i.pravatar.cc/150?img=1',
                   'https://i.pravatar.cc/150?img=12',
@@ -64,12 +64,12 @@ export function Hero() {
                     key={i}
                     src={avatarUrl}
                     alt={`Utilisateur ${i + 1}`}
-                    className="w-7 h-7 rounded-full border-2 border-white object-cover"
+                    className="w-5 h-5 sm:w-7 sm:h-7 rounded-full border-2 border-white object-cover"
                   />
                 ))}
               </div>
-              <span className="text-sm font-medium text-blue-700">
-                Utilisé par plus de 1M+ utilisateurs
+              <span className="text-xs sm:text-sm font-medium text-blue-700">
+                <span className="hidden sm:inline">Utilisé par plus de </span>1M+ utilisateurs
               </span>
             </motion.div>
 
@@ -78,7 +78,7 @@ export function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold tracking-tight leading-tight text-slate-900 max-w-5xl"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold tracking-tight leading-tight text-black max-w-5xl px-4"
             >
               <span className="text-black">Planifiez Vos Équipes. Unifiez Vos Sites.</span>{' '}
               <span className="text-blue-600">Simplifiez</span>{' '}
@@ -90,7 +90,7 @@ export function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-lg md:text-xl lg:text-2xl text-slate-600 leading-relaxed max-w-3xl font-light"
+              className="text-base sm:text-lg md:text-xl lg:text-2xl text-slate-700 leading-relaxed max-w-3xl font-light px-4"
             >
               Centralisez vos plannings, vos équipes et vos sites sur une seule plateforme. La performance terrain, sans la complexité.
             </motion.p>
@@ -100,12 +100,14 @@ export function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
+              className="px-4"
             >
               <Link
                 href="#fonctionnalites"
-                className="inline-flex items-center justify-center px-8 py-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium text-base transition-all duration-300 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/40 hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center px-6 py-3 sm:px-8 sm:py-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm sm:text-base transition-all duration-300 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/40 hover:-translate-y-0.5 w-full sm:w-auto min-h-[44px] sm:min-h-[52px] touch-manipulation"
               >
-                Découvrir les fonctionnalités
+                <span className="hidden sm:inline">Découvrir les fonctionnalités</span>
+                <span className="sm:hidden">Découvrir</span>
               </Link>
             </motion.div>
           </div>

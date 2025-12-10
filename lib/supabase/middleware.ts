@@ -1,98 +1,78 @@
-import { createServerClient } from "@supabase/ssr";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-// Validation stricte des variables d'environnement pour middleware
-function getMiddlewareEnvVars() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  // Support des nouvelles clés publishable et des anciennes clés anon
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY || 
-                          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  // En middleware, on permet des valeurs par défaut pour éviter de casser le build,
-  // mais on log un warning
-  if (!supabaseUrl || supabaseUrl === "https://your-project.supabase.co" || supabaseUrl === "https://example.com" || supabaseUrl === "https://placeholder.supabase.co") {
-    console.error(
-      "[Middleware Error] NEXT_PUBLIC_SUPABASE_URL is missing or not configured. " +
-      "Middleware will not function correctly. Please configure environment variables."
-    );
-  }
-
-  // Vérifier si la clé est valide (publishable commence par sb_, anon par eyJ)
-  const isValidKey = supabaseAnonKey && 
-                     supabaseAnonKey !== "your-anon-key-here" && 
-                     supabaseAnonKey !== "placeholder-key" &&
-                     supabaseAnonKey !== "placeholder" &&
-                     (supabaseAnonKey.startsWith('sb_') || supabaseAnonKey.startsWith('eyJ'));
-
-  if (!isValidKey) {
-    console.error(
-      "[Middleware Error] NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY or NEXT_PUBLIC_SUPABASE_ANON_KEY is missing or not configured. " +
-      "Middleware will not function correctly. Please configure environment variables."
-    );
-  }
-
-  // Utiliser des valeurs par défaut pour éviter de casser complètement le middleware
-  // mais cela empêchera l'authentification de fonctionner
-  return {
-    supabaseUrl: supabaseUrl || "https://placeholder.supabase.co",
-    supabaseAnonKey: supabaseAnonKey || "placeholder-key",
-  };
-}
-
+/**
+ * Middleware helper pour gérer la session Supabase dans Edge Runtime
+ * Cette fonction est optimisée pour fonctionner dans l'environnement Edge de Next.js
+ */
 export async function updateSession(request: NextRequest): Promise<{
   response: NextResponse;
   user: any | null;
 }> {
-  let supabaseResponse = NextResponse.next({
+  let response = NextResponse.next({
     request: {
       headers: request.headers,
     },
   });
 
-  const { supabaseUrl, supabaseAnonKey } = getMiddlewareEnvVars();
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY || 
+                          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  const supabase = createServerClient(
-    supabaseUrl,
-    supabaseAnonKey,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            request.cookies.set(name, value)
-          );
-          supabaseResponse = NextResponse.next({
-            request,
-          });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          );
-        },
-      },
-    }
-  );
-
-  // Get user (with error handling to avoid breaking middleware)
-  let user = null;
-  try {
-    const {
-      data: { user: supabaseUser },
-      error,
-    } = await supabase.auth.getUser();
-    
-    if (error) {
-      // Silently fail - user is not authenticated
-      user = null;
-    } else {
-      user = supabaseUser;
-    }
-  } catch (error) {
-    // Silently fail - user is not authenticated
-    // This prevents middleware from crashing on auth errors
-    user = null;
+  // Si les variables d'environnement ne sont pas configurées, on retourne une réponse sans authentification
+  if (!supabaseUrl || !supabaseAnonKey || 
+      supabaseUrl === "https://your-project.supabase.co" || 
+      supabaseAnonKey === "your-anon-key-here") {
+    return { response, user: null };
   }
 
-  return { response: supabaseResponse, user };
+  try {
+    const supabase = createServerClient(
+      supabaseUrl,
+      supabaseAnonKey,
+      {
+        cookies: {
+          getAll() {
+            return request.cookies.getAll();
+          },
+          setAll(cookiesToSet: Array<{ name: string; value: string; options?: CookieOptions }>) {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              request.cookies.set(name, value);
+            });
+            response = NextResponse.next({
+              request,
+            });
+            cookiesToSet.forEach(({ name, value, options }) => {
+              response.cookies.set(name, value, options);
+            });
+          },
+        },
+      }
+    );
+
+    // Tenter de récupérer l'utilisateur
+    // On catch les erreurs pour éviter de casser le middleware
+    let user = null;
+    try {
+      const {
+        data: { user: supabaseUser },
+        error,
+      } = await supabase.auth.getUser();
+      
+      if (!error && supabaseUser) {
+        user = supabaseUser;
+      }
+    } catch (error) {
+      // Silently fail - l'utilisateur n'est pas authentifié
+      // C'est normal si les cookies sont invalides ou expirés
+      user = null;
+    }
+
+    return { response, user };
+  } catch (error) {
+    // En cas d'erreur critique, on retourne une réponse sans authentification
+    // Cela permet au site de continuer à fonctionner même si Supabase a un problème
+    console.error('[Middleware] Error updating session:', error);
+    return { response, user: null };
+  }
 }

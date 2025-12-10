@@ -17,9 +17,9 @@ export async function middleware(request: NextRequest) {
 
   // User is authenticated
   if (user) {
-    // Redirect authenticated users away from auth pages to portal for smart routing
+    // Redirect authenticated users away from login page to dashboard
     if (isLoginRoute) {
-      return NextResponse.redirect(new URL('/portal', request.url));
+      return NextResponse.redirect(new URL('/dashboard/employer', request.url));
     }
     
     // Portal route is allowed for authenticated users (it handles routing internally)
@@ -27,18 +27,14 @@ export async function middleware(request: NextRequest) {
       return response;
     }
     
-    // Redirect authenticated users away from onboarding if they already completed it
-    // Note: We don't check DB here for performance - let the page handle the check
-    // This avoids DB queries on every request in middleware
-    if (isOnboardingRoute && pathname === '/onboarding/employer') {
-      // Let the onboarding page check if org exists and redirect if needed
-      // This is more performant than checking DB in middleware
-      return response;
+    // Onboarding routes are no longer used - redirect to dashboard
+    if (isOnboardingRoute) {
+      return NextResponse.redirect(new URL('/dashboard/employer', request.url));
     }
   } else {
     // User is NOT authenticated - protect routes
     if (isDashboardRoute || isOnboardingRoute) {
-      const redirectUrl = new URL('/login/employer', request.url);
+      const redirectUrl = new URL('/login', request.url);
       redirectUrl.searchParams.set('redirect', pathname);
       return NextResponse.redirect(redirectUrl);
     }

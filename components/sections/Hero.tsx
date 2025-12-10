@@ -1,818 +1,371 @@
 'use client'
 
-import { useRef, useState, useEffect } from 'react'
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import Link from 'next/link'
-import React from 'react'
-import { AreaChart, Area, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts'
-import { demoEmployees, demoShifts, demoDailyTotals, demoKPIs } from '@/lib/demo-data'
 import { Navbar } from '@/components/layout/Navbar'
-import { Logo } from '@/components/ui/Logo'
-
-type DemoView = 'dashboard' | 'planning' | 'employees'
 
 export function Hero() {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [hoveredCard, setHoveredCard] = useState<number | null>(null)
-  const [activeView, setActiveView] = useState<DemoView>('dashboard')
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end start'],
-  })
-
-  const yTitle = useTransform(scrollYProgress, [0, 1], [0, -50])
-  const ySub = useTransform(scrollYProgress, [0, 1], [0, -30])
-  const scaleDashboard = useTransform(scrollYProgress, [0, 0.4], [1, 1.05])
-  const opacityDashboard = useTransform(scrollYProgress, [0, 0.3], [1, 0.8])
-  const yDashboard = useTransform(scrollYProgress, [0, 0.4], [0, -40])
-
-  // Animated counter for KPIs
-  const AnimatedNumber = ({ value, suffix = '', delay = 0 }: { value: string | number, suffix?: string, delay?: number }) => {
-    const [displayValue, setDisplayValue] = useState(0)
-    const numValue = typeof value === 'string' ? parseFloat(value.replace(/[^0-9.]/g, '')) : value
-
-    useEffect(() => {
-      const timer = setTimeout(() => {
-        const duration = 1200
-        const steps = 40
-        const increment = numValue / steps
-        let current = 0
-        const interval = setInterval(() => {
-          current += increment
-          if (current >= numValue) {
-            setDisplayValue(numValue)
-            clearInterval(interval)
-          } else {
-            setDisplayValue(current)
-          }
-        }, duration / steps)
-        return () => clearInterval(interval)
-      }, delay * 1000)
-      return () => clearTimeout(timer)
-    }, [numValue, delay])
-
-    if (typeof value === 'string' && value.includes('€')) {
-      return <>{displayValue.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}€{suffix}</>
-    }
-    if (typeof value === 'string' && value.includes('/')) {
-      return <>{value}</>
-    }
-    if (typeof value === 'string' && value.includes('.')) {
-      return <>{displayValue.toFixed(2)}€{suffix}</>
-    }
-    return <>{Math.round(displayValue)}{suffix}</>
-  }
-
   return (
     <section
-      ref={containerRef}
-      className="relative min-h-[100vh] w-full pt-20 lg:pt-24 flex flex-col items-center overflow-x-hidden font-sans text-slate-900 dark:text-slate-100 bg-[#F5F5F7] dark:bg-[#000000]"
+      data-hero-section="true"
+      className="relative min-h-0 md:min-h-[80vh] w-full pt-20 md:pt-24 lg:pt-24 pb-8 md:pb-16 lg:pb-16 px-4 md:px-6 lg:px-8 overflow-x-hidden font-sans bg-white dark:bg-slate-950"
+      style={{ zIndex: 0 }}
     >
-      {/* Ambient Light */}
-      <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[100vw] h-[100vh] bg-gradient-to-b from-blue-400/10 to-transparent pointer-events-none blur-[120px] dark:opacity-20"></div>
-
-      {/* Navbar in Hero */}
-      <div className="relative z-10 w-full flex justify-center mb-12 lg:mb-16">
-        <Navbar />
-      </div>
-
-      <div className="relative z-10 flex flex-col items-center text-center px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
-        {/* Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
-          className="mb-8 px-3 py-1 rounded-full border border-black/10 dark:border-white/15 bg-white/40 dark:bg-white/5 backdrop-blur-md text-[11px] font-semibold tracking-wider uppercase text-black/60 dark:text-white/60"
-        >
-          Nouvelle Version Enterprise
-        </motion.div>
-
-        {/* Title */}
-        <motion.h1
-          style={{ y: yTitle }}
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="text-6xl md:text-8xl font-semibold tracking-tighter leading-[1.05] text-black dark:text-white"
-        >
-          Planifiez.<br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-b from-black to-black/40 dark:from-white dark:to-white/40">
-            Unifiez.
-          </span>{' '}
-          <span className="relative inline-block">
-            <span className="absolute -inset-1 bg-blue-100 dark:bg-blue-900/30 -skew-y-2 rounded-lg -z-10"></span>
-            <span className="text-blue-600 dark:text-blue-400">
-              Simplifiez.
-            </span>
-          </span>
-        </motion.h1>
-
-        {/* Subtext */}
-        <motion.p
-          style={{ y: ySub }}
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-8 text-xl md:text-2xl font-medium text-black/60 dark:text-white/60 max-w-2xl leading-relaxed"
-        >
-          Une orchestration parfaite pour les entreprises multi-sites.
-          <br />
-          La puissance sans la complexité.
-        </motion.p>
-
-        {/* Buttons */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="mt-10 flex items-center gap-4"
-        >
-          <Link
-            href="/register"
-            className="h-12 px-8 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-medium text-lg transition-colors flex items-center justify-center shadow-lg shadow-blue-500/20"
-          >
-            Commencer
-          </Link>
-          <button className="h-12 px-8 rounded-full text-blue-600 dark:text-blue-400 font-medium text-lg hover:bg-blue-50 dark:hover:bg-white/5 transition-colors flex items-center gap-2">
-            Voir la démo <span className="material-symbols-outlined text-xl">play_circle</span>
-          </button>
-        </motion.div>
-      </div>
-
-      {/* INTERACTIVE DEMO SECTION */}
+      {/* Premium Background with Gradient Bloom */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50/40 via-indigo-50/30 via-purple-50/20 to-pink-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 pointer-events-none" style={{ zIndex: -1 }}></div>
+      
+      {/* Animated Bloom Halos */}
       <motion.div
-        style={{ scale: scaleDashboard, opacity: opacityDashboard, y: yDashboard }}
-        initial={{ opacity: 0, y: 100 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.2, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="relative mt-16 lg:mt-24 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8"
-      >
-        {/* Badge DÉMO INTERACTIVE */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="mb-4 flex items-center justify-center"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-surface-dark/80 backdrop-blur-xl rounded-full border border-black/10 dark:border-white/10 shadow-lg">
-            <span className="material-symbols-outlined text-accent text-base">play_circle</span>
-            <span className="text-xs font-semibold tracking-wider uppercase text-black/60 dark:text-white/60">
-              DÉMO INTERACTIVE
-            </span>
-          </div>
-        </motion.div>
+        animate={{
+          scale: [1, 1.2, 1],
+          opacity: [0.3, 0.5, 0.3],
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        className="absolute top-1/4 right-1/4 w-[300px] h-[300px] sm:w-[400px] sm:h-[400px] lg:w-[600px] lg:h-[600px] bg-gradient-to-r from-blue-400/20 via-cyan-400/15 to-purple-400/20 rounded-full blur-[80px] sm:blur-[100px] lg:blur-[120px] pointer-events-none"
+        style={{ zIndex: -1 }}
+      />
+      <motion.div
+        animate={{
+          scale: [1.2, 1, 1.2],
+          opacity: [0.2, 0.4, 0.2],
+        }}
+        transition={{
+          duration: 10,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 1,
+        }}
+        className="absolute bottom-1/4 left-1/4 w-[250px] h-[250px] sm:w-[350px] sm:h-[350px] lg:w-[500px] lg:h-[500px] bg-gradient-to-r from-purple-400/20 via-pink-400/15 to-blue-400/20 rounded-full blur-[60px] sm:blur-[80px] lg:blur-[100px] pointer-events-none"
+        style={{ zIndex: -1 }}
+      />
 
-        {/* Navigation Tabs - Above Dashboard */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.7 }}
-          className="mb-4 flex items-center justify-center gap-2"
-        >
-          <div className="flex items-center gap-1 bg-white/80 dark:bg-surface-dark/80 backdrop-blur-xl rounded-full p-1.5 border border-black/10 dark:border-white/10 shadow-lg">
-            {[
-              { id: 'dashboard' as DemoView, label: 'Dashboard', icon: 'dashboard' },
-              { id: 'planning' as DemoView, label: 'Planning', icon: 'calendar_month' },
-              { id: 'employees' as DemoView, label: 'Collaborateurs', icon: 'group' },
-            ].map((view) => (
-              <motion.button
-                key={view.id}
-                onClick={() => setActiveView(view.id)}
-                className={`relative px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
-                  activeView === view.id
-                    ? 'text-white'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {activeView === view.id && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute inset-0 bg-gradient-to-r from-accent to-primary rounded-full"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                  />
-                )}
-                <span className="material-symbols-outlined text-base relative z-10">
-                  {view.icon}
-                </span>
-                <span className="relative z-10 hidden sm:inline">{view.label}</span>
-              </motion.button>
-            ))}
-          </div>
-        </motion.div>
+      {/* Subtle Grid Texture */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] opacity-30 dark:opacity-10 pointer-events-none" style={{ zIndex: -1 }}></div>
 
-          {/* Hardware Frame - Enhanced */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-          className="relative rounded-[1.5rem] md:rounded-[2rem] p-1 md:p-2 bg-gradient-to-b from-black/5 to-black/20 dark:from-white/10 dark:to-white/5 backdrop-blur-2xl border border-black/5 dark:border-white/10 shadow-2xl group mx-auto max-w-[95vw]"
-        >
-          {/* Glow effect */}
-          <motion.div
-            className="absolute -inset-0.5 md:-inset-1 bg-gradient-to-r from-accent/20 via-primary/20 to-accent/20 rounded-[1.5rem] md:rounded-[2rem] blur-lg md:blur-xl"
-            animate={{ opacity: [0, 0.3, 0] }}
-            transition={{ duration: 3, repeat: Infinity }}
-          />
+      {/* Navbar */}
+      <Navbar />
+
+      {/* Main Content Container */}
+      <div className="relative max-w-7xl mx-auto px-4 md:px-6 lg:px-8 pb-8 md:pb-16 lg:pb-16" style={{ zIndex: 0 }}>
+        <div className="flex flex-col md:grid md:grid-cols-2 gap-8 md:gap-8 lg:gap-12 items-center">
           
-          {/* Screen Content */}
-          <div className="relative rounded-2xl md:rounded-3xl overflow-hidden bg-white dark:bg-[#1C1C1E] aspect-[9/16] md:aspect-[16/10] border border-black/5 dark:border-white/5 shadow-inner h-[600px] md:h-auto">
-            {/* REAL DASHBOARD UI with Sidebar */}
-            <div className="absolute inset-0 flex overflow-hidden">
-              {/* Sidebar */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.6 }}
-                className="hidden md:flex w-16 md:w-20 bg-slate-50 dark:bg-[#0F172A] border-r border-slate-200 dark:border-slate-800 flex-col items-center py-4 gap-6"
+          {/* LEFT COLUMN - Text Content */}
+          <div className="text-center md:text-left space-y-5 md:space-y-6 w-full max-w-full md:max-w-2xl order-1 md:order-1">
+            {/* Main Title */}
+            <div>
+              <h1 className="text-xl md:text-4xl lg:text-6xl xl:text-7xl font-bold tracking-tight leading-[1.2] md:leading-tight text-slate-900 dark:text-white">
+                La gestion des plannings{' '}
+                <span className="relative inline-block">
+                  <span className="relative">réinventée</span>
+                  <span className="absolute bottom-0 md:bottom-1 left-0 right-0 h-1 md:h-3 bg-gradient-to-r from-blue-400/30 via-cyan-400/30 to-purple-400/30 dark:from-blue-500/20 dark:via-cyan-500/20 dark:to-purple-500/20 -z-0"></span>
+                </span>{' '}
+                pour les équipes terrain.
+              </h1>
+            </div>
+
+            {/* Subtitle */}
+            <div>
+              <p className="text-sm md:text-lg lg:text-xl xl:text-2xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-full md:max-w-2xl font-light">
+                ShiftPilot automatise vos horaires, simplifie la communication et vous fait gagner un temps précieux. Pour les managers, RH et PME.
+              </p>
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col md:flex-row gap-4 w-full">
+              <Link
+                href="/register"
+                className="group relative w-full md:w-auto inline-flex items-center justify-center px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold text-base transition-all duration-300 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/40 hover:-translate-y-0.5 overflow-hidden"
               >
-                {/* Logo */}
-                <div className="flex items-center justify-center min-h-[120px] py-4">
-                  <div className="flex flex-col items-center justify-center gap-2">
-                    <Logo size={24} />
-                  </div>
-                </div>
+                <span className="relative flex items-center gap-2">
+                  Démarrer l'essai gratuit
+                  <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </span>
+              </Link>
+
+              <Link
+                href="/register"
+                className="group w-full md:w-auto inline-flex items-center justify-center px-6 py-3 rounded-xl border-2 border-slate-300/80 dark:border-slate-700/80 text-slate-700 dark:text-slate-200 hover:bg-slate-50/80 dark:hover:bg-slate-900/80 backdrop-blur-sm font-semibold text-base transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+              >
+                Demander une démo
+              </Link>
+            </div>
+          </div>
+
+          {/* RIGHT COLUMN - Visuals - Hidden on mobile, visible on desktop */}
+          <div className="hidden md:block relative mt-8 md:mt-0 w-full order-2 md:order-2">
+            {/* Dashboard Mockup with Glassmorphism */}
+            <div className="relative w-full max-w-full md:max-w-3xl mx-auto lg:mx-0">
+              <div className="relative">
+                {/* Glow Effect Behind Dashboard */}
+                <div className="absolute -inset-2 md:-inset-4 bg-gradient-to-r from-blue-500/20 via-cyan-500/20 to-purple-500/20 rounded-[2rem] blur-2xl opacity-60 pointer-events-none" style={{ zIndex: -1 }}></div>
                 
-                {/* Navigation */}
-                <div className="flex flex-col gap-2 flex-1">
-                  {[
-                    { icon: 'dashboard', label: 'Tableau de bord', view: 'dashboard' as DemoView },
-                    { icon: 'calendar_month', label: 'Planning', view: 'planning' as DemoView },
-                    { icon: 'group', label: 'Employés', view: 'employees' as DemoView },
-                    { icon: 'schedule', label: 'Disponibilités', view: 'planning' as DemoView },
-                    { icon: 'verified', label: 'Conformité', view: 'dashboard' as DemoView },
-                  ].map((item, idx) => {
-                    const isActive = activeView === item.view
-                    return (
-                      <motion.button
-                        key={idx}
-                        onClick={() => setActiveView(item.view)}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                        className={`w-10 h-10 rounded-lg flex items-center justify-center cursor-pointer transition-colors ${
-                          isActive
-                            ? 'bg-accent/20 text-accent'
-                            : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
-                        }`}
-                        title={item.label}
-                      >
-                        <span className="material-symbols-outlined text-xl">{item.icon}</span>
-                      </motion.button>
-                    )
-                  })}
-                </div>
-
-                {/* Settings */}
-                <motion.button
-                  whileHover={{ scale: 1.1, rotate: 90 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-10 h-10 rounded-lg flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors"
-                  title="Paramètres"
-                >
-                  <span className="material-symbols-outlined text-xl">settings</span>
-                </motion.button>
-              </motion.div>
-
-              {/* Main Content */}
-              <div className="flex-1 flex flex-col overflow-hidden">
-                {/* Header */}
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.7 }}
-                  className="px-4 md:px-6 py-3 md:py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between"
-                >
-                  <div className="flex items-center gap-3">
-                    {/* Mobile Menu Button */}
-                    <button className="md:hidden p-1 -ml-1 text-slate-500">
-                        <span className="material-symbols-outlined">menu</span>
-                    </button>
-                    <div>
-                        <AnimatePresence mode="wait">
-                          <motion.h2
-                            key={activeView}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: 10 }}
-                            transition={{ duration: 0.2 }}
-                            className="text-base md:text-xl font-bold text-slate-900 dark:text-white"
-                          >
-                            {activeView === 'dashboard' ? 'Tableau de bord' : activeView === 'planning' ? 'Planning' : 'Collaborateurs'}
-                          </motion.h2>
-                        </AnimatePresence>
-                        <p className="text-[10px] md:text-sm text-slate-500 dark:text-slate-400 mt-0.5 hidden sm:block">
-                          {activeView === 'dashboard' ? 'Vue d\'ensemble de votre activité' : activeView === 'planning' ? 'Gestion des plannings et shifts' : 'Gestion des équipes'}
-                        </p>
+                <div className="relative bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl rounded-xl md:rounded-2xl shadow-2xl overflow-hidden border border-slate-200/50 dark:border-slate-800/50">
+                  {/* Top Header Bar - Clean & Light */}
+                  <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/50 px-4 md:px-6 py-3 md:py-4 flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 md:gap-3 min-w-0">
+                      <span className="text-xs md:text-sm font-medium text-slate-600 dark:text-slate-400 truncate">Voir dashboard</span>
+                      <span className="text-[10px] md:text-xs px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium whitespace-nowrap">
+                        Semaine 42
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
+                      <button className="px-2 md:px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs md:text-xs font-semibold flex items-center gap-1 md:gap-1.5 shadow-sm transition-all duration-200">
+                        <svg className="w-3 h-3 md:w-3.5 md:h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        <span className="hidden md:inline">IA</span>
+                      </button>
+                      <div className="w-8 h-8 md:w-9 md:h-9 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-xs font-bold shadow-md">
+                        AM
+                      </div>
+                      <button className="w-8 h-8 md:w-9 md:h-9 rounded-full flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 backdrop-blur-sm transition-all duration-200">
+                        <svg className="w-4 h-4 md:w-4 md:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                        </svg>
+                      </button>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 md:gap-3">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="flex items-center gap-2 px-2 md:px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg text-[10px] md:text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-                    >
-                      <span className="text-slate-600 dark:text-slate-300 truncate max-w-[60px] md:max-w-none">Semaine 42</span>
-                      <span className="material-symbols-outlined text-sm">expand_more</span>
-                    </motion.button>
-                    <motion.div
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="size-7 md:size-10 rounded-full bg-accent flex items-center justify-center text-white text-[10px] md:text-xs font-bold cursor-pointer shadow-lg"
-                    >
-                      AM
-                    </motion.div>
-                  </div>
-                </motion.div>
 
-                {/* Dashboard Content */}
-                <div className="flex-1 overflow-y-auto p-3 md:p-4">
-                  <AnimatePresence mode="wait">
-                    {activeView === 'dashboard' && (
-                      <motion.div
-                        key="dashboard"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.3 }}
-                        className="space-y-3 md:space-y-4 h-full"
-                      >
-                        {/* Header */}
-                        <div className="flex items-center justify-between">
+                  {/* Main Content - Mobile: Vertical Layout */}
+                  <div className="flex flex-col md:flex-row">
+                    {/* Dark Sidebar - Hidden on mobile */}
+                    <div className="hidden md:flex w-16 bg-slate-800/95 dark:bg-slate-950/95 backdrop-blur-xl flex-col items-center py-6 gap-5 border-r border-slate-700/50 dark:border-slate-800/50">
+                      <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
+                        <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                        </svg>
+                      </div>
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white/50 hover:bg-white/10 transition-all duration-300 cursor-pointer group">
+                        <svg className="w-5 h-5 group-hover:text-white/70 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white/50 hover:bg-white/10 transition-all duration-300 cursor-pointer group">
+                        <svg className="w-5 h-5 group-hover:text-white/70 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                      </div>
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white/50 hover:bg-white/10 transition-all duration-300 cursor-pointer group">
+                        <svg className="w-5 h-5 group-hover:text-white/70 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                      </div>
+                    </div>
+
+                    {/* Main Content */}
+                    <div className="flex-1 min-w-0">
+                      {/* Section Header */}
+                      <div className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl px-4 md:px-6 lg:px-8 py-4 md:py-6 border-b border-slate-200/50 dark:border-slate-800/50">
+                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-0 mb-4 md:mb-6">
                           <div>
-                            <h2 className="text-base md:text-lg font-semibold text-black dark:text-white">Bonjour, John</h2>
-                            <p className="text-[10px] md:text-xs text-black/60 dark:text-white/60 mt-0.5">Voici ce qui se passe dans votre restaurant aujourd'hui</p>
+                            <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-slate-900 dark:text-white mb-1 tracking-tight">Planning de la semaine</h3>
+                            <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400">4-10 Décembre 2025</p>
                           </div>
-                          <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="px-2 md:px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-full text-[9px] md:text-xs font-medium flex items-center gap-1 shadow-lg"
-                          >
-                            <span className="material-symbols-outlined text-xs md:text-sm">auto_awesome</span>
-                            <span className="hidden sm:inline">IA</span>
-                          </motion.button>
+                          <div className="flex items-center gap-2">
+                            <button className="px-2 md:px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 transition-colors">
+                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                              </svg>
+                            </button>
+                            <button className="px-2 md:px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 transition-colors">
+                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                            </button>
+                          </div>
                         </div>
 
-                        {/* Stats Grid */}
-                        <div className="grid grid-cols-2 gap-2 md:gap-3">
+                        {/* Compact Stats Row - Mobile: 2x2 Grid */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-3">
                           {[
                             { 
-                              label: 'Employés présents', 
-                              val: '12/15', 
-                              delta: '+2', 
-                              trend: 'up',
-                              icon: 'group',
-                              iconBg: 'bg-orange-100 dark:bg-orange-900/30',
-                              iconColor: 'text-orange-600 dark:text-orange-400'
+                              label: 'Couverture', 
+                              value: '95%', 
+                              trend: '+2%',
+                              icon: (
+                                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                </svg>
+                              ), 
+                              bgColor: 'bg-emerald-50 dark:bg-emerald-950/20', 
+                              iconColor: 'text-emerald-600 dark:text-emerald-400',
+                              trendColor: 'text-emerald-600 dark:text-emerald-400'
                             },
                             { 
-                              label: 'Heures planifiées', 
-                              val: '145h', 
-                              delta: '-5h', 
-                              trend: 'down',
-                              icon: 'schedule',
-                              iconBg: 'bg-purple-100 dark:bg-purple-900/30',
-                              iconColor: 'text-purple-600 dark:text-purple-400'
-                            },
-                            { 
-                              label: 'Conformité planning', 
-                              val: '98%', 
-                              delta: '+3%', 
-                              trend: 'up',
-                              icon: 'verified',
-                              iconBg: 'bg-green-100 dark:bg-green-900/30',
-                              iconColor: 'text-green-600 dark:text-green-400'
+                              label: 'Shifts aujourd\'hui', 
+                              value: '8', 
+                              trend: '3 équipes',
+                              icon: (
+                                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                              ), 
+                              bgColor: 'bg-blue-50 dark:bg-blue-950/20', 
+                              iconColor: 'text-blue-600 dark:text-blue-400',
+                              trendColor: 'text-blue-600 dark:text-blue-400'
                             },
                             { 
                               label: 'Coût semaine', 
-                              val: '3,240€', 
-                              delta: '-120€', 
-                              trend: 'down',
-                              icon: 'euro',
-                              iconBg: 'bg-blue-100 dark:bg-blue-900/30',
-                              iconColor: 'text-blue-600 dark:text-blue-400'
+                              value: '€5.2K', 
+                              trend: '-120€',
+                              icon: (
+                                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                              ), 
+                              bgColor: 'bg-amber-50 dark:bg-amber-950/20', 
+                              iconColor: 'text-amber-600 dark:text-amber-400',
+                              trendColor: 'text-amber-600 dark:text-amber-400'
+                            },
+                            { 
+                              label: 'Équipe active', 
+                              value: '12/15', 
+                              trend: '+2',
+                              icon: (
+                                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                </svg>
+                              ), 
+                              bgColor: 'bg-purple-50 dark:bg-purple-950/20', 
+                              iconColor: 'text-purple-600 dark:text-purple-400',
+                              trendColor: 'text-purple-600 dark:text-purple-400'
                             },
                           ].map((stat, idx) => (
-                            <motion.div
+                            <div
                               key={idx}
-                              initial={{ opacity: 0, y: 20 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ duration: 0.5, delay: 0.8 + idx * 0.1 }}
-                              whileHover={{ scale: 1.02, y: -2 }}
-                              className="bg-white dark:bg-[#1C1C1E] rounded-lg border border-black/5 dark:border-white/5 p-2 md:p-3 shadow-sm h-full flex flex-col"
+                              className={`${stat.bgColor} rounded-xl p-3 md:p-3 border border-slate-200/30 dark:border-slate-800/30`}
                             >
-                              <div className="flex items-start justify-between mb-2">
-                                <div className={`size-7 md:size-9 rounded-lg ${stat.iconBg} flex items-center justify-center`}>
-                                  <span className={`material-symbols-outlined ${stat.iconColor} text-sm md:text-base`}>
-                                    {stat.icon}
-                                  </span>
+                              <div className="flex items-center gap-2 mb-2">
+                                <div className={`${stat.iconColor} p-1.5 rounded-lg bg-white/60 dark:bg-slate-800/60`}>
+                                  {stat.icon}
                                 </div>
-                                <div className={`flex items-center gap-0.5 text-[9px] md:text-[10px] font-semibold ${
-                                  stat.trend === 'up' ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' : 'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400'
-                                } px-1.5 py-0.5 rounded-full`}>
-                                  {stat.trend === 'up' ? (
-                                    <span className="material-symbols-outlined text-[10px]">trending_up</span>
-                                  ) : (
-                                    <span className="material-symbols-outlined text-[10px]">trending_down</span>
-                                  )}
-                                  {stat.delta}
+                                <span className={`text-base md:text-base font-bold ${stat.iconColor}`}>{stat.value}</span>
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <p className="text-[10px] md:text-[10px] font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">{stat.label}</p>
+                                <span className={`text-[9px] md:text-[9px] font-semibold ${stat.trendColor}`}>{stat.trend}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Planning Grid Section - Premium - Mobile: Vertical Cards */}
+                      <div className="p-4 md:p-6 lg:p-8 bg-gradient-to-b from-slate-50/40 to-white/60 dark:from-slate-950/40 dark:to-slate-900/60 backdrop-blur-sm">
+                        {/* Mobile: Employee Cards Layout (Vertical) */}
+                        <div className="md:hidden space-y-4">
+                          {[
+                            { name: 'Anna Smith', role: 'Vendeuse', team: 'Équipe caisse', shifts: [{ day: 'Mar', time: '9h-17h' }, { day: 'Jeu', time: '9h-17h' }, { day: 'Ven', time: '9h-17h' }], color: 'from-blue-500 to-blue-600', badge: 'CAISSE' },
+                            { name: 'John Doe', role: 'Manager', team: 'Équipe terrain', shifts: [{ day: 'Lun', time: '9h-17h' }, { day: 'Mer', time: '9h-17h' }, { day: 'Ven', time: '9h-17h' }, { day: 'Sam', time: '9h-17h' }], color: 'from-emerald-500 to-emerald-600', badge: 'TERRAIN' },
+                            { name: 'Marie Curie', role: 'Technicien', team: 'Équipe support', shifts: [{ day: 'Mar', time: '9h-17h' }, { day: 'Mer', time: '9h-17h' }, { day: 'Jeu', time: '9h-17h' }, { day: 'Dim', time: '9h-17h' }], color: 'from-amber-500 to-amber-600', badge: 'SUPPORT' },
+                            { name: 'Tom Brown', role: 'Vendeur', team: 'Équipe caisse', shifts: [{ day: 'Lun', time: '9h-17h' }, { day: 'Mar', time: '9h-17h' }, { day: 'Jeu', time: '9h-17h' }, { day: 'Ven', time: '9h-17h' }], color: 'from-purple-500 to-purple-600', badge: 'CAISSE' },
+                          ].map((employee, empIdx) => (
+                            <div
+                              key={empIdx}
+                              className="bg-white/90 dark:bg-slate-900/90 rounded-xl p-4 border border-slate-200/50 dark:border-slate-800/50 shadow-sm"
+                            >
+                              <div className="flex items-center gap-3 mb-3">
+                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-xs font-bold shadow-md">
+                                  {employee.name.split(' ').map(n => n[0]).join('')}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <p className="text-sm font-semibold text-slate-900 dark:text-white">{employee.name}</p>
+                                    <span className="text-[9px] px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-semibold uppercase tracking-tight">
+                                      {employee.badge}
+                                    </span>
+                                  </div>
+                                  <p className="text-xs text-slate-500 dark:text-slate-400">{employee.role}</p>
                                 </div>
                               </div>
-                              <div className="flex-1 flex flex-col justify-end">
-                                <p className="text-[9px] md:text-[10px] text-black/60 dark:text-white/60 mb-0.5 truncate">{stat.label}</p>
-                                <p className="text-base md:text-xl font-semibold text-black dark:text-white">
-                                  {stat.val}
-                                </p>
+                              <div className="flex flex-wrap gap-2">
+                                {employee.shifts.map((shift, shiftIdx) => (
+                                  <div
+                                    key={shiftIdx}
+                                    className={`bg-gradient-to-br ${employee.color} rounded-lg px-3 py-2 text-white shadow-md`}
+                                  >
+                                    <p className="text-[10px] font-semibold">{shift.day}</p>
+                                    <p className="text-xs font-bold">{shift.time}</p>
+                                  </div>
+                                ))}
                               </div>
-                            </motion.div>
+                            </div>
                           ))}
                         </div>
 
-                        {/* Planning de la semaine avec graphiques */}
-                        <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.5, delay: 1.2 }}
-                          className="bg-white dark:bg-[#1C1C1E] rounded-lg border border-black/5 dark:border-white/5 p-3 md:p-4 shadow-sm"
-                        >
-                          <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-2 md:gap-3">
-                              <div className="size-8 md:size-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                                <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-base md:text-lg">calendar_month</span>
-                              </div>
-                              <div>
-                                <h3 className="text-sm md:text-base font-semibold text-black dark:text-white">Planning de la semaine</h3>
-                                <p className="text-[9px] md:text-xs text-black/60 dark:text-white/60">4-10 Décembre 2025</p>
-                              </div>
-                            </div>
-                            <motion.div
-                              whileHover={{ x: 5 }}
-                              transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                            >
-                              <span className="text-[9px] md:text-xs text-blue-600 dark:text-blue-400 font-medium cursor-pointer">Voir tout →</span>
-                            </motion.div>
-                          </div>
-
-                          {/* Graphiques avec recharts */}
-                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-6">
-                            {/* Graphique des heures par jour */}
-                            <div>
-                              <h4 className="text-[10px] md:text-sm font-semibold text-black dark:text-white mb-3 md:mb-4">Heures planifiées par jour</h4>
-                              <ResponsiveContainer width="100%" height={150}>
-                                <BarChart
-                                  data={[
-                                    { day: 'Lun', hours: 145, cost: 3200 },
-                                    { day: 'Mar', hours: 152, cost: 3350 },
-                                    { day: 'Mer', hours: 138, cost: 3050 },
-                                    { day: 'Jeu', hours: 165, cost: 3650 },
-                                    { day: 'Ven', hours: 178, cost: 3900 },
-                                    { day: 'Sam', hours: 190, cost: 4200 },
-                                    { day: 'Dim', hours: 160, cost: 3550 }
-                                  ]}
-                                >
-                                  <CartesianGrid strokeDasharray="3 3" stroke="currentColor" className="opacity-10" />
-                                  <XAxis dataKey="day" stroke="currentColor" className="text-[9px]" />
-                                  <YAxis stroke="currentColor" className="text-[9px]" />
-                                  <Tooltip
-                                    contentStyle={{
-                                      backgroundColor: '#3B82F6',
-                                      border: 'none',
-                                      borderRadius: '8px',
-                                      color: 'white',
-                                      fontSize: '11px'
-                                    }}
-                                  />
-                                  <Bar dataKey="hours" fill="#3B82F6" radius={[8, 8, 0, 0]} />
-                                </BarChart>
-                              </ResponsiveContainer>
-                            </div>
-
-                            {/* Graphique des coûts */}
-                            <div>
-                              <h4 className="text-[10px] md:text-sm font-semibold text-black dark:text-white mb-3 md:mb-4">Coût journalier (€)</h4>
-                              <ResponsiveContainer width="100%" height={150}>
-                                <AreaChart
-                                  data={[
-                                    { day: 'Lun', cost: 3200 },
-                                    { day: 'Mar', cost: 3350 },
-                                    { day: 'Mer', cost: 3050 },
-                                    { day: 'Jeu', cost: 3650 },
-                                    { day: 'Ven', cost: 3900 },
-                                    { day: 'Sam', cost: 4200 },
-                                    { day: 'Dim', cost: 3550 }
-                                  ]}
-                                >
-                                  <defs>
-                                    <linearGradient id="colorCostDemo" x1="0" y1="0" x2="0" y2="1">
-                                      <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8}/>
-                                      <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
-                                    </linearGradient>
-                                  </defs>
-                                  <CartesianGrid strokeDasharray="3 3" stroke="currentColor" className="opacity-10" />
-                                  <XAxis dataKey="day" stroke="currentColor" className="text-[9px]" />
-                                  <YAxis stroke="currentColor" className="text-[9px]" />
-                                  <Tooltip
-                                    contentStyle={{
-                                      backgroundColor: '#3B82F6',
-                                      border: 'none',
-                                      borderRadius: '8px',
-                                      color: 'white',
-                                      fontSize: '11px'
-                                    }}
-                                  />
-                                  <Area type="monotone" dataKey="cost" stroke="#3B82F6" fillOpacity={1} fill="url(#colorCostDemo)" />
-                                </AreaChart>
-                              </ResponsiveContainer>
-                            </div>
-                          </div>
-
-                          {/* Boutons de navigation des jours */}
-                          <div className="grid grid-cols-7 gap-2">
-                            {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((day, index) => (
+                        {/* Desktop: Original Grid Layout */}
+                        <div className="hidden md:block">
+                          {/* Days Header */}
+                          <div className="grid grid-cols-[160px_repeat(7,1fr)] gap-3 mb-4">
+                            <div></div>
+                            {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((day, idx) => (
                               <div key={day} className="text-center">
-                                <p className="text-[9px] md:text-xs font-medium text-black/60 dark:text-white/60 mb-2">{day}</p>
-                                {index < 5 && (
-                                  <motion.button
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    className="w-full h-8 md:h-10 rounded-lg flex items-center justify-center text-xs md:text-sm font-medium text-white"
-                                    style={{ backgroundColor: '#3B82F6' }}
-                                  >
-                                    {index + 1}
-                                  </motion.button>
-                                )}
+                                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">{day}</p>
+                                <div className="h-12 rounded-xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border border-slate-200/50 dark:border-slate-800/50 flex items-center justify-center shadow-sm">
+                                  <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{idx + 4}</span>
+                                </div>
                               </div>
                             ))}
                           </div>
-                        </motion.div>
 
-                        {/* Alerts */}
-                        <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.5, delay: 1.4 }}
-                          className="space-y-1.5"
-                        >
-                          <div className="bg-white dark:bg-[#1C1C1E] rounded-lg p-2 border-l-4 border-yellow-500 flex items-center gap-2 shadow-sm border border-black/5 dark:border-white/5">
-                            <span className="material-symbols-outlined text-yellow-600 dark:text-yellow-400 text-sm">warning</span>
-                            <p className="text-[10px] md:text-xs font-medium text-black dark:text-white flex-1">2 demandes de congé en attente</p>
-                            <button className="text-[9px] md:text-[10px] text-blue-600 dark:text-blue-400 font-medium">Voir</button>
-                          </div>
-                        </motion.div>
-
-                        {/* Main Content Grid */}
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 md:gap-3">
-                          {/* Planning du jour */}
-                          <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 1.5 }}
-                            className="lg:col-span-2 bg-white dark:bg-[#1C1C1E] rounded-lg border border-black/5 dark:border-white/5 p-2 md:p-3 shadow-sm"
-                          >
-                            <div className="flex items-center justify-between mb-2">
-                              <div className="flex items-center gap-2">
-                                <div className="size-7 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                                  <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-sm">calendar_month</span>
-                                </div>
-                                <div>
-                                  <h3 className="text-xs md:text-sm font-semibold text-black dark:text-white">Planning du jour</h3>
-                                  <p className="text-[8px] md:text-[9px] text-black/60 dark:text-white/60">Jeudi 4 Décembre 2025</p>
-                                </div>
-                              </div>
-                              <span className="text-[8px] text-blue-600 dark:text-blue-400 font-medium">Voir tout →</span>
-                            </div>
-                            <div className="space-y-1">
-                              {[
-                                { name: 'Marie Dupont', role: 'Serveur', time: '08:00-12:00' },
-                                { name: 'Jean Martin', role: 'Cuisine', time: '08:00-14:00' },
-                                { name: 'Sophie Bernard', role: 'Serveur', time: '12:00-18:00' },
-                              ].map((shift, idx) => (
-                                <div
-                                  key={idx}
-                                  className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-all border border-black/5 dark:border-white/5"
-                                >
-                                  <div className="w-1 h-8 rounded-full bg-blue-600" />
-                                  <div className="flex-1 min-w-0">
-                                    <p className="text-[10px] font-medium text-black dark:text-white truncate">{shift.name}</p>
-                                    <p className="text-[8px] text-black/60 dark:text-white/60">{shift.role}</p>
-                                  </div>
-                                  <div className="text-right">
-                                    <p className="text-[9px] font-mono font-medium text-black dark:text-white">{shift.time}</p>
-                                    <p className="text-[8px] text-black/60 dark:text-white/60">4h</p>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </motion.div>
-
-                          {/* Quick Actions */}
-                          <motion.div
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.5, delay: 1.5 }}
-                            className="space-y-2"
-                          >
-                            <h3 className="text-xs md:text-sm font-semibold text-black dark:text-white flex items-center gap-1">
-                              <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-sm">auto_awesome</span>
-                              Actions rapides
-                            </h3>
+                          {/* Employee Rows with Team Labels */}
+                          <div className="space-y-3">
                             {[
-                              { title: 'Générer Planning IA', icon: 'auto_awesome', badge: 'IA' },
-                              { title: 'Voir les messages', icon: 'message', badge: '12' },
-                            ].map((action, idx) => (
+                              { name: 'Anna Smith', role: 'Vendeuse', team: 'Équipe caisse', shifts: [0, 1, 0, 1, 1, 0, 0], color: 'from-blue-500 to-blue-600', times: ['', '9h-17h', '', '9h-17h', '9h-17h', '', ''], badge: 'CAISSE' },
+                              { name: 'John Doe', role: 'Manager', team: 'Équipe terrain', shifts: [1, 0, 1, 0, 1, 1, 0], color: 'from-emerald-500 to-emerald-600', times: ['9h-17h', '', '9h-17h', '', '9h-17h', '9h-17h', ''], badge: 'TERRAIN' },
+                              { name: 'Marie Curie', role: 'Technicien', team: 'Équipe support', shifts: [0, 1, 1, 1, 0, 0, 1], color: 'from-amber-500 to-amber-600', times: ['', '9h-17h', '9h-17h', '9h-17h', '', '', '9h-17h'], badge: 'SUPPORT' },
+                              { name: 'Tom Brown', role: 'Vendeur', team: 'Équipe caisse', shifts: [1, 1, 0, 1, 1, 0, 0], color: 'from-purple-500 to-purple-600', times: ['9h-17h', '9h-17h', '', '9h-17h', '9h-17h', '', ''], badge: 'CAISSE' },
+                            ].map((employee, empIdx) => (
                               <div
-                                key={idx}
-                                className="bg-white dark:bg-[#1C1C1E] rounded-lg p-2 border border-black/5 dark:border-white/5 shadow-sm"
+                                key={empIdx}
+                                className="grid grid-cols-[160px_repeat(7,1fr)] gap-3"
                               >
-                                <div className="flex items-start justify-between mb-1">
-                                  <div className="size-7 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-                                    <span className="material-symbols-outlined text-purple-600 dark:text-purple-400 text-sm">{action.icon}</span>
+                                <div className="flex items-center gap-3">
+                                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-xs font-bold shadow-md">
+                                    {employee.name.split(' ').map(n => n[0]).join('')}
                                   </div>
-                                  {action.badge && (
-                                    <span className="px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-[8px] font-semibold rounded-full">
-                                      {action.badge}
-                                    </span>
-                                  )}
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2 mb-0.5">
+                                      <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">{employee.name}</p>
+                                      <span className="text-[9px] px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-semibold uppercase tracking-tight">
+                                        {employee.badge}
+                                      </span>
+                                    </div>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{employee.role}</p>
+                                  </div>
                                 </div>
-                                <h4 className="text-[10px] font-semibold text-black dark:text-white mb-0.5">{action.title}</h4>
-                                <p className="text-[8px] text-black/60 dark:text-white/60">Créer un planning optimal</p>
+                                {employee.shifts.map((hasShift, dayIdx) => (
+                                  <div key={dayIdx} className="h-14 rounded-xl flex items-center justify-center">
+                                    {hasShift ? (
+                                      <div className={`w-full h-full bg-gradient-to-br ${employee.color} rounded-xl flex flex-col items-center justify-center text-white p-2 shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105`}>
+                                        <span className="text-[10px] font-semibold mb-0.5">{employee.times[dayIdx]}</span>
+                                        <span className="text-[9px] opacity-90 font-medium">Shift</span>
+                                      </div>
+                                    ) : (
+                                      <div className="w-full h-full bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm rounded-xl border border-slate-200/40 dark:border-slate-800/40"></div>
+                                    )}
+                                  </div>
+                                ))}
                               </div>
                             ))}
-                          </motion.div>
-                        </div>
-                      </motion.div>
-                    )}
-
-                    {activeView === 'planning' && (
-                      <motion.div
-                        key="planning"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        transition={{ duration: 0.3 }}
-                        className="h-full"
-                      >
-                        <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm p-4 md:p-6 h-full">
-                          <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-2 text-xs">
-                              <motion.button
-                                whileHover={{ scale: 1.1, x: -2 }}
-                                whileTap={{ scale: 0.9 }}
-                                className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
-                              >
-                                <span className="material-symbols-outlined text-accent">chevron_left</span>
-                              </motion.button>
-                              <span className="font-semibold">Semaine 29 (15-21 Juil)</span>
-                              <motion.button
-                                whileHover={{ scale: 1.1, x: 2 }}
-                                whileTap={{ scale: 0.9 }}
-                                className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
-                              >
-                                <span className="material-symbols-outlined text-accent">chevron_right</span>
-                              </motion.button>
-                            </div>
-                            <motion.button
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                              className="px-2 py-1 bg-accent text-white rounded text-[10px] font-medium hover:bg-accent/90 transition-colors"
-                            >
-                              <span className="material-symbols-outlined text-xs align-middle mr-1">magic_button</span>
-                              IA
-                            </motion.button>
-                          </div>
-                          
-                          {/* Responsive Planning View */}
-                          <div className="overflow-x-auto pb-2">
-                            {/* Mobile View (Vertical List) - Visible on small screens */}
-                            <div className="md:hidden space-y-3">
-                              {demoShifts.slice(0, 3).map((shift, i) => (
-                                <div key={i} className="bg-slate-50 dark:bg-slate-900/50 rounded border border-slate-200 dark:border-slate-700 p-2">
-                                  <div className="flex items-center gap-2 mb-2 pb-2 border-b border-slate-200 dark:border-slate-700">
-                                    <div className="size-6 rounded-full bg-accent/20 flex items-center justify-center text-[10px] font-bold text-accent">
-                                      {shift.employee.split(' ').map(n => n[0]).join('')}
-                                    </div>
-                                    <span className="text-xs font-semibold text-slate-900 dark:text-white">{shift.employee.split(' ')[0]}</span>
-                                  </div>
-                                  <div className="flex gap-2 overflow-x-auto pb-1">
-                                    {['monday', 'wednesday', 'friday'].map((day) => {
-                                      const shiftData = shift[day as keyof typeof shift] as any
-                                      if (!shiftData?.start) return null
-                                      return (
-                                        <div key={day} className="flex-shrink-0 min-w-[80px] rounded border border-blue-500/50 bg-blue-500/20 p-1.5 text-[9px]">
-                                          <div className="font-bold text-blue-700 dark:text-blue-300 mb-0.5">
-                                            {day === 'monday' ? 'Lun' : day === 'wednesday' ? 'Mer' : 'Ven'}
-                                          </div>
-                                          <div>{shiftData.start}-{shiftData.end}</div>
-                                        </div>
-                                      )
-                                    })}
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-
-                            {/* Desktop View (Table) - Hidden on small screens */}
-                            <div className="hidden md:block min-w-[600px] text-[10px]">
-                              <div className="grid grid-cols-[100px_repeat(7,1fr)] gap-1">
-                                <div className="p-1.5 bg-slate-50 dark:bg-[#151e32] rounded font-semibold text-slate-500 text-left text-[9px]">Collaborateur</div>
-                                {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((day) => (
-                                  <div key={day} className="p-1.5 bg-slate-50 dark:bg-[#151e32] rounded text-center font-semibold text-slate-500 text-[9px]">
-                                    {day}
-                                  </div>
-                                ))}
-                                {demoShifts.slice(0, 4).map((shift, i) => (
-                                  <React.Fragment key={i}>
-                                    <div className="p-1.5 flex items-center gap-1">
-                                      <div className="size-5 rounded-full bg-accent/20 flex items-center justify-center text-[8px] font-bold text-accent">
-                                        {shift.employee.split(' ').map(n => n[0]).join('')}
-                                      </div>
-                                      <div className="text-[9px] font-semibold text-slate-900 dark:text-white truncate">
-                                        {shift.employee.split(' ')[0]}
-                                      </div>
-                                    </div>
-                                    {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => {
-                                      const shiftData = shift[day as keyof typeof shift] as any
-                                      return (
-                                        <div key={day} className="p-0.5 min-h-[40px]">
-                                          {shiftData?.start ? (
-                                            <div className="h-full rounded border border-blue-500/50 bg-blue-500/20 p-1 flex flex-col text-[8px]">
-                                              <div className="font-bold text-blue-700 dark:text-blue-300">{shiftData.start}-{shiftData.end}</div>
-                                              {shiftData.covers > 0 && (
-                                                <div className="text-[7px] opacity-80 mt-0.5">{shiftData.covers} cov.</div>
-                                              )}
-                                            </div>
-                                          ) : null}
-                                        </div>
-                                      )
-                                    })}
-                                  </React.Fragment>
-                                ))}
-                              </div>
-                            </div>
                           </div>
                         </div>
-                      </motion.div>
-                    )}
-
-                    {activeView === 'employees' && (
-                      <motion.div
-                        key="employees"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        transition={{ duration: 0.3 }}
-                        className="h-full"
-                      >
-                        <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm p-4 md:p-6 h-full">
-                      <div className="flex items-center justify-between mb-3">
-                        <h3 className="text-xs md:text-sm font-bold text-slate-900 dark:text-white">Collaborateurs</h3>
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="px-2 py-1 bg-accent text-white rounded text-[10px] font-medium hover:bg-accent/90 transition-colors flex items-center gap-1"
-                        >
-                          <span className="material-symbols-outlined text-xs">add</span>
-                          Nouveau
-                        </motion.button>
                       </div>
-                      <div className="space-y-2">
-                        {demoEmployees.slice(0, 5).map((emp, i) => (
-                          <motion.div
-                            key={i}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.3, delay: i * 0.1 }}
-                            whileHover={{ scale: 1.02, x: 4 }}
-                            className="flex items-center gap-2 p-2 bg-slate-50 dark:bg-background-dark rounded border border-steel-dark/30 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                          >
-                            <div className="size-8 rounded-full bg-accent/20 flex items-center justify-center text-[10px] font-bold text-accent">
-                              {emp.avatar}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="text-xs font-semibold text-slate-900 dark:text-white">{emp.name}</div>
-                              <div className="text-[10px] text-slate-500">{emp.role} • {emp.department}</div>
-                            </div>
-                            <div className="text-right">
-                              <div className={`text-[9px] px-1.5 py-0.5 rounded-full ${
-                                emp.status === 'En shift' ? 'bg-success/20 text-success' : 'bg-blue-500/20 text-blue-600'
-                              }`}>
-                                {emp.status}
-                              </div>
-                              <div className="text-[9px] text-slate-500 mt-0.5">{emp.hoursThisWeek}h</div>
-                            </div>
-                          </motion.div>
-                        ))}
-                      </div>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </section>
   )
 }

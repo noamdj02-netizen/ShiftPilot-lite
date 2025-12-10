@@ -7,14 +7,14 @@ export default function AuthLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen w-full flex bg-[#F5F5F7] dark:bg-[#000000]">
+    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-[#F5F5F7] dark:bg-[#000000]">
       {/* Left - Form Side */}
-      <div className="flex-1 flex flex-col justify-center px-4 sm:px-6 lg:px-8 py-12 bg-white dark:bg-[#000000] border-r border-black/5 dark:border-white/5">
-        <div className="w-full max-w-sm mx-auto">
-          <Link href="/" className="inline-block mb-12 hover:opacity-80 transition-opacity">
+      <div className="flex-1 flex flex-col justify-center px-4 sm:px-6 lg:px-8 py-8 sm:py-12 bg-white dark:bg-[#000000] lg:border-r border-black/5 dark:border-white/5">
+        <div className="w-full max-w-md mx-auto">
+          <Link href="/" className="inline-block mb-8 sm:mb-12 hover:opacity-80 transition-opacity">
             <div className="flex items-center gap-2 text-slate-900 dark:text-white">
-              <Logo size={32} />
-              <span className="text-xl font-bold tracking-tight">ShiftPilot</span>
+              <Logo size={28} className="sm:w-8 sm:h-8" />
+              <span className="text-lg sm:text-xl font-bold tracking-tight">ShiftPilot</span>
             </div>
           </Link>
           {children}
@@ -22,7 +22,7 @@ export default function AuthLayout({
       </div>
 
       {/* Right - Visual Side (Desktop only) */}
-      <div className="hidden lg:flex lg:w-[55%] bg-[#000000] relative overflow-hidden items-center justify-center p-12">
+      <div className="hidden lg:flex lg:w-[55%] xl:w-[50%] bg-[#000000] relative overflow-hidden items-center justify-center p-8 xl:p-12">
         {/* Background Effects */}
         <div className="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] bg-accent/20 rounded-full blur-[120px] pointer-events-none opacity-40"></div>
         <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-500/20 rounded-full blur-[100px] pointer-events-none opacity-40"></div>

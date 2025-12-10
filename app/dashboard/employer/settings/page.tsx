@@ -5,13 +5,14 @@ import { motion } from 'framer-motion'
 import { Settings, Palette } from 'lucide-react'
 import { useColorTheme } from '@/hooks/useColorTheme'
 
-type SettingsSection = 'restaurant' | 'hours' | 'legal' | 'billing' | 'notifications' | 'team' | 'colors'
+type SettingsSection = 'restaurant' | 'restaurant-params' | 'hours' | 'legal' | 'billing' | 'notifications' | 'team' | 'colors'
 
 export default function SettingsPage() {
   const [activeSection, setActiveSection] = useState<SettingsSection>('restaurant')
 
   const sections = [
     { key: 'restaurant', label: 'Informations restaurant' },
+    { key: 'restaurant-params', label: 'Paramètres restaurant' },
     { key: 'hours', label: 'Horaires d\'ouverture' },
     { key: 'legal', label: 'Paramètres légaux' },
     { key: 'billing', label: 'Facturation & Abonnement' },
@@ -186,6 +187,163 @@ export default function SettingsPage() {
                       Enregistrer les modifications
                     </motion.button>
                   </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Restaurant Parameters Section */}
+          {activeSection === 'restaurant-params' && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-6"
+            >
+              <div className="bg-white dark:bg-[#1C1C1E] rounded-lg p-4 md:p-6 border border-black/5 dark:border-white/5 shadow-sm">
+                <h2 className="text-lg md:text-xl font-semibold text-black dark:text-white mb-6">
+                  Paramètres du restaurant
+                </h2>
+
+                <div className="space-y-6">
+                  {/* Budget RH */}
+                  <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      Budget RH hebdomadaire (€)
+                    </label>
+                    <input 
+                      type="number" 
+                      defaultValue="3500" 
+                      min="0"
+                      step="50"
+                      className="w-full px-4 py-2 bg-white dark:bg-slate-700 rounded-lg text-slate-900 dark:text-white border border-slate-200 dark:border-slate-600 focus:outline-none focus:border-slate-400 dark:focus:border-slate-500" 
+                    />
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                      Budget maximum pour les coûts de personnel par semaine
+                    </p>
+                  </div>
+
+                  <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      Seuil d'alerte budget (%)
+                    </label>
+                    <input 
+                      type="number" 
+                      defaultValue="90" 
+                      min="0"
+                      max="100"
+                      className="w-full px-4 py-2 bg-white dark:bg-slate-700 rounded-lg text-slate-900 dark:text-white border border-slate-200 dark:border-slate-600 focus:outline-none focus:border-slate-400 dark:focus:border-slate-500" 
+                    />
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                      Alerte lorsque le budget atteint ce pourcentage
+                    </p>
+                  </div>
+
+                  {/* Durée des shifts */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700">
+                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        Durée shift minimum (heures)
+                      </label>
+                      <input 
+                        type="number" 
+                        defaultValue="4" 
+                        min="2"
+                        max="12"
+                        step="0.5"
+                        className="w-full px-4 py-2 bg-white dark:bg-slate-700 rounded-lg text-slate-900 dark:text-white border border-slate-200 dark:border-slate-600 focus:outline-none focus:border-slate-400 dark:focus:border-slate-500" 
+                      />
+                    </div>
+                    <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700">
+                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        Durée shift maximum (heures)
+                      </label>
+                      <input 
+                        type="number" 
+                        defaultValue="10" 
+                        min="4"
+                        max="12"
+                        step="0.5"
+                        className="w-full px-4 py-2 bg-white dark:bg-slate-700 rounded-lg text-slate-900 dark:text-white border border-slate-200 dark:border-slate-600 focus:outline-none focus:border-slate-400 dark:focus:border-slate-500" 
+                      />
+                    </div>
+                  </div>
+
+                  {/* Pauses automatiques */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700">
+                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        Pause automatique à 6h (minutes)
+                      </label>
+                      <input 
+                        type="number" 
+                        defaultValue="20" 
+                        min="15"
+                        max="60"
+                        step="5"
+                        className="w-full px-4 py-2 bg-white dark:bg-slate-700 rounded-lg text-slate-900 dark:text-white border border-slate-200 dark:border-slate-600 focus:outline-none focus:border-slate-400 dark:focus:border-slate-500" 
+                      />
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                        Pause obligatoire pour un shift de 6h ou plus
+                      </p>
+                    </div>
+                    <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700">
+                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        Pause automatique à 9h (minutes)
+                      </label>
+                      <input 
+                        type="number" 
+                        defaultValue="30" 
+                        min="20"
+                        max="90"
+                        step="5"
+                        className="w-full px-4 py-2 bg-white dark:bg-slate-700 rounded-lg text-slate-900 dark:text-white border border-slate-200 dark:border-slate-600 focus:outline-none focus:border-slate-400 dark:focus:border-slate-500" 
+                      />
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                        Pause obligatoire pour un shift de 9h ou plus
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Notifications */}
+                  <div className="space-y-4">
+                    <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Notifications automatiques</h3>
+                    
+                    <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700">
+                      <label className="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" defaultChecked className="w-5 h-5 rounded" />
+                        <div>
+                          <p className="font-medium text-slate-900 dark:text-white">Rappel publication planning</p>
+                          <p className="text-sm text-slate-600 dark:text-slate-400">
+                            Recevoir un rappel pour publier le planning avant la fin de la semaine
+                          </p>
+                        </div>
+                      </label>
+                    </div>
+
+                    <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700">
+                      <label className="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" defaultChecked className="w-5 h-5 rounded" />
+                        <div>
+                          <p className="font-medium text-slate-900 dark:text-white">Notification d'absence</p>
+                          <p className="text-sm text-slate-600 dark:text-slate-400">
+                            Être alerté immédiatement lorsqu'un employé signale une absence
+                          </p>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="px-6 py-2 theme-primary hover:theme-primary text-white rounded-full font-medium shadow-lg transition-all"
+                    style={{ boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px var(--theme-primary)40' }}
+                  >
+                    Enregistrer les modifications
+                  </motion.button>
                 </div>
               </div>
             </motion.div>

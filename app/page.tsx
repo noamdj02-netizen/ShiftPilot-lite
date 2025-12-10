@@ -30,7 +30,7 @@ export const metadata = {
 
 export default function LandingPage() {
   return (
-    <main className="relative w-full overflow-x-hidden font-sans text-slate-900 dark:text-slate-100 bg-background-light dark:bg-background-dark">
+    <main className="relative w-full overflow-x-hidden font-sans text-slate-900 dark:text-slate-100 bg-background-light dark:bg-background-dark" data-page-content="true">
       <Hero />
       <TrustSection />
       <BentoFeatures />

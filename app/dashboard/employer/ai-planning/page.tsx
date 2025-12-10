@@ -52,8 +52,8 @@ export default function AIPlanningPage() {
   ]
 
   const generatePlanning = async () => {
-    if (!profile?.organization_id) {
-      toast.error('Organisation requise. Veuillez compléter votre profil.')
+    if (!profile?.restaurant_id) {
+      toast.error('Restaurant requis. Veuillez créer votre restaurant.')
       return
     }
 

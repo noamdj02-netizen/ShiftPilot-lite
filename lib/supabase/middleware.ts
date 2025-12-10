@@ -4,20 +4,29 @@ import { NextResponse, type NextRequest } from "next/server";
 // Validation stricte des variables d'environnement pour middleware
 function getMiddlewareEnvVars() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  // Support des nouvelles clés publishable et des anciennes clés anon
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY || 
+                          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   // En middleware, on permet des valeurs par défaut pour éviter de casser le build,
   // mais on log un warning
-  if (!supabaseUrl || supabaseUrl === "https://your-project.supabase.co" || supabaseUrl === "https://example.com") {
+  if (!supabaseUrl || supabaseUrl === "https://your-project.supabase.co" || supabaseUrl === "https://example.com" || supabaseUrl === "https://placeholder.supabase.co") {
     console.error(
       "[Middleware Error] NEXT_PUBLIC_SUPABASE_URL is missing or not configured. " +
       "Middleware will not function correctly. Please configure environment variables."
     );
   }
 
-  if (!supabaseAnonKey || supabaseAnonKey === "your-anon-key-here" || supabaseAnonKey === "placeholder") {
+  // Vérifier si la clé est valide (publishable commence par sb_, anon par eyJ)
+  const isValidKey = supabaseAnonKey && 
+                     supabaseAnonKey !== "your-anon-key-here" && 
+                     supabaseAnonKey !== "placeholder-key" &&
+                     supabaseAnonKey !== "placeholder" &&
+                     (supabaseAnonKey.startsWith('sb_') || supabaseAnonKey.startsWith('eyJ'));
+
+  if (!isValidKey) {
     console.error(
-      "[Middleware Error] NEXT_PUBLIC_SUPABASE_ANON_KEY is missing or not configured. " +
+      "[Middleware Error] NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY or NEXT_PUBLIC_SUPABASE_ANON_KEY is missing or not configured. " +
       "Middleware will not function correctly. Please configure environment variables."
     );
   }

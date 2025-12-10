@@ -26,8 +26,8 @@ const plans = [
       { text: "Chatbot IA clients", included: false, highlight: false },
       { text: "Multi-établissements", included: false, highlight: false },
     ],
-    cta: "Essai gratuit",
-    ctaLink: "/register",
+    cta: "S'abonner",
+    ctaLink: "https://buy.stripe.com/28EaEQ2U6aP18FUeosfUQ03",
     popular: false,
     tagline: "Le choix parfait pour commencer sans friction",
   },
@@ -53,8 +53,8 @@ const plans = [
       { text: "PilotSMS avancé", included: false, highlight: false },
       { text: "Multi-établissements", included: false, highlight: false },
     ],
-    cta: "Essai gratuit",
-    ctaLink: "/register",
+    cta: "S'abonner",
+    ctaLink: "https://buy.stripe.com/fZu5kwcuG7CPaO2804fUQ04",
     popular: true,
     tagline: "Idéal pour restaurants avec 8–30 employés",
   },
@@ -79,8 +79,8 @@ const plans = [
       { text: "Multi-établissements illimité", included: true, highlight: false },
       { text: "Support prioritaire", included: true, highlight: false },
     ],
-    cta: "Essai gratuit",
-    ctaLink: "/register",
+    cta: "S'abonner",
+    ctaLink: "https://buy.stripe.com/cNi7sEamy7CP7BQ4NSfUQ05",
     popular: false,
     tagline: "Gère l'opérationnel pendant que vous bossez",
   },
@@ -92,31 +92,31 @@ export function PricingSection() {
   const isInView = useInView(ref, { once: true, margin: "-100px" })
   
   return (
-    <section ref={ref} className="py-24 lg:py-32 bg-white dark:bg-[#000000] relative overflow-hidden" id="tarifs">
+    <section ref={ref} className="py-12 sm:py-16 md:py-20 lg:py-24 xl:py-32 bg-white dark:bg-[#000000] relative overflow-hidden" id="tarifs">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="text-center max-w-3xl mx-auto mb-12 lg:mb-16"
+          className="text-center max-w-3xl mx-auto mb-12 sm:mb-16 lg:mb-16"
         >
-          <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/40 dark:bg-white/5 rounded-full text-xs font-semibold tracking-wider uppercase text-black/60 dark:text-white/60 mb-6 border border-black/5 dark:border-white/10">
-            <span className="material-symbols-outlined text-base">payments</span>
+          <span className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-white/40 dark:bg-white/5 rounded-full text-[10px] sm:text-xs font-semibold tracking-wider uppercase text-black/60 dark:text-white/60 mb-6 border border-black/5 dark:border-white/10">
+            <span className="material-symbols-outlined text-sm sm:text-base">payments</span>
             Tarifs Enterprise
           </span>
           
-          <h2 className="text-4xl md:text-5xl font-semibold text-black dark:text-white tracking-tight mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-black dark:text-white tracking-tight mb-4">
             Des prix transparents. <span className="text-black/40 dark:text-white/40">Sans surprise.</span>
           </h2>
           
-          <p className="text-lg text-black/60 dark:text-white/60 mb-6 max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg text-black/60 dark:text-white/60 mb-6 max-w-2xl mx-auto">
             Vous perdez du temps chaque semaine avec les plannings, les remplacements,
             les employés qui lisent pas les horaires, les messages Insta,
             et les avis Google à gérer.
           </p>
           
-          <p className="text-base text-black/70 dark:text-white/70 mb-8 font-medium">
+          <p className="text-xs sm:text-sm md:text-base text-black/70 dark:text-white/70 mb-8 font-medium">
             ShiftPilot automatise tout ça pour vous : <span className="text-accent">Planning IA</span> • <span className="text-accent">SMS équipe</span> • <span className="text-accent">Chatbot client</span> • <span className="text-accent">Avis Google automatiques</span>
           </p>
           
@@ -124,24 +124,24 @@ export function PricingSection() {
             14 jours gratuits • Sans carte bancaire • Résiliable en 1 clic
           </p>
           
-          {/* Toggle */}
-          <div className="inline-flex items-center gap-4 p-1.5 bg-slate-100 dark:bg-surface-dark rounded-full border border-steel-dark/30">
+          {/* Toggle - Flex-col sur mobile */}
+          <div className="inline-flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 p-1.5 bg-slate-100 dark:bg-surface-dark rounded-full border border-steel-dark/30">
             <button
               onClick={() => setIsYearly(false)}
-              className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${
+              className={`px-6 py-3 min-h-[48px] rounded-full text-base font-semibold transition-all touch-manipulation ${
                 !isYearly 
                   ? 'bg-white dark:bg-background-dark text-black dark:text-white shadow-sm' 
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  : 'text-slate-600 dark:text-slate-400 active:text-slate-900 dark:active:text-white'
               }`}
             >
               Mensuel
             </button>
             <button
               onClick={() => setIsYearly(true)}
-              className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all flex items-center gap-2 ${
+              className={`px-6 py-3 min-h-[48px] rounded-full text-base font-semibold transition-all flex items-center justify-center gap-2 touch-manipulation ${
                 isYearly 
                   ? 'bg-white dark:bg-background-dark text-black dark:text-white shadow-sm' 
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  : 'text-slate-600 dark:text-slate-400 active:text-slate-900 dark:active:text-white'
               }`}
             >
               Annuel
@@ -152,15 +152,15 @@ export function PricingSection() {
           </div>
         </motion.div>
         
-        {/* Plans */}
-        <div className="grid md:grid-cols-3 gap-4 lg:gap-6 mb-12 max-w-5xl mx-auto">
+        {/* Plans - Grid responsive optimisée */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-12 max-w-5xl mx-auto">
           {plans.map((plan, index) => (
             <motion.div
               key={plan.name}
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className={`relative bg-white dark:bg-surface-dark rounded-xl p-6 border-2 transition-all ${
+              className={`relative bg-white dark:bg-surface-dark rounded-xl p-5 sm:p-6 lg:p-8 border-2 transition-all ${
                 plan.popular 
                   ? 'border-accent scale-105 shadow-xl shadow-accent/20' 
                   : 'border-steel-dark/30 hover:border-accent/50'
@@ -232,22 +232,22 @@ export function PricingSection() {
                 )}
               </div>
               
-              {/* Features */}
-              <ul className="space-y-2.5 mb-6 min-h-[320px]">
+              {/* Features - Responsive optimisé */}
+              <ul className="space-y-2 sm:space-y-3 mb-6 min-h-[280px] sm:min-h-[320px]">
                 {plan.features.map((feature, i) => (
                   <li key={i} className={`flex items-start gap-2 ${
-                    feature.highlight ? 'bg-gradient-to-r from-violet-500/15 to-purple-500/15 dark:from-violet-500/25 dark:to-purple-500/25 border border-violet-500/30 dark:border-violet-500/40 rounded-lg p-2.5 -mx-2' : ''
+                    feature.highlight ? 'bg-gradient-to-r from-violet-500/15 to-purple-500/15 dark:from-violet-500/25 dark:to-purple-500/25 border border-violet-500/30 dark:border-violet-500/40 rounded-lg p-2 sm:p-2.5 -mx-2' : ''
                   }`}>
                     {feature.included ? (
-                      <span className={`text-lg flex-shrink-0 ${
+                      <span className={`text-base sm:text-lg flex-shrink-0 ${
                         feature.highlight ? 'text-violet-600 dark:text-violet-400' : 'text-success'
                       }`}>
                         <span className="material-symbols-outlined">check_circle</span>
                       </span>
                     ) : (
-                      <span className="material-symbols-outlined text-slate-400 dark:text-slate-600 text-lg flex-shrink-0">cancel</span>
+                      <span className="material-symbols-outlined text-slate-400 dark:text-slate-600 text-base sm:text-lg flex-shrink-0">cancel</span>
                     )}
-                    <span className={`text-sm ${
+                    <span className={`text-xs sm:text-sm ${
                       feature.included 
                         ? feature.highlight
                           ? 'text-violet-700 dark:text-violet-300 font-bold'
@@ -261,17 +261,33 @@ export function PricingSection() {
               </ul>
               
               {/* CTA */}
-              <Link 
-                href={plan.ctaLink}
-                className={`w-full py-3 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 ${
-                  plan.popular 
-                    ? 'bg-accent text-white hover:bg-accent/90 shadow-lg shadow-accent/20' 
-                    : 'bg-slate-100 dark:bg-background-dark text-black dark:text-white hover:bg-slate-200 dark:hover:bg-white/10 border border-steel-dark/30'
-                }`}
-              >
-                {plan.cta}
-                <span className="material-symbols-outlined text-lg">arrow_forward</span>
-              </Link>
+              {plan.ctaLink.startsWith('http') ? (
+                <a 
+                  href={plan.ctaLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`w-full min-h-[48px] py-3 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 touch-manipulation ${
+                    plan.popular 
+                      ? 'bg-accent text-white active:bg-accent/90 shadow-lg shadow-accent/20' 
+                      : 'bg-slate-100 dark:bg-background-dark text-black dark:text-white active:bg-slate-200 dark:active:bg-white/10 border border-steel-dark/30'
+                  }`}
+                >
+                  {plan.cta}
+                  <span className="material-symbols-outlined text-lg">arrow_forward</span>
+                </a>
+              ) : (
+                <Link 
+                  href={plan.ctaLink}
+                  className={`w-full min-h-[48px] py-3 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 touch-manipulation ${
+                    plan.popular 
+                      ? 'bg-accent text-white active:bg-accent/90 shadow-lg shadow-accent/20' 
+                      : 'bg-slate-100 dark:bg-background-dark text-black dark:text-white active:bg-slate-200 dark:active:bg-white/10 border border-steel-dark/30'
+                  }`}
+                >
+                  {plan.cta}
+                  <span className="material-symbols-outlined text-lg">arrow_forward</span>
+                </Link>
+              )}
             </motion.div>
           ))}
         </div>

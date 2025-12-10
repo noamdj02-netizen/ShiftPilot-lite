@@ -11,8 +11,8 @@ export function HeroSection() {
       <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-gradient-to-bl from-purple-200/30 via-transparent to-transparent blur-3xl" />
       <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-gradient-to-tr from-pink-200/30 via-transparent to-transparent blur-3xl" />
       
-      <div className="container-wide relative z-10 py-24 lg:py-32">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <div className="container-wide relative z-10 py-12 sm:py-16 md:py-20 lg:py-24 xl:py-32 px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
           
           {/* LEFT - Content */}
           <div className="text-center lg:text-left">
@@ -34,13 +34,13 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-5xl sm:text-6xl lg:text-7xl font-bold text-foreground leading-tight mb-6"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-foreground leading-[1.1] sm:leading-tight mb-4 sm:mb-6"
             >
               Vos plannings resto en{' '}
               <span className="relative inline-block text-purple-600">
                 <span>10 secondes</span>
                 <svg
-                  className="absolute -bottom-2 left-0 right-0 h-4"
+                  className="absolute -bottom-1 sm:-bottom-2 left-0 right-0 h-3 sm:h-4"
                   viewBox="0 0 200 20"
                   preserveAspectRatio="none"
                   fill="none"
@@ -49,7 +49,7 @@ export function HeroSection() {
                   <path
                     d="M0 15 Q50 5, 100 10 T200 8"
                     stroke="#FCD34D"
-                    strokeWidth="4"
+                    strokeWidth="3"
                     strokeLinecap="round"
                     fill="none"
                   />
@@ -62,7 +62,7 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-xl lg:text-2xl text-foreground-muted mb-8 max-w-2xl mx-auto lg:mx-0 leading-relaxed"
+              className="text-base sm:text-lg md:text-xl lg:text-2xl text-foreground-muted mb-6 sm:mb-8 max-w-2xl mx-auto lg:mx-0 leading-relaxed px-2 sm:px-0"
             >
               L'intelligence artificielle crée vos plannings automatiquement. 100% conforme au code du travail. Fini les heures perdues sur Excel! 🚀
             </motion.p>

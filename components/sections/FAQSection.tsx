@@ -45,30 +45,30 @@ export function FAQSection() {
   const isInView = useInView(ref, { once: true, margin: "-100px" })
   
   return (
-    <section id="faq" ref={ref} className="py-24 lg:py-32 bg-[#F5F5F7] dark:bg-[#000000] relative overflow-hidden">
+    <section id="faq" ref={ref} className="py-12 sm:py-16 md:py-20 lg:py-24 xl:py-32 bg-[#F5F5F7] dark:bg-[#000000] relative overflow-hidden">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="text-center mb-12 lg:mb-16"
+          className="text-center mb-12 sm:mb-16 lg:mb-16"
         >
-          <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/40 dark:bg-white/5 rounded-full text-xs font-semibold tracking-wider uppercase text-black/60 dark:text-white/60 mb-6 border border-black/5 dark:border-white/10">
-            <span className="material-symbols-outlined text-base">help</span>
+          <span className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-white/40 dark:bg-white/5 rounded-full text-[10px] sm:text-xs font-semibold tracking-wider uppercase text-black/60 dark:text-white/60 mb-6 border border-black/5 dark:border-white/10">
+            <span className="material-symbols-outlined text-sm sm:text-base">help</span>
             Questions fréquentes
           </span>
           
-          <h2 className="text-4xl md:text-5xl font-semibold text-black dark:text-white tracking-tight mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-black dark:text-white tracking-tight mb-4">
             Vous avez des questions ?
           </h2>
-          <p className="text-lg text-black/60 dark:text-white/60 max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg text-black/60 dark:text-white/60 max-w-2xl mx-auto">
             Tout ce que vous devez savoir sur ShiftPilot Enterprise
           </p>
         </motion.div>
         
-        {/* FAQ items */}
-        <div className="space-y-3">
+        {/* FAQ items - Responsive spacing */}
+        <div className="space-y-2 sm:space-y-3">
           {faqs.map((faq, index) => (
             <motion.div
               key={index}
@@ -78,24 +78,24 @@ export function FAQSection() {
             >
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className={`w-full bg-white dark:bg-[#1C1C1E] rounded-xl p-6 text-left transition-all border ${
+                className={`w-full bg-white dark:bg-[#1C1C1E] rounded-xl p-4 sm:p-5 md:p-6 text-left transition-all border min-h-[48px] touch-manipulation ${
                   openIndex === index 
                     ? 'border-accent/50 shadow-lg shadow-accent/10' 
-                    : 'border-black/5 dark:border-white/5 hover:border-accent/30'
+                    : 'border-black/5 dark:border-white/5 active:border-accent/30'
                 }`}
               >
                 <div className="flex items-center justify-between gap-4">
-                  <span className={`font-semibold text-base md:text-lg text-left ${
+                  <span className={`font-semibold text-sm sm:text-base md:text-lg text-left leading-snug ${
                     openIndex === index ? 'text-accent' : 'text-black dark:text-white'
                   }`}>
                     {faq.question}
                   </span>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${
+                  <div className={`w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${
                     openIndex === index 
                       ? 'bg-accent text-white' 
                       : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400'
                   }`}>
-                    <span className="material-symbols-outlined text-lg">
+                    <span className="material-symbols-outlined text-base sm:text-lg md:text-xl">
                       {openIndex === index ? 'remove' : 'add'}
                     </span>
                   </div>
@@ -110,7 +110,7 @@ export function FAQSection() {
                       transition={{ duration: 0.3 }}
                       className="overflow-hidden"
                     >
-                      <p className="pt-4 text-black/60 dark:text-white/60 leading-relaxed border-t border-black/5 dark:border-white/5 mt-4">
+                      <p className="pt-4 text-xs sm:text-sm md:text-base text-black/60 dark:text-white/60 leading-relaxed border-t border-black/5 dark:border-white/5 mt-4">
                         {faq.answer}
                       </p>
                     </motion.div>
@@ -133,7 +133,7 @@ export function FAQSection() {
           </p>
           <Link 
             href="/contact" 
-            className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-white rounded-full font-medium hover:bg-accent/90 transition-colors shadow-lg shadow-accent/20"
+            className="inline-flex items-center gap-2 px-6 py-3 min-h-[48px] bg-accent text-white rounded-full font-medium active:bg-accent/90 transition-colors shadow-lg shadow-accent/20 touch-manipulation"
           >
             Contactez notre équipe
             <span className="material-symbols-outlined text-lg">arrow_forward</span>

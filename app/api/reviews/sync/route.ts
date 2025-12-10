@@ -80,9 +80,18 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("Sync reviews error:", error);
+    
+    // Gérer spécifiquement les erreurs de clé API
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    let userFriendlyMessage = errorMessage;
+    
+    if (errorMessage.includes('API key') || errorMessage.includes('GOOGLE_PLACES_API_KEY')) {
+      userFriendlyMessage = 'La clé API Google Places n\'est pas configurée. Veuillez configurer GOOGLE_PLACES_API_KEY dans les variables d\'environnement.';
+    }
+    
     return NextResponse.json(
       { 
-        error: error instanceof Error ? error.message : "Unknown error",
+        error: userFriendlyMessage,
         details: process.env.NODE_ENV === 'development' ? String(error) : undefined
       },
       { status: 500 }

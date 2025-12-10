@@ -5,14 +5,14 @@ export interface AuthenticatedUser {
   id: string;
   email: string;
   role: 'OWNER' | 'MANAGER' | 'HR' | 'EMPLOYEE';
-  organization_id: string | null;
+  restaurant_id: string | null; // Utilise restaurant_id au lieu de organization_id
   profile: {
     id: string;
     full_name: string | null;
     first_name: string | null;
     last_name: string | null;
     role: string;
-    organization_id: string | null;
+    restaurant_id: string | null;
   };
 }
 
@@ -34,34 +34,35 @@ export async function getAuthenticatedUser(): Promise<{
       };
     }
 
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', authUser.id)
-      .single();
+    // Récupérer le restaurant de l'utilisateur (owner_id)
+    const { data: restaurant, error: restaurantError } = await supabase
+      .from('restaurants')
+      .select('id, nom, owner_id')
+      .eq('owner_id', authUser.id)
+      .maybeSingle();
 
-    if (profileError || !profile) {
-      return {
-        user: null,
-        error: NextResponse.json({ error: "Profile not found" }, { status: 404 })
-      };
-    }
+    // Extraire les metadata de l'utilisateur pour le profil
+    const firstName = authUser.user_metadata?.first_name || 
+                     authUser.user_metadata?.name?.split(' ')[0] || 
+                     null;
+    const lastName = authUser.user_metadata?.last_name || 
+                    (authUser.user_metadata?.name?.split(' ').slice(1).join(' ') || null);
 
     return {
       user: {
         id: authUser.id,
         email: authUser.email || '',
-        role: profile.role as AuthenticatedUser['role'],
-        organization_id: profile.organization_id,
+        role: 'OWNER' as AuthenticatedUser['role'], // Avec le nouveau schéma, tous les utilisateurs sont OWNER
+        restaurant_id: restaurant?.id || null,
         profile: {
-          id: profile.id,
-          full_name: profile.first_name && profile.last_name 
-            ? `${profile.first_name} ${profile.last_name}` 
-            : profile.first_name || profile.last_name || null,
-          first_name: profile.first_name,
-          last_name: profile.last_name,
-          role: profile.role,
-          organization_id: profile.organization_id
+          id: authUser.id,
+          full_name: firstName && lastName 
+            ? `${firstName} ${lastName}` 
+            : firstName || lastName || null,
+          first_name: firstName,
+          last_name: lastName,
+          role: 'owner',
+          restaurant_id: restaurant?.id || null
         }
       },
       error: null
@@ -79,25 +80,40 @@ export async function getAuthenticatedUser(): Promise<{
 }
 
 /**
- * Vérifie que l'utilisateur a une organisation
+ * Vérifie que l'utilisateur a un restaurant
  */
-export async function requireOrganization(user: AuthenticatedUser): Promise<{
-  organization_id: string;
+export async function requireRestaurant(user: AuthenticatedUser): Promise<{
+  restaurant_id: string;
   error: NextResponse | null;
 }> {
-  if (!user.organization_id) {
+  if (!user.restaurant_id) {
     return {
-      organization_id: '',
+      restaurant_id: '',
       error: NextResponse.json(
-        { error: "Organization required. Please complete onboarding." },
+        { error: "Restaurant required. Please create your restaurant first." },
         { status: 403 }
       )
     };
   }
 
   return {
-    organization_id: user.organization_id,
+    restaurant_id: user.restaurant_id,
     error: null
+  };
+}
+
+/**
+ * @deprecated Utilisez requireRestaurant à la place
+ * Vérifie que l'utilisateur a une organisation (alias pour requireRestaurant)
+ */
+export async function requireOrganization(user: AuthenticatedUser): Promise<{
+  organization_id: string;
+  error: NextResponse | null;
+}> {
+  const result = await requireRestaurant(user);
+  return {
+    organization_id: result.restaurant_id,
+    error: result.error
   };
 }
 
@@ -122,17 +138,17 @@ export function requireRole(
 }
 
 /**
- * Vérifie que l'utilisateur peut accéder à une organisation spécifique
+ * Vérifie que l'utilisateur peut accéder à un restaurant spécifique
  */
-export function requireOrganizationAccess(
+export function requireRestaurantAccess(
   user: AuthenticatedUser,
-  organization_id: string
+  restaurant_id: string
 ): { allowed: boolean; error: NextResponse | null } {
-  if (user.organization_id !== organization_id) {
+  if (user.restaurant_id !== restaurant_id) {
     return {
       allowed: false,
       error: NextResponse.json(
-        { error: "Access denied to this organization" },
+        { error: "Access denied to this restaurant" },
         { status: 403 }
       )
     };
@@ -142,13 +158,28 @@ export function requireOrganizationAccess(
 }
 
 /**
+ * @deprecated Utilisez requireRestaurantAccess à la place
+ * Vérifie que l'utilisateur peut accéder à une organisation spécifique (alias pour requireRestaurantAccess)
+ */
+export function requireOrganizationAccess(
+  user: AuthenticatedUser,
+  organization_id: string
+): { allowed: boolean; error: NextResponse | null } {
+  return requireRestaurantAccess(user, organization_id);
+}
+
+/**
  * Helper pour créer une réponse d'erreur standardisée
  */
 export function errorResponse(
   message: string,
-  status: number = 400
+  status: number = 400,
+  details?: Record<string, any>
 ): NextResponse {
-  return NextResponse.json({ error: message }, { status });
+  return NextResponse.json({ 
+    error: message,
+    ...(details && { details })
+  }, { status });
 }
 
 /**

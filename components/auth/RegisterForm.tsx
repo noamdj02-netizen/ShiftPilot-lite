@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '@/hooks/useAuth'
-import { GoogleLoginButton } from '@/components/auth/GoogleLoginButton'
 
 export function RegisterForm() {
   const router = useRouter()
@@ -67,21 +66,6 @@ export function RegisterForm() {
         </p>
       </div>
 
-      {/* Google Login Button */}
-      <div className="space-y-3">
-        <GoogleLoginButton userType="employer" />
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-slate-200 dark:border-white/10"></div>
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white dark:bg-[#1C1C1E] px-2 text-slate-500 dark:text-slate-400">
-              Ou
-            </span>
-          </div>
-        </div>
-      </div>
-
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Progress Steps */}
         <div className="flex items-center gap-2 mb-6">
@@ -125,10 +109,11 @@ export function RegisterForm() {
                     <input
                       id="firstName"
                       type="text"
+                      autoComplete="given-name"
                       value={formData.firstName}
                       onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                       placeholder="Marie"
-                      className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
+                      className="w-full pl-10 pr-4 py-3 min-h-[48px] text-base bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all touch-manipulation"
                       required
                     />
                   </div>
@@ -140,10 +125,11 @@ export function RegisterForm() {
                   <input
                     id="lastName"
                     type="text"
+                    autoComplete="family-name"
                     value={formData.lastName}
                     onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                     placeholder="Dupont"
-                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
+                    className="w-full px-4 py-3 min-h-[48px] text-base bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all touch-manipulation"
                     required
                   />
                 </div>
@@ -158,10 +144,12 @@ export function RegisterForm() {
                   <input
                     id="email"
                     type="email"
+                    inputMode="email"
+                    autoComplete="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="marie@restaurant.com"
-                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
+                    className="w-full pl-10 pr-4 py-3 min-h-[48px] text-base bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all touch-manipulation"
                     required
                   />
                 </div>
@@ -176,17 +164,19 @@ export function RegisterForm() {
                   <input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
+                    autoComplete="new-password"
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     placeholder="8 caractères minimum"
-                    className="w-full pl-10 pr-10 py-2.5 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
+                    className="w-full pl-10 pr-10 py-3 min-h-[48px] text-base bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all touch-manipulation"
                     minLength={8}
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 active:text-slate-600 dark:active:text-slate-200 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation"
+                    aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
                   >
                     <span className="material-symbols-outlined text-[20px]">
                       {showPassword ? 'visibility_off' : 'visibility'}
@@ -217,10 +207,11 @@ export function RegisterForm() {
                   <input
                     id="restaurantName"
                     type="text"
+                    autoComplete="organization"
                     value={formData.restaurantName}
                     onChange={(e) => setFormData({ ...formData, restaurantName: e.target.value })}
                     placeholder="Le Comptoir"
-                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
+                    className="w-full pl-10 pr-4 py-3 min-h-[48px] text-base bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all touch-manipulation"
                     required
                   />
                 </div>
@@ -236,7 +227,7 @@ export function RegisterForm() {
                     id="employeeCount"
                     value={formData.employeeCount}
                     onChange={(e) => setFormData({ ...formData, employeeCount: e.target.value })}
-                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all appearance-none cursor-pointer"
+                    className="w-full pl-10 pr-4 py-3 min-h-[48px] text-base bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all appearance-none cursor-pointer touch-manipulation"
                     required
                   >
                     <option value="" disabled>Sélectionnez</option>
@@ -281,18 +272,18 @@ export function RegisterForm() {
         {/* Buttons */}
         <div className="flex gap-3 pt-2">
           {step === 2 && (
-            <button
-              type="button"
-              onClick={() => setStep(1)}
-              className="flex-1 py-3 px-4 bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-200 font-semibold rounded-xl hover:bg-slate-200 dark:hover:bg-white/20 transition-all"
-            >
-              Retour
-            </button>
+          <button
+            type="button"
+            onClick={() => setStep(1)}
+            className="flex-1 py-3 px-4 min-h-[48px] bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-200 font-semibold rounded-xl active:bg-slate-200 dark:active:bg-white/20 transition-all touch-manipulation"
+          >
+            Retour
+          </button>
           )}
           <button
             type="submit"
             disabled={isLoading}
-            className="flex-1 py-3 px-4 bg-slate-900 dark:bg-white text-white dark:text-black font-semibold rounded-xl shadow-lg hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-2"
+            className="flex-1 py-3 px-4 min-h-[48px] bg-slate-900 dark:bg-white text-white dark:text-black font-semibold rounded-xl shadow-lg active:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2 touch-manipulation"
           >
             {isLoading ? (
               <span className="material-symbols-outlined animate-spin text-xl">progress_activity</span>

@@ -1,0 +1,31 @@
+[1mdiff --git a/lib/services/google-reviews-service.ts b/lib/services/google-reviews-service.ts[m
+[1mindex e5b5eb3..9eaa045 100644[m
+[1m--- a/lib/services/google-reviews-service.ts[m
+[1m+++ b/lib/services/google-reviews-service.ts[m
+[36m@@ -33,7 +33,7 @@[m [mexport async function fetchGoogleReviews(placeId: string): Promise<GoogleReview[[m
+         place_id: placeId,[m
+         fields: ['reviews', 'rating', 'user_ratings_total', 'name'],[m
+         key: process.env.GOOGLE_PLACES_API_KEY,[m
+[31m-        language:language: 'fr' as any,  [m
+[32m+[m[32m        language: Language.fr, // Français[m[41m  [m
+ [m
+       },[m
+     });[m
+[36m@@ -65,7 +65,7 @@[m [mexport async function findPlaceId([m
+       params: {[m
+         query,[m
+         key: process.env.GOOGLE_PLACES_API_KEY,[m
+[31m-        language: 'fr',[m
+[32m+[m[32m        language: Language.fr,[m
+       },[m
+     });[m
+ [m
+[36m@@ -94,7 +94,7 @@[m [mexport async function getPlaceDetails(placeId: string): Promise<PlaceDetails | n[m
+         place_id: placeId,[m
+         fields: ['name', 'rating', 'user_ratings_total', 'reviews', 'formatted_address'],[m
+         key: process.env.GOOGLE_PLACES_API_KEY,[m
+[31m-        language: 'fr',[m
+[32m+[m[32m        language: Language.fr,[m
+       },[m
+     });[m
+ [m

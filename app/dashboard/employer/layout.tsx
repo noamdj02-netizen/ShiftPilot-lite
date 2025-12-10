@@ -43,12 +43,7 @@ function EmployerDashboardContent({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
-  // Redirect to onboarding if no organization
-  useEffect(() => {
-    if (profile && !profile.organization_id && pathname !== '/onboarding/employer') {
-      router.push('/onboarding/employer')
-    }
-  }, [profile, pathname, router])
+  // No redirect needed - user can access dashboard even without organization
 
   const navigation = [
     {
@@ -395,7 +390,7 @@ function EmployerDashboardContent({ children }: { children: React.ReactNode }) {
             </nav>
 
             {/* User Profile Mobile */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-black/5 dark:border-white/5 bg-white dark:bg-[#1C1C1E]">
+            <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-black/5 dark:border-white/5 bg-white dark:bg-[#1C1C1E] space-y-3">
               <div className="flex items-center gap-3">
                 <div
                   className="w-10 h-10 theme-primary rounded-full flex items-center justify-center text-white font-semibold shadow-md"
@@ -407,6 +402,31 @@ function EmployerDashboardContent({ children }: { children: React.ReactNode }) {
                   <p className="text-sm font-semibold text-black dark:text-white">John Doe</p>
                   <p className="text-xs text-black/60 dark:text-white/60">Manager</p>
                 </div>
+              </div>
+              
+              {/* Paramètres et Déconnexion */}
+              <div className="flex flex-col gap-2">
+                <Link
+                  href="/dashboard/employer/settings"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white"
+                >
+                  <Settings className="w-5 h-5" />
+                  <span className="text-sm font-medium">Paramètres</span>
+                </Link>
+                
+                <motion.button
+                  onClick={async () => {
+                    await handleLogout()
+                    setIsMobileMenuOpen(false)
+                  }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors text-red-600 dark:text-red-400 group"
+                >
+                  <LogOut className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                  <span className="text-sm font-medium">Déconnexion</span>
+                </motion.button>
               </div>
             </div>
           </motion.aside>

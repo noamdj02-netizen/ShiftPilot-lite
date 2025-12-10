@@ -3,6 +3,10 @@
 import { useEffect, useState } from 'react'
 import { Moon, Sun } from 'lucide-react'
 
+/**
+ * Dark Mode Toggle - Réduit à 50% de la taille originale
+ * Style minimaliste inspiré Apple/Vercel/Linear
+ */
 export function DarkModeToggle() {
   const [isDark, setIsDark] = useState(false)
 
@@ -28,13 +32,15 @@ export function DarkModeToggle() {
   return (
     <button
       onClick={toggleDarkMode}
-      className="p-0 border-0 bg-transparent hover:opacity-80 transition-opacity"
-      aria-label="Toggle dark mode"
+      className="p-0.5 border-0 bg-transparent hover:opacity-80 transition-opacity"
+      aria-label="Basculer entre mode clair et sombre"
+      role="button"
+      type="button"
     >
       {isDark ? (
-        <Sun className="w-5 h-5 text-white" />
+        <Sun className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-700 dark:text-slate-300" />
       ) : (
-        <Moon className="w-5 h-5 text-white" />
+        <Moon className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-700 dark:text-slate-300" />
       )}
     </button>
   )

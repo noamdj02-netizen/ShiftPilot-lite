@@ -2,23 +2,36 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import type { Database } from "@/types/database";
 
-// Validation stricte des variables d'environnement côté serveur
+// Validation des variables d'environnement côté serveur
 function getEnvVars() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  // Support des nouvelles clés publishable et des anciennes clés anon
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY || 
+                          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  if (!supabaseUrl || supabaseUrl === "https://your-project.supabase.co" || supabaseUrl === "https://example.com") {
-    throw new Error(
-      "NEXT_PUBLIC_SUPABASE_URL is missing or not configured. " +
-      "Please set it in your environment variables (Vercel: Settings > Environment Variables, Local: .env.local)"
-    );
+  // Si les variables sont des placeholders, retourner des valeurs par défaut
+  // Cela permettra au code de fonctionner mais les requêtes échoueront avec des erreurs claires
+  if (!supabaseUrl || supabaseUrl === "https://your-project.supabase.co" || supabaseUrl === "https://example.com" || supabaseUrl === "https://placeholder.supabase.co") {
+    console.warn("[Supabase Server] NEXT_PUBLIC_SUPABASE_URL is not configured. Using placeholder. API calls will fail.");
+    return {
+      supabaseUrl: "https://placeholder.supabase.co",
+      supabaseAnonKey: "placeholder-key"
+    };
   }
 
-  if (!supabaseAnonKey || supabaseAnonKey === "your-anon-key-here" || supabaseAnonKey === "placeholder") {
-    throw new Error(
-      "NEXT_PUBLIC_SUPABASE_ANON_KEY is missing or not configured. " +
-      "Please set it in your environment variables (Vercel: Settings > Environment Variables, Local: .env.local)"
-    );
+  // Vérifier si la clé est valide (publishable commence par sb_, anon par eyJ)
+  const isValidKey = supabaseAnonKey && 
+                     supabaseAnonKey !== "your-anon-key-here" && 
+                     supabaseAnonKey !== "placeholder" && 
+                     supabaseAnonKey !== "placeholder-key" &&
+                     (supabaseAnonKey.startsWith('sb_') || supabaseAnonKey.startsWith('eyJ'));
+  
+  if (!isValidKey) {
+    console.warn("[Supabase Server] NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY or NEXT_PUBLIC_SUPABASE_ANON_KEY is not configured. Using placeholder. API calls will fail.");
+    return {
+      supabaseUrl: supabaseUrl || "https://placeholder.supabase.co",
+      supabaseAnonKey: "placeholder-key"
+    };
   }
 
   return { supabaseUrl, supabaseAnonKey };

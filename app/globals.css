@@ -47,6 +47,161 @@
     @apply bg-accent text-white;
   }
 
+  /* Mobile touch optimization - Remove 300ms delay */
+  button, a, input, select, textarea, [role="button"] {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+  }
+
+  /* Prevent horizontal scroll on mobile */
+  * {
+    max-width: 100%;
+  }
+  
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+  }
+  
+  /* Ensure images and media don't overflow */
+  img, video, iframe, embed, object {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Prevent tables from causing horizontal scroll */
+  table {
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  /* FORCE le menu mobile à être au-dessus de TOUT */
+  body.mobile-menu-open {
+    overflow: hidden !important;
+    position: fixed !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* D'ABORD : FORCER la visibilité du menu mobile et backdrop (même si parent est caché) */
+  body.mobile-menu-open [data-mobile-menu="true"],
+  body.mobile-menu-open [data-mobile-backdrop="true"],
+  body.mobile-menu-open .mobile-menu-container,
+  body.mobile-menu-open .mobile-menu-backdrop,
+  body.mobile-menu-open [data-mobile-menu="true"] > *,
+  body.mobile-menu-open .mobile-menu-container > * {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    position: relative !important;
+  }
+  
+  body.mobile-menu-open [data-mobile-menu="true"],
+  body.mobile-menu-open .mobile-menu-container {
+    z-index: 99999 !important;
+    position: fixed !important;
+  }
+  
+  body.mobile-menu-open [data-mobile-backdrop="true"],
+  body.mobile-menu-open .mobile-menu-backdrop {
+    z-index: 99998 !important;
+    position: fixed !important;
+  }
+
+  /* CACHER le contenu visible des sections, MAIS PAS le main lui-même (sinon le menu mobile est aussi caché) */
+  /* Cacher le contenu de la Hero SAUF le div qui contient le Navbar */
+  body.mobile-menu-open [data-hero-section="true"] > div:not(:has([data-navbar-wrapper])) {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+  
+  /* GARDER visible le div qui contient le Navbar dans la Hero */
+  body.mobile-menu-open [data-hero-section="true"] > div:has([data-navbar-wrapper]) {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 99999 !important;
+  }
+  
+  /* CACHER toutes les autres sections (pas la Hero car elle contient le Navbar) */
+  body.mobile-menu-open main > section:not([data-hero-section]) {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+  
+  /* CACHER aussi le footer si présent */
+  body.mobile-menu-open footer {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  /* GARDER visible le wrapper navbar - nécessaire pour que React puisse rendre le menu mobile */
+  body.mobile-menu-open [data-navbar-wrapper="true"] {
+    display: block !important;
+    position: relative !important;
+    z-index: 99999 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  /* CACHER seulement la navbar normale (logo, liens) */
+  body.mobile-menu-open [data-navbar-wrapper="true"] nav[data-navbar="true"] {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+  
+  /* GARDER visible AnimatePresence (conteneur du menu mobile) */
+  body.mobile-menu-open [data-navbar-wrapper="true"] > div {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  /* Menu mobile - z-index maximum avec !important - FOND OPAQUE */
+  [data-mobile-menu="true"],
+  .mobile-menu-container {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 99999 !important;
+    background-color: white !important;
+    background: white !important;
+    overflow-y: auto !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  /* Dark mode pour menu mobile */
+  .dark [data-mobile-menu="true"],
+  .dark .mobile-menu-container {
+    background-color: #1C1C1E !important;
+    background: #1C1C1E !important;
+  }
+
+  /* Backdrop menu mobile */
+  [data-mobile-backdrop="true"],
+  .mobile-menu-backdrop {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 99998 !important;
+    background-color: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(4px) !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
   /* Improved focus styles for accessibility */
   :focus-visible {
     @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background-light dark:ring-offset-background-dark;
@@ -89,12 +244,26 @@
     padding-bottom: env(safe-area-inset-bottom, 16px);
   }
 
-  /* Touch-friendly tap targets */
+  /* Touch-friendly tap targets - Mobile only */
   @media (max-width: 768px) {
-    button, a, input, select, textarea {
+    button:not(.no-touch-target), 
+    a:not(.no-touch-target), 
+    input:not(.no-touch-target), 
+    select:not(.no-touch-target), 
+    textarea:not(.no-touch-target) {
       min-height: 44px;
       min-width: 44px;
     }
+  }
+
+  /* Responsive container utilities */
+  .container-responsive {
+    @apply px-4 sm:px-5 md:px-6 lg:px-8 xl:px-12;
+  }
+
+  /* Responsive section padding */
+  .section-padding {
+    @apply py-12 sm:py-16 md:py-20 lg:py-24 xl:py-32;
   }
 
   /* Prevent text size adjustment on iOS */
@@ -158,8 +327,18 @@
 }
 
 @layer components {
+  /* Buttons - Uniformisés avec touch targets */
   .btn {
     @apply inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98];
+    @apply min-h-[44px] px-4 py-2 text-sm sm:text-base;
+  }
+  
+  .btn-sm {
+    @apply min-h-[36px] px-3 py-1.5 text-xs sm:text-sm;
+  }
+
+  .btn-lg {
+    @apply min-h-[48px] px-6 sm:px-8 py-3 text-base sm:text-lg;
   }
   
   .btn-primary {

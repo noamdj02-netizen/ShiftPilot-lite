@@ -558,7 +558,7 @@ export function AutomationSection() {
   ]
 
   return (
-    <section ref={ref} className="py-24 lg:py-32 bg-white dark:bg-[#000000] relative overflow-hidden">
+    <section ref={ref} className="py-12 sm:py-16 md:py-20 lg:py-24 xl:py-32 bg-white dark:bg-[#000000] relative overflow-hidden">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -572,24 +572,24 @@ export function AutomationSection() {
             Automatisation complète
           </span>
           
-          <h2 className="text-4xl md:text-5xl font-semibold text-black dark:text-white tracking-tight mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-black dark:text-white tracking-tight mb-4">
             ShiftPilot s'occupe de l'opérationnel.{' '}
             <span className="text-black/40 dark:text-white/40">Pendant que vous bossez.</span>
           </h2>
           
-          <p className="text-lg text-black/60 dark:text-white/60 max-w-3xl mx-auto mb-2">
+          <p className="text-base sm:text-lg md:text-xl text-black/60 dark:text-white/60 max-w-3xl mx-auto mb-2 leading-relaxed">
             Une solution unique, quatre moteurs qui tournent pour vous.
           </p>
-          <p className="text-base text-black/70 dark:text-white/70 max-w-3xl mx-auto mb-4">
+          <p className="text-base sm:text-lg text-black/70 dark:text-white/70 max-w-3xl mx-auto mb-4 leading-relaxed">
             Pendant que vous gérez votre service, ShiftPilot automatise : les plannings, les remplacements, les avis Google, et même les messages clients.
           </p>
-          <p className="text-sm font-semibold text-black/80 dark:text-white/80">
+          <p className="text-sm sm:text-base font-semibold text-black/80 dark:text-white/80">
             Résultat : <span className="text-accent">moins de charge mentale, plus de clients, plus d'avis, zéro galère.</span>
           </p>
         </motion.div>
 
-        {/* Features Grid */}
-        <div className="grid md:grid-cols-2 gap-4 lg:gap-6">
+        {/* Features Grid avec espacement responsive */}
+        <div className="grid md:grid-cols-2 gap-6 sm:gap-8 md:gap-12">
           {features.map((feature, index) => (
             <FeatureCard
               key={feature.title}
@@ -643,14 +643,14 @@ function FeatureCard({
       initial={{ opacity: 0, y: 30 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: index * 0.1 }}
-      className={`group relative bg-white dark:bg-[#000000] rounded-3xl p-8 border-2 ${feature.borderColor} hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] overflow-hidden`}
+      className={`group relative bg-white dark:bg-[#000000] rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 border-2 ${feature.borderColor} hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] overflow-hidden flex flex-col ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} md:items-center gap-6 sm:gap-8 md:gap-12`}
     >
       {/* Gradient background */}
       <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
       
-      <div className="relative z-10">
+      <div className="relative z-10 flex-1 md:w-1/2">
         {/* Icon & Title */}
-        <div className="flex items-start gap-4 mb-4">
+        <div className="flex items-start gap-3 sm:gap-4 mb-4">
           <div className={`w-14 h-14 rounded-2xl ${feature.iconBg} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300`}>
             <Icon className={`w-7 h-7 ${feature.iconColor}`} />
           </div>
@@ -669,9 +669,9 @@ function FeatureCard({
           {feature.description}
         </p>
 
-        {/* Video Demo - Auto-playing */}
-        <div className="mb-6 rounded-xl overflow-hidden border border-black/5 dark:border-white/10 bg-slate-50 dark:bg-slate-900/50 relative group/video">
-          <div className="aspect-video relative">
+        {/* Video Demo - Auto-playing avec layout vertical mobile */}
+        <div className="mb-6 md:mb-0 md:w-1/2 rounded-xl overflow-hidden border border-black/5 dark:border-white/10 bg-slate-50 dark:bg-slate-900/50 relative group/video">
+          <div className="aspect-video relative max-h-[250px] sm:max-h-[350px] md:max-h-none w-full max-w-full h-auto">
             <motion.div 
               className="absolute inset-0 bg-slate-900 flex items-center justify-center"
               initial={{ opacity: 0 }}

@@ -31,110 +31,214 @@ export const useAuthStore = create<AuthState>()(
       setRestaurant: (restaurant) => set({ restaurant }),
       
       signIn: async (email, pass) => {
-        // Normalize email (trim and lowercase)
-        const normalizedEmail = email.trim().toLowerCase()
+        let data: any = null
         
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: normalizedEmail,
-          password: pass,
-        })
-        
-        if (error) {
-          console.error('Sign in error:', error)
-          // Provide more user-friendly error messages
-          if (error.message.includes('Invalid login credentials') || error.message.includes('Invalid credentials')) {
-            throw new Error('Email ou mot de passe incorrect')
-          } else if (error.message.includes('Email not confirmed')) {
-            throw new Error('Veuillez confirmer votre email avant de vous connecter')
-          } else {
-            throw new Error(error.message || 'Erreur de connexion')
-          }
-        }
-        
-        // After successful login, fetch user profile and restaurant
-        if (data?.user) {
-          try {
-            // Fetch profile
-            const { data: profileData, error: profileError } = await (supabase
-              .from('profiles') as any)
-              .select('*')
-              .eq('id', data.user.id)
-              .single()
+        try {
+          // Normalize email (trim and lowercase)
+          const normalizedEmail = email.trim().toLowerCase()
+          
+          const response = await supabase.auth.signInWithPassword({
+            email: normalizedEmail,
+            password: pass,
+          })
+          
+          data = response.data
+          
+          if (response.error) {
+            console.error('Sign in error:', response.error)
             
-            if (profileError) {
-              console.error('Error fetching profile:', profileError)
-              // Don't throw here, just log. We still want the user to be logged in.
+            // Gérer spécifiquement les erreurs de configuration
+            if (response.error.message.includes('Invalid API key') || response.error.message.includes('JWT')) {
+              throw new Error('Erreur de configuration Supabase. Veuillez vérifier les variables d\'environnement.')
             }
             
-            if (profileData) {
-              set({ profile: profileData })
-              
-              // Fetch restaurant/organization if exists
-              if (profileData.organization_id || profileData.restaurant_id) {
-                const orgId = profileData.organization_id || profileData.restaurant_id
-                const tableName = profileData.organization_id ? 'organizations' : 'restaurants'
-                const { data: orgData } = await (supabase
-                  .from(tableName) as any)
-                  .select('*')
-                  .eq('id', orgId)
-                  .single()
-                
-                if (orgData) {
-                  set({ restaurant: orgData })
+            // Provide more user-friendly error messages
+            if (response.error.message.includes('Invalid login credentials') || response.error.message.includes('Invalid credentials')) {
+              throw new Error('Email ou mot de passe incorrect')
+            } else if (response.error.message.includes('Email not confirmed')) {
+              throw new Error('Veuillez confirmer votre email avant de vous connecter')
+            } else {
+              throw new Error(response.error.message || 'Erreur de connexion')
+            }
+          }
+        } catch (err) {
+          // Si l'erreur est liée à Supabase non configuré
+          if (err instanceof Error && (err.message.includes('Supabase') || err.message.includes('API key') || err.message.includes('Invalid API key'))) {
+            // Ne pas afficher l'erreur sur la landing page
+            if (typeof window !== 'undefined' && window.location.pathname === '/') {
+              throw new Error('Email ou mot de passe incorrect')
+            }
+            throw new Error('Configuration Supabase manquante. Veuillez configurer NEXT_PUBLIC_SUPABASE_URL et NEXT_PUBLIC_SUPABASE_ANON_KEY.')
+          }
+          throw err
+        }
+        
+        // After successful login, update user state immediately
+        if (data?.user) {
+          // Update user state immediately for middleware to detect
+          set({ user: data.user, isLoading: false })
+          
+          try {
+            // Fetch restaurant directly using owner_id (new schema)
+            const { data: restaurantData, error: restaurantError } = await (supabase
+              .from('restaurants') as any)
+              .select('*')
+              .eq('owner_id', data.user.id)
+              .maybeSingle()
+            
+            if (restaurantError) {
+              console.error('Error fetching restaurant:', restaurantError)
+              // Don't throw here, just log. We still want the user to be logged in.
+            } else if (restaurantData) {
+              set({ restaurant: restaurantData })
+              // Create a profile-like object for compatibility
+              set({ 
+                profile: {
+                  id: data.user.id,
+                  restaurant_id: restaurantData.id,
+                  email: data.user.email,
+                  first_name: data.user.user_metadata?.first_name,
+                  last_name: data.user.user_metadata?.last_name,
                 }
-              }
+              })
+            } else {
+              // No restaurant found, set profile without restaurant_id
+              set({ 
+                profile: {
+                  id: data.user.id,
+                  restaurant_id: null,
+                  email: data.user.email,
+                  first_name: data.user.user_metadata?.first_name,
+                  last_name: data.user.user_metadata?.last_name,
+                }
+              })
             }
           } catch (err) {
              console.error('Unexpected error loading user data:', err)
+             // Don't throw, user is already logged in
           }
         }
       },
 
       signUp: async (email, pass, userData) => {
-        // 1. Sign up the user
-        const { data: authData, error: authError } = await supabase.auth.signUp({
-          email,
-          password: pass,
-          options: {
-            data: {
-              first_name: userData.first_name,
-              last_name: userData.last_name,
-              role: 'employer', // Default role for new signups is employer
-              // Store plan and employee count in metadata if needed, or just ignore for now
+        try {
+          // 1. Sign up the user
+          const { data: authData, error: authError } = await supabase.auth.signUp({
+            email,
+            password: pass,
+            options: {
+              data: {
+                first_name: userData.first_name,
+                last_name: userData.last_name,
+                role: 'employer', // Default role for new signups is employer
+              },
             },
-          },
-        })
+          })
 
-        if (authError) throw authError
-        if (!authData.user) throw new Error('No user created')
+          if (authError) {
+            console.error('Sign up error:', authError)
+            // Messages d'erreur plus clairs
+            if (authError.message.includes('already registered') || authError.message.includes('already exists')) {
+              throw new Error('Cet email est déjà utilisé. Connectez-vous ou utilisez un autre email.')
+            } else if (authError.message.includes('Invalid email')) {
+              throw new Error('Email invalide. Veuillez entrer une adresse email valide.')
+            } else if (authError.message.includes('Password')) {
+              throw new Error('Le mot de passe doit contenir au moins 8 caractères.')
+            } else if (authError.message.includes('API key') || authError.message.includes('JWT')) {
+              throw new Error('Erreur de configuration. Veuillez contacter le support.')
+            }
+            throw new Error(authError.message || 'Erreur lors de la création du compte')
+          }
 
-        // 2. Create the restaurant (Tenant)
-        // Ideally this should be done via a trigger or a secure RPC to ensure atomicity,
-        // but for simplicity in client-side initiation we do it here. 
-        // RLS policies must allow authenticated users to create a restaurant.
-        
-        // NOTE: Since the profile is created via trigger on auth.users insert (see schema.sql),
-        // we just need to create the restaurant and link it.
-        
-        // @ts-ignore - Type mismatch between database schema types
-        const { data: restaurantData, error: restaurantError } = await supabase
-          .from('restaurants')
-          // @ts-ignore
-          .insert({ name: userData.restaurant_name })
-          .select()
-          .single()
+          if (!authData.user) {
+            throw new Error('Impossible de créer le compte. Veuillez réessayer.')
+          }
 
-        if (restaurantError) throw restaurantError
+          // 2. Create the restaurant using RPC function (bypasses RLS safely)
+          let restaurant: any = null
+          
+          try {
+            // @ts-ignore
+            const { data: restaurantData, error: restaurantError } = await supabase
+              .rpc('create_restaurant_on_signup', {
+                p_nom: userData.restaurant_name,
+                p_owner_id: authData.user.id
+              })
 
-        // 3. Update the profile with the restaurant_id
-        // @ts-ignore - Type mismatch between database schema types
-        const { error: profileError } = await supabase
-          .from('profiles')
-          // @ts-ignore
-          .update({ restaurant_id: restaurantData.id })
-          .eq('id', authData.user.id)
+            if (restaurantError) {
+              console.error('Restaurant creation error:', restaurantError)
+              
+              // Si la fonction RPC n'existe pas, essayer l'insertion directe
+              if (restaurantError.message.includes('function') && restaurantError.message.includes('does not exist')) {
+                console.warn('RPC function not found, trying direct insert...')
+                // @ts-ignore
+                const { data: directInsertData, error: directInsertError } = await supabase
+                  .from('restaurants')
+                  // @ts-ignore
+                  .insert({ 
+                    nom: userData.restaurant_name,
+                    owner_id: authData.user.id,
+                    plan: 'trial'
+                  })
+                  .select()
+                  .single()
+                
+                if (directInsertError) {
+                  // Messages d'erreur spécifiques pour la création du restaurant
+                  if (directInsertError.code === '23505') { // Unique violation
+                    throw new Error('Un restaurant avec ce nom existe déjà.')
+                  } else if (directInsertError.message.includes('permission denied') || directInsertError.message.includes('RLS') || directInsertError.message.includes('row-level security')) {
+                    throw new Error('Erreur de permissions. Veuillez exécuter la migration 027_fix_restaurant_creation.sql dans Supabase Dashboard → SQL Editor.')
+                  } else if (directInsertError.message.includes('null value') || directInsertError.message.includes('required')) {
+                    throw new Error('Informations manquantes. Veuillez remplir tous les champs.')
+                  }
+                  throw new Error(`Erreur lors de la création du restaurant: ${directInsertError.message}`)
+                }
+                
+                restaurant = directInsertData
+              } else {
+                // Messages d'erreur spécifiques pour la création du restaurant
+                if (restaurantError.code === '23505') { // Unique violation
+                  throw new Error('Un restaurant avec ce nom existe déjà.')
+                } else if (restaurantError.message.includes('permission denied') || restaurantError.message.includes('RLS') || restaurantError.message.includes('row-level security')) {
+                  throw new Error('Erreur de permissions. Veuillez exécuter la migration 027_fix_restaurant_creation.sql dans Supabase Dashboard → SQL Editor.')
+                } else if (restaurantError.message.includes('null value') || restaurantError.message.includes('required')) {
+                  throw new Error('Informations manquantes. Veuillez remplir tous les champs.')
+                }
+                throw new Error(`Erreur lors de la création du restaurant: ${restaurantError.message}`)
+              }
+            } else {
+              // RPC retourne un tableau, prendre le premier élément
+              restaurant = Array.isArray(restaurantData) && restaurantData.length > 0 ? restaurantData[0] : restaurantData
+            }
+          } catch (rpcError) {
+            // Si c'est déjà une Error, la re-lancer
+            if (rpcError instanceof Error) {
+              throw rpcError
+            }
+            throw new Error('Erreur lors de la création du restaurant')
+          }
 
-        if (profileError) throw profileError
+          // Mettre à jour l'état avec le restaurant créé
+          if (restaurant) {
+            set({ 
+              restaurant: restaurant,
+              profile: {
+                id: authData.user.id,
+                restaurant_id: restaurant.id,
+                email: authData.user.email,
+                first_name: userData.first_name,
+                last_name: userData.last_name,
+              }
+            })
+          }
+        } catch (err) {
+          // Re-throw avec un message plus clair si ce n'est pas déjà une Error
+          if (err instanceof Error) {
+            throw err
+          }
+          throw new Error('Une erreur inattendue est survenue. Veuillez réessayer.')
+        }
       },
 
       signOut: async () => {
@@ -170,30 +274,34 @@ export const useAuth = () => {
   React.useEffect(() => {
     const loadUserData = async (userId: string) => {
       try {
-        // Fetch profile
-        const { data: profileData } = await (supabase
-          .from('profiles') as any)
+        // Fetch restaurant directly using owner_id (new schema)
+        const { data: restaurantData } = await (supabase
+          .from('restaurants') as any)
           .select('*')
-          .eq('id', userId)
-          .single()
+          .eq('owner_id', userId)
+          .maybeSingle()
         
-        if (profileData) {
-          setProfile(profileData)
-          
-          // Fetch restaurant/organization if exists
-          if (profileData.organization_id || profileData.restaurant_id) {
-            const orgId = profileData.organization_id || profileData.restaurant_id
-            const tableName = profileData.organization_id ? 'organizations' : 'restaurants'
-            const { data: orgData } = await (supabase
-              .from(tableName) as any)
-              .select('*')
-              .eq('id', orgId)
-              .single()
-            
-            if (orgData) {
-              setRestaurant(orgData)
-            }
-          }
+        if (restaurantData) {
+          setRestaurant(restaurantData)
+          // Create a profile-like object for compatibility
+          const { data: { user } } = await supabase.auth.getUser()
+          setProfile({
+            id: userId,
+            restaurant_id: restaurantData.id,
+            email: user?.email,
+            first_name: user?.user_metadata?.first_name,
+            last_name: user?.user_metadata?.last_name,
+          })
+        } else {
+          // No restaurant found
+          const { data: { user } } = await supabase.auth.getUser()
+          setProfile({
+            id: userId,
+            restaurant_id: null,
+            email: user?.email,
+            first_name: user?.user_metadata?.first_name,
+            last_name: user?.user_metadata?.last_name,
+          })
         }
       } catch (error) {
         console.error('Error loading user data:', error)

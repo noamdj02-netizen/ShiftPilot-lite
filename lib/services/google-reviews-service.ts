@@ -33,14 +33,27 @@ export async function fetchGoogleReviews(placeId: string): Promise<GoogleReview[
         place_id: placeId,
         fields: ['reviews', 'rating', 'user_ratings_total', 'name'],
         key: process.env.GOOGLE_PLACES_API_KEY,
-        language:language: 'fr' as any,  
+        language: Language.fr, // Français  
 
       },
     });
 
-    return response.data.result.reviews || [];
-  } catch (error) {
+    // Mapper les avis pour garantir le type correct
+    const reviews = response.data.result.reviews || [];
+    return reviews.map(review => ({
+      ...review,
+      time: typeof review.time === 'string' ? parseInt(review.time, 10) : review.time,
+    })) as GoogleReview[];
+  } catch (error: any) {
     console.error('Google Places API error:', error);
+    
+    // Gérer spécifiquement les erreurs de clé API invalide
+    const errorMessage = error?.response?.data?.error_message || error?.message || String(error);
+    
+    if (errorMessage.includes('API key') || errorMessage.includes('INVALID_REQUEST') || errorMessage.includes('REQUEST_DENIED')) {
+      throw new Error('La clé API Google Places n\'est pas configurée correctement. Veuillez vérifier vos variables d\'environnement.');
+    }
+    
     throw new Error('Erreur lors de la récupération des avis Google');
   }
 }
@@ -65,17 +78,24 @@ export async function findPlaceId(
       params: {
         query,
         key: process.env.GOOGLE_PLACES_API_KEY,
-        language: 'fr',
+        language: Language.fr,
       },
     });
 
     if (response.data.results && response.data.results.length > 0) {
-      return response.data.results[0].place_id;
+      return response.data.results[0].place_id || null;
     }
 
     return null;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Google Places search error:', error);
+    
+    // Log mais ne pas throw pour la recherche (on retourne null)
+    const errorMessage = error?.response?.data?.error_message || error?.message || String(error);
+    if (errorMessage.includes('API key') || errorMessage.includes('INVALID_REQUEST') || errorMessage.includes('REQUEST_DENIED')) {
+      console.error('Google Places API key is invalid or not configured');
+    }
+    
     return null;
   }
 }
@@ -94,20 +114,32 @@ export async function getPlaceDetails(placeId: string): Promise<PlaceDetails | n
         place_id: placeId,
         fields: ['name', 'rating', 'user_ratings_total', 'reviews', 'formatted_address'],
         key: process.env.GOOGLE_PLACES_API_KEY,
-        language: 'fr',
+        language: Language.fr,
       },
     });
 
     const result = response.data.result;
+    const reviews = result.reviews || [];
+    
     return {
       place_id: placeId,
       name: result.name || '',
       rating: result.rating,
       user_ratings_total: result.user_ratings_total,
-      reviews: result.reviews || []
+      reviews: reviews.map(review => ({
+        ...review,
+        time: typeof review.time === 'string' ? parseInt(review.time, 10) : review.time,
+      })) as GoogleReview[]
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Google Places details error:', error);
+    
+    // Log mais ne pas throw pour getPlaceDetails (on retourne null)
+    const errorMessage = error?.response?.data?.error_message || error?.message || String(error);
+    if (errorMessage.includes('API key') || errorMessage.includes('INVALID_REQUEST') || errorMessage.includes('REQUEST_DENIED')) {
+      console.error('Google Places API key is invalid or not configured');
+    }
+    
     return null;
   }
 }

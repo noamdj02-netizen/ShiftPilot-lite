@@ -3,6 +3,10 @@
 import React, { useState, useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 
+/**
+ * BeforeAfterSection - Optimisé pour responsive mobile/desktop
+ * Comparaison visuelle avant/après avec mockups adaptatifs
+ */
 export function BeforeAfterSection() {
   const [activeTab, setActiveTab] = useState<'employeur' | 'employe'>('employeur')
   const ref = useRef(null)
@@ -429,7 +433,7 @@ export function BeforeAfterSection() {
   }
 
   return (
-    <section ref={ref} className="py-24 lg:py-32 bg-white dark:bg-[#000000] relative overflow-hidden">
+    <section ref={ref} className="py-12 sm:py-16 md:py-20 lg:py-24 xl:py-32 bg-white dark:bg-[#000000] relative overflow-hidden">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -443,44 +447,44 @@ export function BeforeAfterSection() {
             Transformation
           </span>
           
-          <h2 className="text-4xl md:text-5xl font-semibold text-black dark:text-white tracking-tight mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-black dark:text-white tracking-tight mb-4">
             Avant. Après. <span className="text-black/40 dark:text-white/40">ShiftPilot.</span>
           </h2>
-          <p className="text-lg text-black/60 dark:text-white/60 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-black/60 dark:text-white/60 max-w-2xl mx-auto leading-relaxed">
             Découvrez la différence entre l'ancien système et ShiftPilot Enterprise
           </p>
         </motion.div>
 
-        {/* Tabs */}
-        <div className="flex justify-center mb-12">
-          <div className="inline-flex bg-slate-100 dark:bg-surface-dark rounded-lg p-1 border border-steel-dark/30">
+        {/* Tabs - Full-width sur mobile */}
+        <div className="flex justify-center mb-8 sm:mb-12">
+          <div className="inline-flex w-full sm:w-auto bg-slate-100 dark:bg-surface-dark rounded-lg p-1 border border-steel-dark/30">
             <button
               onClick={() => setActiveTab('employeur')}
-              className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
+              className={`flex-1 sm:flex-none px-4 sm:px-6 py-3 rounded-md text-sm sm:text-base font-medium transition-all min-h-[48px] touch-manipulation flex items-center justify-center gap-2 ${
                 activeTab === 'employeur'
                   ? 'bg-white dark:bg-background-dark text-accent shadow-sm'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  : 'text-slate-600 dark:text-slate-400 active:text-slate-900 dark:active:text-white'
               }`}
             >
-              <span className="material-symbols-outlined text-base align-middle mr-2">business</span>
-              Vue Employeur
+              <span className="material-symbols-outlined text-base sm:text-lg">business</span>
+              <span>Vue Employeur</span>
             </button>
             <button
               onClick={() => setActiveTab('employe')}
-              className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
+              className={`flex-1 sm:flex-none px-4 sm:px-6 py-3 rounded-md text-sm sm:text-base font-medium transition-all min-h-[48px] touch-manipulation flex items-center justify-center gap-2 ${
                 activeTab === 'employe'
                   ? 'bg-white dark:bg-background-dark text-accent shadow-sm'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  : 'text-slate-600 dark:text-slate-400 active:text-slate-900 dark:active:text-white'
               }`}
             >
-              <span className="material-symbols-outlined text-base align-middle mr-2">person</span>
-              Vue Employé
+              <span className="material-symbols-outlined text-base sm:text-lg">person</span>
+              <span>Vue Employé</span>
             </button>
           </div>
         </div>
 
-        {/* Before/After Grid */}
-        <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
+        {/* Before/After Grid - Layout mobile optimisé */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
           {/* Before */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -497,20 +501,23 @@ export function BeforeAfterSection() {
                   {beforeContent[activeTab].title}
                 </h3>
               </div>
-              <p className="text-black/60 dark:text-white/60 mb-4">
+              <p className="text-sm sm:text-base md:text-lg text-black/60 dark:text-white/60 mb-4">
                 {beforeContent[activeTab].description}
               </p>
               <ul className="space-y-2">
                 {beforeContent[activeTab].items.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-black/70 dark:text-white/70">
+                  <li key={i} className="flex items-start gap-2 text-sm sm:text-base md:text-lg text-black/70 dark:text-white/70">
                     <span className="material-symbols-outlined text-red-500 text-lg">close</span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="mt-6">
-              {beforeContent[activeTab].mockup}
+            {/* Mockups optimisés pour mobile */}
+            <div className="mt-6 max-w-full">
+              <div className="max-w-full h-auto max-h-[400px] object-contain overflow-hidden">
+                {beforeContent[activeTab].mockup}
+              </div>
             </div>
           </motion.div>
 
@@ -542,8 +549,11 @@ export function BeforeAfterSection() {
                 ))}
               </ul>
             </div>
-            <div className="mt-6">
-              {afterContent[activeTab].mockup}
+            {/* Mockups optimisés pour mobile */}
+            <div className="mt-6 max-w-full">
+              <div className="max-w-full h-auto max-h-[400px] object-contain overflow-hidden">
+                {afterContent[activeTab].mockup}
+              </div>
             </div>
           </motion.div>
         </div>

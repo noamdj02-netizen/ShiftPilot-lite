@@ -1,11 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { useAuth } from '@/hooks/useAuth'
-import { GoogleLoginButton } from '@/components/auth/GoogleLoginButton'
 
 interface LoginFormProps {
   userType?: 'employer' | 'employee'
@@ -17,11 +16,33 @@ export function LoginForm({ userType = 'employer' }: LoginFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
+  const [configError, setConfigError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     remember: false,
   })
+
+  // Vérifier la configuration Supabase au chargement (seulement si on est sur une page d'auth)
+  useEffect(() => {
+    // Ne pas afficher l'erreur sur la landing page
+    if (typeof window !== 'undefined' && (window.location.pathname === '/' || window.location.pathname === '')) {
+      return
+    }
+    
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    // Support des nouvelles clés publishable et des anciennes clés anon
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY || 
+                        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    
+    // Ne pas afficher l'erreur si les variables sont définies (même si ce sont des placeholders)
+    // L'erreur ne sera affichée que si les variables sont vraiment manquantes
+    if (!supabaseUrl) {
+      setConfigError('NEXT_PUBLIC_SUPABASE_URL n\'est pas configuré. Veuillez le configurer dans Vercel Environment Variables.')
+    } else if (!supabaseKey) {
+      setConfigError('NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY ou NEXT_PUBLIC_SUPABASE_ANON_KEY n\'est pas configuré. Veuillez configurer l\'une de ces variables dans Vercel Environment Variables.')
+    }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -39,17 +60,32 @@ export function LoginForm({ userType = 'employer' }: LoginFormProps) {
         return
       }
       
+      // Sign in using the auth hook which handles state management
+      // The hook uses supabaseClient internally and will set cookies via SSR
       await signIn(email, pass)
       
-      // Small delay to ensure state is updated
-      await new Promise(resolve => setTimeout(resolve, 100))
+      // Wait for Supabase SSR to set cookies in the browser
+      // This is critical for the middleware to detect the session
+      await new Promise(resolve => setTimeout(resolve, 1200))
       
-      // Redirect to portal for smart routing based on user role
-      router.push('/portal')
+      // Force a full page reload to ensure cookies are sent to server
+      // The middleware will detect the authenticated user and allow access
+      const redirectPath = userType === 'employee' ? '/dashboard/employee' : '/dashboard/employer'
+      window.location.replace(redirectPath)
     } catch (err) {
       // Login error handling
       const errorMessage = err instanceof Error ? err.message : 'Une erreur est survenue'
-      setError(errorMessage)
+      
+      // Ne pas afficher l'erreur de configuration Supabase sur la landing page
+      if (typeof window !== 'undefined' && (window.location.pathname === '/' || window.location.pathname === '')) {
+        if (errorMessage.includes('Configuration Supabase')) {
+          setError('Email ou mot de passe incorrect')
+        } else {
+          setError(errorMessage)
+        }
+      } else {
+        setError(errorMessage)
+      }
     } finally {
       setIsLoading(false)
     }
@@ -73,32 +109,37 @@ export function LoginForm({ userType = 'employer' }: LoginFormProps) {
       className="space-y-6"
     >
       {userType === 'employer' && (
-        <div className="space-y-2 text-center sm:text-left">
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+        <div className="space-y-2 text-center sm:text-left mb-4 sm:mb-6">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
             Bon retour parmi nous
           </h1>
-          <p className="text-slate-500 dark:text-slate-400">
+          <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400">
             Entrez vos identifiants pour accéder à votre dashboard
           </p>
         </div>
       )}
 
-      {/* Google Login Button */}
-      <div className="space-y-3">
-        <GoogleLoginButton userType={userType} />
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-slate-200 dark:border-white/10"></div>
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white dark:bg-[#1C1C1E] px-2 text-slate-500 dark:text-slate-400">
-              Ou
-            </span>
-          </div>
-        </div>
-      </div>
-
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Configuration Error Alert */}
+        {configError && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-900/30 rounded-lg text-yellow-800 dark:text-yellow-400 text-sm"
+          >
+            <div className="flex items-start gap-3">
+              <span className="material-symbols-outlined text-lg flex-shrink-0">warning</span>
+              <div className="flex-1">
+                <p className="font-semibold mb-1">Configuration Supabase manquante</p>
+                <p className="text-xs opacity-90">{configError}</p>
+                <p className="text-xs mt-2 opacity-75">
+                  Allez dans Vercel Dashboard → Settings → Environment Variables pour configurer les variables.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         {/* Error Alert */}
         {error && (
           <motion.div
@@ -121,10 +162,12 @@ export function LoginForm({ userType = 'employer' }: LoginFormProps) {
             <input
               id="email"
               type="email"
+              inputMode="email"
+              autoComplete="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               placeholder={userType === 'employer' ? 'nom@entreprise.com' : 'votre@email.com'}
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
+              className="w-full pl-10 pr-4 py-3 min-h-[48px] text-base bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all touch-manipulation"
               required
             />
           </div>
@@ -148,16 +191,18 @@ export function LoginForm({ userType = 'employer' }: LoginFormProps) {
             <input
               id="password"
               type={showPassword ? 'text' : 'password'}
+              autoComplete="current-password"
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               placeholder="••••••••"
-              className="w-full pl-10 pr-10 py-2.5 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
+              className="w-full pl-10 pr-10 py-3 min-h-[48px] text-base bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all touch-manipulation"
               required
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 active:text-slate-600 dark:active:text-slate-200 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation"
+              aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
             >
               <span className="material-symbols-outlined text-[20px]">
                 {showPassword ? 'visibility_off' : 'visibility'}
@@ -185,7 +230,7 @@ export function LoginForm({ userType = 'employer' }: LoginFormProps) {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 px-4 bg-slate-900 dark:bg-white text-white dark:text-black font-semibold rounded-xl shadow-lg hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-2"
+            className="w-full min-h-[48px] py-3 px-4 bg-slate-900 dark:bg-white text-white dark:text-black font-semibold rounded-xl shadow-lg active:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-base touch-manipulation"
           >
             {isLoading ? (
               <span className="material-symbols-outlined animate-spin text-xl">progress_activity</span>

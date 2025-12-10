@@ -46,6 +46,23 @@ const nextConfig = {
     return config
   },
 
+  // Redirections (www → non-www)
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'www.shiftpilot.fr',
+          },
+        ],
+        destination: 'https://shiftpilot.fr/:path*',
+        permanent: true,
+      },
+    ]
+  },
+
   // Headers de sécurité
   async headers() {
     return [

@@ -23,7 +23,7 @@ export default function PortalPage() {
         
         if (authError || !user) {
           // Not authenticated, redirect to login
-          router.push('/login/employer')
+          router.push('/login')
           return
         }
 
@@ -37,10 +37,10 @@ export default function PortalPage() {
         if (profileError) {
           console.error('Error fetching profile:', profileError)
           
-          // If profile doesn't exist (PGRST116), redirect to onboarding
+          // If profile doesn't exist (PGRST116), redirect to dashboard
           if (profileError.code === 'PGRST116' || profileError.message?.includes('No rows')) {
             setStatus('redirecting')
-            router.push('/onboarding/employer')
+            router.push('/dashboard/employer')
             return
           }
           
@@ -54,7 +54,7 @@ export default function PortalPage() {
                 if (profileData) {
                   setStatus('redirecting')
                   if (!profileData.organization_id) {
-                    router.push('/onboarding/employer')
+                    router.push('/dashboard/employer')
                     return
                   }
                   const role = profileData.role
@@ -83,10 +83,10 @@ export default function PortalPage() {
           return
         }
 
-        // If no profile data, redirect to onboarding
+        // If no profile data, redirect to dashboard
         if (!profile) {
           setStatus('redirecting')
-          router.push('/onboarding/employer')
+          router.push('/dashboard/employer')
           return
         }
 
@@ -94,8 +94,8 @@ export default function PortalPage() {
 
         // Determine route based on role and organization
         if (!profile.organization_id) {
-          // No organization, redirect to onboarding
-          router.push('/onboarding/employer')
+          // No organization, redirect to dashboard
+          router.push('/dashboard/employer')
           return
         }
 
@@ -199,13 +199,13 @@ export default function PortalPage() {
                 Réessayer
               </button>
               <button
-                onClick={() => router.push('/onboarding/employer')}
+                onClick={() => router.push('/dashboard/employer')}
                 className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-sm font-medium"
               >
-                Aller à l'onboarding
+                Aller au dashboard
               </button>
               <button
-                onClick={() => router.push('/login/employer')}
+                onClick={() => router.push('/login')}
                 className="px-4 py-2 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
               >
                 Retour à la connexion

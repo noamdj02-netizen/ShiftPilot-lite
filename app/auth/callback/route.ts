@@ -29,10 +29,10 @@ export async function GET(request: Request) {
         .eq("id", user.id)
         .single();
 
-      // If no profile exists, redirect to onboarding
+      // If no profile exists, redirect to dashboard
       if (!profile) {
         return NextResponse.redirect(
-          new URL("/onboarding/employer", request.url)
+          new URL("/dashboard/employer", request.url)
         );
       }
 

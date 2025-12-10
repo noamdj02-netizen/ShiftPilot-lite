@@ -63,7 +63,7 @@ export default function PlanningPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          organizationId: profile.organization_id,
+          restaurantId: profile.restaurant_id,
           shifts: shiftsToPublish,
           status: 'published'
         })

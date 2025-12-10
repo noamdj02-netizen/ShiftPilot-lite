@@ -68,7 +68,7 @@ export default function AIPlanningPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          organizationId: profile.organization_id,
+          restaurantId: profile.restaurant_id,
           startDate: startDate.toISOString().split('T')[0],
           variant: selectedVariant
         })
@@ -93,7 +93,7 @@ export default function AIPlanningPage() {
   }
 
   const handlePublish = async () => {
-    if (!generatedSchedule?.shifts || !profile?.organization_id) {
+    if (!generatedSchedule?.shifts || !profile?.restaurant_id) {
       toast.error('Aucun planning à publier')
       return
     }
@@ -105,7 +105,7 @@ export default function AIPlanningPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          organizationId: profile.organization_id,
+          restaurantId: profile.restaurant_id,
           shifts: generatedSchedule.shifts,
           status: 'published'
         })

@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Vérifier que l'utilisateur n'a pas déjà une organisation
-    if (user.organization_id || user.profile?.organization_id) {
+    if (user.restaurant_id || user.profile?.restaurant_id) {
       return errorResponse("User already has an organization", 400);
     }
 
